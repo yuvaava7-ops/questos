@@ -7,33 +7,42 @@ Working notes for Claude Code sessions in this repo: [`CLAUDE.md`](./CLAUDE.md)
 
 ## Status
 
-🚧 MVP — home dashboard only, static mock data, no backend yet. Skill tree page, Supabase, and live integrations (GitHub, health data) are planned but not built (see roadmap in the scope doc).
+🚧 MVP — home dashboard backed by Supabase, no mock data. Single-user, no auth yet. Skill tree page and live integrations (GitHub, health data) are planned but not built (see roadmap in the scope doc).
 
 ## Stack
 
-Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · lucide-react
+Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · lucide-react · Supabase
 
 ## Getting started
 
 ```bash
 npm install
+```
+
+Create a Supabase project, run [`supabase/schema.sql`](./supabase/schema.sql) in its SQL editor, then copy `.env.example` to `.env.local` and fill in your project URL + anon key.
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Without Supabase configured, the app shows a setup screen instead of the dashboard.
 
 ## Project structure
 
 ```
 app/                Next.js App Router pages
   layout.tsx
-  page.tsx           Home dashboard
+  page.tsx           Home dashboard (Server Component, fetches from Supabase)
+  error.tsx           Error boundary for failed Supabase queries
   globals.css
 components/          UI components (Sidebar, StatCard, QuestList, etc.)
 lib/
   types.ts            Shared TypeScript types (SkillTree, Quest, etc.)
-data/
-  sample.ts           Mock data — swap for Supabase queries later
+  supabase.ts          Supabase client
+  queries.ts           Server-side data fetching + derived stats/streak/activity
+  actions.ts           Server actions for quest/task CRUD
+supabase/
+  schema.sql           Table definitions + RLS policies — run once per project
 docs/
   PROJECT_SCOPE.md     Goal, features, data model, stack, roadmap
 ```

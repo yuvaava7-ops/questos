@@ -36,8 +36,9 @@ export interface StatCard {
 }
 
 export interface DayActivity {
-  date: string; // ISO date
+  date: string; // ISO date, "" for a not-yet-happened cell padding out the grid
   level: 0 | 1 | 2 | 3 | 4; // intensity, drives heatmap color
+  count: number; // quests completed that day; -1 marks a future padding cell
 }
 
 export interface UserSummary {

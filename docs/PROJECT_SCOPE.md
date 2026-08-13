@@ -66,4 +66,4 @@ One generic tree-rendering component handles every tree, built-in or custom.
 
 ## Current Status
 
-This repo contains the **MVP home dashboard** — static/mock data, no backend yet. Supabase, auth, the skill tree page, and live integrations are not built yet. See README for what's implemented.
+This repo contains the **MVP home dashboard**, wired to Supabase (Postgres) for all data — no mock/placeholder data left. It's single-user with no auth (see `supabase/schema.sql` for the permissive RLS policies and why). Quests and tasks support add/toggle/delete via server actions; the activity heatmap and streak are computed live from completed quests. Auth, the skill tree page, and live integrations (GitHub commits, health data) are not built yet. See README for what's implemented.

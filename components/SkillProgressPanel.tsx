@@ -13,8 +13,12 @@ export function SkillProgressPanel({ skills }: { skills: SkillProgress[] }) {
     <div className="rounded-card border border-border bg-panel p-5">
       <div className="mb-3.5 flex items-center justify-between">
         <h3 className="text-[14.5px] font-bold">Skill Progress</h3>
-        <button className="text-xs text-blue">See All</button>
       </div>
+      {skills.length === 0 && (
+        <p className="py-2 text-[13px] text-text-faint">
+          No skills tracked yet — insert rows into <code>skills</code> in Supabase to see progress here.
+        </p>
+      )}
       {skills.map((skill) => {
         const Icon = (Icons as unknown as Record<string, Icons.LucideIcon>)[skill.icon] ?? Icons.Circle;
         return (

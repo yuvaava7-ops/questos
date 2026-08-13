@@ -8,14 +8,14 @@ QuestOS — a personal RPG-styled life tracker. Full goal/scope/roadmap lives in
 
 ## Current state
 
-MVP stage: static Next.js + TypeScript dashboard, mock data in `data/`, no backend wired up yet. Don't assume Supabase, auth, or live integrations exist until they're actually added — check `docs/PROJECT_SCOPE.md`'s "Current Status" section, which should be kept up to date as phases land.
+MVP stage: Next.js + TypeScript dashboard backed by Supabase (Postgres) — no mock data, no `data/` directory. Single-user, no auth (see `supabase/schema.sql` for RLS policies). Don't assume auth, the skill tree page, or live integrations (GitHub, health data) exist until they're actually added — check `docs/PROJECT_SCOPE.md`'s "Current Status" section, which should be kept up to date as phases land.
 
 ## Stack & conventions
 
 - **Next.js (App Router) + React + TypeScript** — strict mode on, avoid `any`
 - **Tailwind CSS** for all styling — no CSS-in-JS, no separate stylesheet files per component
 - **Component style**: functional components, one component per file, colocate small pieces in `components/`, shared types in `lib/types.ts`
-- **Data**: until Supabase is wired up, mock/sample data lives in `data/`, typed against `lib/types.ts` — new features should consume that same shape so swapping in Supabase later is a data-layer change, not a component rewrite
+- **Data**: `lib/supabase.ts` is the client, `lib/queries.ts` holds server-side reads (called from Server Components), `lib/actions.ts` holds `"use server"` mutations — all typed against `lib/types.ts`. Schema changes go in `supabase/schema.sql`. No mock data — an empty table should render an empty state, not placeholder rows
 - **Icons**: `lucide-react` only, no custom SVG icon sets, no emoji in production UI copy (emoji were used as placeholders in the original prototype — replace with lucide icons as components are touched)
 - **Naming**: PascalCase components, camelCase functions/variables, kebab-case file names for non-component files
 
