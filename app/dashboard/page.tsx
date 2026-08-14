@@ -49,51 +49,53 @@ export default async function DashboardPage() {
     <>
       <Sidebar user={user} />
 
-      <main className="max-w-[1100px] flex-1 px-6 py-8 md:px-10">
-        <div className="mb-7 flex items-start justify-between">
+      <main className="max-w-[1100px] flex-1 px-8 py-10 md:px-12">
+        <div className="mb-9 flex items-start justify-between">
           <div>
-            <h1 className="text-[26px] font-extrabold tracking-tight">
+            <h1 className="text-[28px] font-semibold tracking-tight">
               {timeOfDayGreeting()}, {user.name}
             </h1>
-            <div className="mt-2 flex gap-3.5 text-[13px] font-medium text-text-dim">
+            <div className="mt-2.5 flex gap-4 text-[13px] text-text-faint">
               <span className="flex items-center gap-1.5">
-                <Flame size={14} className="text-orange" /> Streak: <strong className="text-text">{user.streakDays} days</strong>
+                <Flame size={14} className="text-orange" /> Streak <span className="font-medium text-text-dim">{user.streakDays} days</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <Star size={14} className="text-purple" /> Level: <strong className="text-text">{user.level}</strong>
+                <Star size={14} className="text-purple" /> Level <span className="font-medium text-text-dim">{user.level}</span>
               </span>
             </div>
           </div>
-          <div className="flex gap-2.5">
-            <button className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-border bg-panel2 text-text-dim transition-colors hover:text-text">
-              <Bell size={16} />
+          <div className="flex gap-2">
+            <button className="flex h-9 w-9 items-center justify-center rounded-full text-text-faint transition-colors hover:bg-white/[0.05] hover:text-text-dim">
+              <Bell size={17} strokeWidth={1.75} />
             </button>
-            <button className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-border bg-panel2 text-text-dim transition-colors hover:text-text">
-              <Settings size={16} />
+            <button className="flex h-9 w-9 items-center justify-center rounded-full text-text-faint transition-colors hover:bg-white/[0.05] hover:text-text-dim">
+              <Settings size={17} strokeWidth={1.75} />
             </button>
           </div>
         </div>
 
         {!profile && (
-          <div className="mb-5 rounded-card border border-dashed border-border bg-panel/50 p-4 text-[13px] text-text-dim">
+          <div className="mb-6 rounded-card border border-dashed border-border/60 bg-panel/50 p-4 text-[13px] text-text-dim">
             No profile row found — insert one into <code>profile</code> in Supabase to set your name, level, and XP.
           </div>
         )}
 
-        <div className="mb-5 grid grid-cols-2 gap-3.5 lg:grid-cols-4">
+        <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {stats.map((stat) => (
             <StatCard key={stat.id} stat={stat} />
           ))}
         </div>
 
-        <div className="mb-3.5 grid gap-3.5 lg:grid-cols-2">
+        <div className="mb-6 grid gap-4 lg:grid-cols-2">
           <QuestList quests={quests} />
           <SkillProgressPanel skills={skills} />
         </div>
 
-        <ActivityHeatmap days={days} streakDays={streakDays} />
+        <div className="mb-6">
+          <ActivityHeatmap days={days} streakDays={streakDays} />
+        </div>
 
-        <div className="grid gap-3.5 lg:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2">
           <TaskList tasks={tasks} />
           <QuickOverview user={user} quests={quests} tasks={tasks} />
         </div>

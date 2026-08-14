@@ -8,30 +8,21 @@ const BAR_COLOR_MAP = {
   purple: "bg-purple",
 } as const;
 
-const BADGE_COLOR_MAP = {
-  green: "bg-green-dim text-green",
-  blue: "bg-blue-dim text-blue",
-  orange: "bg-orange-dim text-orange",
-  purple: "bg-purple-dim text-purple",
-} as const;
-
 export function StatCard({ stat }: { stat: StatCardType }) {
   const Icon = (Icons as unknown as Record<string, Icons.LucideIcon>)[stat.icon] ?? Icons.Circle;
 
   return (
-    <div className="rounded-card border border-border bg-panel p-4">
-      <div className="mb-3 flex items-center gap-2 text-[12.5px] font-semibold text-text-dim">
-        <div className={`flex h-6 w-6 items-center justify-center rounded-full ${BADGE_COLOR_MAP[stat.color]}`}>
-          <Icon size={13} />
-        </div>
+    <div className="rounded-card border border-border/60 bg-panel p-5 shadow-[0_1px_0_rgba(255,255,255,0.02)_inset]">
+      <div className="mb-4 flex items-center gap-2 text-[12px] font-medium tracking-wide text-text-faint">
+        <Icon size={14} strokeWidth={1.75} />
         {stat.label}
       </div>
-      <div className="text-[26px] font-extrabold leading-none">
+      <div className="text-[28px] font-semibold leading-none tracking-tight">
         {stat.value}
-        {stat.unit && <span className="ml-1 text-[13px] font-medium text-text-faint">{stat.unit}</span>}
+        {stat.unit && <span className="ml-1 text-[13px] font-normal text-text-faint">{stat.unit}</span>}
       </div>
-      <div className="mb-3 mt-1.5 text-[11.5px] text-text-faint">{stat.sub}</div>
-      <div className="h-1.5 overflow-hidden rounded-full bg-[#1c2233]">
+      <div className="mb-4 mt-2 text-[12px] text-text-faint">{stat.sub}</div>
+      <div className="h-[3px] overflow-hidden rounded-full bg-white/[0.06]">
         <div
           className={`h-full rounded-full ${BAR_COLOR_MAP[stat.color]}`}
           style={{ width: `${stat.percent}%` }}

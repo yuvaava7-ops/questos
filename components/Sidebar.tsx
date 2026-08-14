@@ -29,10 +29,10 @@ export function Sidebar({ user }: { user: UserSummary }) {
   const xpPercent = Math.min(100, Math.round((user.xp / user.xpToNextLevel) * 100));
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border p-4 md:flex">
-      <div className="flex items-center gap-2.5 px-2 pb-7 pt-1 text-lg font-extrabold">
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border/60 p-5 md:flex">
+      <div className="flex items-center gap-2.5 px-1 pb-9 pt-1 text-[15px] font-semibold tracking-tight">
         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue to-purple">
-          <Zap size={15} />
+          <Zap size={14} />
         </div>
         QuestOS
       </div>
@@ -42,32 +42,32 @@ export function Sidebar({ user }: { user: UserSummary }) {
           <a
             key={label}
             href="#"
-            className={`flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-3 rounded-[8px] border-l-2 px-3 py-2 text-[13.5px] font-medium transition-colors ${
               active
-                ? "bg-gradient-to-br from-blue-600 to-indigo-700 text-white"
-                : "text-text-dim hover:bg-panel2 hover:text-text"
+                ? "border-blue bg-white/[0.05] text-text"
+                : "border-transparent text-text-faint hover:bg-white/[0.03] hover:text-text-dim"
             }`}
           >
-            <Icon size={16} />
+            <Icon size={16} strokeWidth={1.75} />
             {label}
           </a>
         ))}
       </nav>
 
-      <div className="border-t border-border pt-4">
+      <div className="border-t border-border/60 pt-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-purple to-blue text-sm font-bold">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-panel2 text-[13px] font-semibold text-text-dim">
             {user.name[0]}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-[13px] font-semibold">{user.name}</div>
-            <div className="text-[11px] text-text-dim">Level {user.level}</div>
+            <div className="truncate text-[13px] font-medium">{user.name}</div>
+            <div className="text-[11px] text-text-faint">Level {user.level}</div>
           </div>
         </div>
-        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-[#1c2233]">
-          <div className="h-full bg-gradient-to-r from-blue to-purple" style={{ width: `${xpPercent}%` }} />
+        <div className="mt-3 h-[3px] overflow-hidden rounded-full bg-white/[0.06]">
+          <div className="h-full rounded-full bg-blue" style={{ width: `${xpPercent}%` }} />
         </div>
-        <div className="mt-1 text-[10.5px] text-text-faint">
+        <div className="mt-1.5 text-[10.5px] text-text-faint">
           {user.xp.toLocaleString()} / {user.xpToNextLevel.toLocaleString()} XP
         </div>
         <SignOutButton />

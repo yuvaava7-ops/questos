@@ -1,4 +1,4 @@
-import { Flame, Zap, CheckCircle2, ListChecks, Sparkles } from "lucide-react";
+import { Flame, Zap, CheckCircle2, ListChecks } from "lucide-react";
 import type { UserSummary, Quest, Task } from "@/lib/types";
 
 const QUOTES = [
@@ -30,34 +30,29 @@ export function QuickOverview({
   const tasksDone = tasks.filter((t) => t.done).length;
 
   const items = [
-    { icon: Flame, value: `${user.streakDays}`, label: "Day Streak", badge: "bg-orange-dim text-orange" },
-    { icon: Zap, value: `${user.xp}`, label: "Total XP", badge: "bg-purple-dim text-purple" },
-    { icon: CheckCircle2, value: `${questsDone}/${quests.length}`, label: "Quests done", badge: "bg-green-dim text-green" },
-    { icon: ListChecks, value: `${tasksDone}/${tasks.length}`, label: "Tasks done", badge: "bg-blue-dim text-blue" },
+    { icon: Flame, value: `${user.streakDays}`, label: "Day Streak" },
+    { icon: Zap, value: `${user.xp}`, label: "Total XP" },
+    { icon: CheckCircle2, value: `${questsDone}/${quests.length}`, label: "Quests done" },
+    { icon: ListChecks, value: `${tasksDone}/${tasks.length}`, label: "Tasks done" },
   ];
 
   return (
-    <div className="rounded-card border border-border bg-panel p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-[15px] font-bold">Quick Overview</h3>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        {items.map(({ icon: Icon, value, label, badge }) => (
-          <div key={label} className="rounded-[10px] bg-panel2 px-2 py-3.5 text-center">
-            <div className={`mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full ${badge}`}>
-              <Icon size={16} />
+    <div className="rounded-card border border-border/60 bg-panel p-6">
+      <h3 className="mb-5 text-[15px] font-semibold tracking-tight">Quick Overview</h3>
+      <div className="grid grid-cols-2 gap-x-6 gap-y-5">
+        {items.map(({ icon: Icon, value, label }) => (
+          <div key={label} className="flex items-center gap-3">
+            <Icon size={17} strokeWidth={1.75} className="shrink-0 text-text-faint" />
+            <div>
+              <div className="text-[17px] font-semibold leading-none tracking-tight">{value}</div>
+              <div className="mt-1 text-[11.5px] text-text-faint">{label}</div>
             </div>
-            <div className="text-base font-extrabold">{value}</div>
-            <div className="mt-0.5 text-[10.5px] text-text-faint">{label}</div>
           </div>
         ))}
       </div>
-      <div className="mt-4 rounded-[10px] border border-border bg-panel2 p-3.5">
-        <div className="flex items-start gap-2">
-          <Sparkles size={14} className="mt-0.5 shrink-0 text-purple" />
-          <p className="text-[12.5px] italic leading-relaxed text-text-dim">{quoteOfTheDay()}</p>
-        </div>
-      </div>
+      <p className="mt-6 border-t border-border/60 pt-4 text-[12.5px] italic leading-relaxed text-text-faint">
+        {quoteOfTheDay()}
+      </p>
     </div>
   );
 }

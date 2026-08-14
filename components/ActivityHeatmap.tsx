@@ -31,11 +31,11 @@ export function ActivityHeatmap({
   });
 
   return (
-    <div className="mb-3.5 rounded-card border border-border bg-panel p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-[15px] font-bold">Activity</h3>
-        <span className="flex items-center gap-1.5 rounded-full bg-orange-dim px-2.5 py-1 text-[11.5px] font-semibold text-orange">
-          <Flame size={12} /> {streakDays} day streak
+    <div className="rounded-card border border-border/60 bg-panel p-6">
+      <div className="mb-5 flex items-center justify-between">
+        <h3 className="text-[15px] font-semibold tracking-tight">Activity</h3>
+        <span className="flex items-center gap-1.5 text-[12px] text-text-faint">
+          <Flame size={13} className="text-orange" /> {streakDays} day streak
         </span>
       </div>
       <div className="overflow-x-auto">
