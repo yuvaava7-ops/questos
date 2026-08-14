@@ -4,13 +4,14 @@ import { useTransition } from "react";
 import { Check, Plus, X } from "lucide-react";
 import type { Quest } from "@/lib/types";
 import { toggleQuest, addQuest, deleteQuest } from "@/lib/actions";
+import { SectionHeading } from "@/components/SectionHeading";
 
 export function QuestList({ quests }: { quests: Quest[] }) {
   const [isPending, startTransition] = useTransition();
 
   return (
     <div className="rounded-card border border-border/60 bg-panel p-6">
-      <h3 className="mb-5 text-[15px] font-semibold tracking-tight">Today&apos;s Quests</h3>
+      <SectionHeading title="Today's Quests" />
 
       {quests.length === 0 && (
         <p className="py-2 text-[13px] text-text-faint">No quests logged for today yet — add one below.</p>
@@ -52,24 +53,24 @@ export function QuestList({ quests }: { quests: Quest[] }) {
           name="label"
           placeholder="Add a quest..."
           required
-          className="min-w-0 flex-1 rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-blue/40"
+          className="min-w-0 flex-1 rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-gold/40"
         />
         <input
           name="time"
           placeholder="7:00 AM"
-          className="w-[84px] rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-blue/40"
+          className="w-[84px] rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-gold/40"
         />
         <input
           name="xp"
           type="number"
           defaultValue={10}
           min={1}
-          className="w-[56px] rounded-[8px] bg-panel2 px-2 py-2 text-[13px] text-text focus:outline-none focus:ring-1 focus:ring-blue/40"
+          className="w-[56px] rounded-[8px] bg-panel2 px-2 py-2 text-[13px] text-text focus:outline-none focus:ring-1 focus:ring-gold/40"
         />
         <button
           type="submit"
           aria-label="Add quest"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-blue text-bg transition-opacity hover:opacity-90"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-gold text-bg transition-opacity hover:opacity-90"
         >
           <Plus size={15} />
         </button>

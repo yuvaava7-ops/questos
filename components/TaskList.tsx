@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Check, Plus, X } from "lucide-react";
 import type { Task } from "@/lib/types";
 import { toggleTask, addTask, deleteTask } from "@/lib/actions";
+import { SectionHeading } from "@/components/SectionHeading";
 
 const PRIORITY_STYLES = {
   high: "bg-[#3a1a1e] text-[#f87171]",
@@ -17,15 +18,14 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
 
   return (
     <div className="rounded-card border border-border/60 bg-panel p-6">
-      <div className="mb-5 flex items-center justify-between">
-        <h3 className="text-[15px] font-semibold tracking-tight">Today&apos;s Tasks</h3>
+      <SectionHeading title="Today's Tasks">
         <button
           onClick={() => setIsAdding((v) => !v)}
-          className="flex items-center gap-1 rounded-[8px] px-2 py-1 text-[12px] font-medium text-text-faint transition-colors hover:text-blue"
+          className="flex items-center gap-1 rounded-[8px] px-2 py-1 text-[12px] font-medium text-text-faint transition-colors hover:text-gold"
         >
           <Plus size={13} /> Add Task
         </button>
-      </div>
+      </SectionHeading>
 
       {tasks.length === 0 && !isAdding && (
         <p className="py-2 text-[13px] text-text-faint">No tasks yet — add one below.</p>
@@ -77,12 +77,12 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
             placeholder="Add a task..."
             required
             autoFocus
-            className="min-w-0 flex-1 rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-blue/40"
+            className="min-w-0 flex-1 rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-gold/40"
           />
           <select
             name="priority"
             defaultValue="medium"
-            className="rounded-[8px] bg-panel2 px-2 py-2 text-[13px] text-text focus:outline-none focus:ring-1 focus:ring-blue/40"
+            className="rounded-[8px] bg-panel2 px-2 py-2 text-[13px] text-text focus:outline-none focus:ring-1 focus:ring-gold/40"
           >
             <option value="high">High</option>
             <option value="medium">Medium</option>
@@ -91,7 +91,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
           <button
             type="submit"
             aria-label="Add task"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-blue text-bg transition-opacity hover:opacity-90"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-gold text-bg transition-opacity hover:opacity-90"
           >
             <Plus size={15} />
           </button>

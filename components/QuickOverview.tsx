@@ -1,5 +1,6 @@
 import { Flame, Zap, CheckCircle2, ListChecks } from "lucide-react";
 import type { UserSummary, Quest, Task } from "@/lib/types";
+import { SectionHeading } from "@/components/SectionHeading";
 
 const QUOTES = [
   "Every quest completed is XP that never disappears.",
@@ -38,7 +39,7 @@ export function QuickOverview({
 
   return (
     <div className="rounded-card border border-border/60 bg-panel p-6">
-      <h3 className="mb-5 text-[15px] font-semibold tracking-tight">Quick Overview</h3>
+      <SectionHeading title="Quick Overview" />
       <div className="grid grid-cols-2 gap-x-6 gap-y-5">
         {items.map(({ icon: Icon, value, label }) => (
           <div key={label} className="flex items-center gap-3">

@@ -1,5 +1,6 @@
 import * as Icons from "lucide-react";
 import type { SkillProgress } from "@/lib/types";
+import { SectionHeading } from "@/components/SectionHeading";
 
 const COLOR_MAP = {
   green: "bg-green",
@@ -11,7 +12,7 @@ const COLOR_MAP = {
 export function SkillProgressPanel({ skills }: { skills: SkillProgress[] }) {
   return (
     <div className="rounded-card border border-border/60 bg-panel p-6">
-      <h3 className="mb-5 text-[15px] font-semibold tracking-tight">Skill Progress</h3>
+      <SectionHeading title="Skill Progress" />
       {skills.length === 0 && (
         <p className="py-2 text-[13px] text-text-faint">
           No skills tracked yet — insert rows into <code>skills</code> in Supabase to see progress here.

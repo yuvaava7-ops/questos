@@ -23,7 +23,7 @@ export function LoginForm() {
     <form action={handleSubmit} className="flex flex-col gap-3.5">
       <label className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim">
         Email
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-blue">
+        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
           <Mail size={15} className="shrink-0 text-text-faint" />
           <input
             name="email"
@@ -38,7 +38,7 @@ export function LoginForm() {
 
       <label className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim">
         Password
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-blue">
+        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
           <Lock size={15} className="shrink-0 text-text-faint" />
           <input
             name="password"
@@ -58,7 +58,7 @@ export function LoginForm() {
         onPointerDown={button.onPointerDown}
         type="submit"
         disabled={isPending}
-        className="mt-1.5 flex items-center justify-center gap-2 rounded-[10px] bg-gradient-to-br from-blue-600 to-indigo-700 py-2.5 text-[13.5px] font-semibold text-white transition-opacity disabled:opacity-60"
+        className="mt-1.5 flex items-center justify-center gap-2 rounded-[8px] bg-gold py-2.5 text-[13.5px] font-semibold text-bg transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         <LogIn size={15} />
         {isPending ? "Signing in..." : "Sign in"}
@@ -66,7 +66,7 @@ export function LoginForm() {
 
       <p className="mt-1 text-center text-[13px] text-text-dim">
         No account yet?{" "}
-        <Link href="/signup" className="font-semibold text-blue">
+        <Link href="/signup" className="font-semibold text-gold">
           Sign up
         </Link>
       </p>

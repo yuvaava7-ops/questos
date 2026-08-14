@@ -30,8 +30,8 @@ export function Sidebar({ user }: { user: UserSummary }) {
 
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border/60 p-5 md:flex">
-      <div className="flex items-center gap-2.5 px-1 pb-9 pt-1 text-[15px] font-semibold tracking-tight">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue to-purple">
+      <div className="flex items-center gap-2.5 px-1 pb-9 pt-1 font-display text-[15px] font-semibold tracking-wide">
+        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gold text-bg">
           <Zap size={14} />
         </div>
         QuestOS
@@ -42,9 +42,9 @@ export function Sidebar({ user }: { user: UserSummary }) {
           <a
             key={label}
             href="#"
-            className={`flex items-center gap-3 rounded-[8px] border-l-2 px-3 py-2 text-[13.5px] font-medium transition-colors ${
+            className={`flex items-center gap-3 rounded-[6px] border-l-2 px-3 py-2 text-[13.5px] font-medium transition-colors ${
               active
-                ? "border-blue bg-white/[0.05] text-text"
+                ? "border-gold bg-white/[0.05] text-text"
                 : "border-transparent text-text-faint hover:bg-white/[0.03] hover:text-text-dim"
             }`}
           >
@@ -65,7 +65,7 @@ export function Sidebar({ user }: { user: UserSummary }) {
           </div>
         </div>
         <div className="mt-3 h-[3px] overflow-hidden rounded-full bg-white/[0.06]">
-          <div className="h-full rounded-full bg-blue" style={{ width: `${xpPercent}%` }} />
+          <div className="h-full rounded-full bg-gold" style={{ width: `${xpPercent}%` }} />
         </div>
         <div className="mt-1.5 text-[10.5px] text-text-faint">
           {user.xp.toLocaleString()} / {user.xpToNextLevel.toLocaleString()} XP

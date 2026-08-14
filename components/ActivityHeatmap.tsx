@@ -1,7 +1,8 @@
 import { Flame } from "lucide-react";
 import type { DayActivity } from "@/lib/types";
+import { SectionHeading } from "@/components/SectionHeading";
 
-const LEVEL_COLORS = ["#171d2c", "#123324", "#155a37", "#1a9150", "#22c55e"];
+const LEVEL_COLORS = ["#1c1712", "#2c3018", "#445a22", "#6b8a2f", "#94b83f"];
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 const CELL = 13;
@@ -32,12 +33,11 @@ export function ActivityHeatmap({
 
   return (
     <div className="rounded-card border border-border/60 bg-panel p-6">
-      <div className="mb-5 flex items-center justify-between">
-        <h3 className="text-[15px] font-semibold tracking-tight">Activity</h3>
+      <SectionHeading title="Activity">
         <span className="flex items-center gap-1.5 text-[12px] text-text-faint">
           <Flame size={13} className="text-orange" /> {streakDays} day streak
         </span>
-      </div>
+      </SectionHeading>
       <div className="overflow-x-auto">
         <div className="inline-flex" style={{ gap: GAP }}>
           <div className="flex flex-col text-[10px] leading-[10px] text-text-faint" style={{ marginTop: 18, gap: GAP }}>

@@ -52,7 +52,7 @@ export default async function DashboardPage() {
       <main className="max-w-[1100px] flex-1 px-8 py-10 md:px-12">
         <div className="mb-9 flex items-start justify-between">
           <div>
-            <h1 className="text-[28px] font-semibold tracking-tight">
+            <h1 className="font-display text-[26px] font-semibold tracking-wide">
               {timeOfDayGreeting()}, {user.name}
             </h1>
             <div className="mt-2.5 flex gap-4 text-[13px] text-text-faint">

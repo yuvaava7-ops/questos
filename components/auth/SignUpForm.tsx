@@ -39,7 +39,7 @@ export function SignUpForm() {
     <form ref={formRef} action={handleSubmit} className="flex flex-col gap-3.5">
       <label data-animate className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim opacity-0">
         Name
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-purple">
+        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
           <User size={15} className="shrink-0 text-text-faint" />
           <input
             name="name"
@@ -53,7 +53,7 @@ export function SignUpForm() {
 
       <label data-animate className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim opacity-0">
         Email
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-purple">
+        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
           <Mail size={15} className="shrink-0 text-text-faint" />
           <input
             name="email"
@@ -68,7 +68,7 @@ export function SignUpForm() {
 
       <label data-animate className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim opacity-0">
         Password
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-purple">
+        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
           <Lock size={15} className="shrink-0 text-text-faint" />
           <input
             name="password"
@@ -90,7 +90,7 @@ export function SignUpForm() {
           onPointerDown={button.onPointerDown}
           type="submit"
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-[10px] bg-gradient-to-br from-purple to-blue py-2.5 text-[13.5px] font-semibold text-bg transition-opacity disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-[8px] bg-gold py-2.5 text-[13.5px] font-semibold text-bg transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           <UserPlus size={15} />
           {isPending ? "Creating account..." : "Create account"}
@@ -99,7 +99,7 @@ export function SignUpForm() {
 
       <p data-animate className="mt-1 text-center text-[13px] text-text-dim opacity-0">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-purple">
+        <Link href="/login" className="font-semibold text-gold">
           Sign in
         </Link>
       </p>

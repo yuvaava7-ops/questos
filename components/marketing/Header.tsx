@@ -5,9 +5,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-20 border-b border-border/60 bg-bg/80 backdrop-blur">
       <div className="mx-auto flex max-w-[1100px] items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-2.5 text-base font-extrabold">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue to-purple">
-            <Zap size={15} />
+        <Link href="/" className="flex items-center gap-2.5 font-display text-[15px] font-semibold tracking-wide">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gold text-bg">
+            <Zap size={14} />
           </div>
           QuestOS
         </Link>
@@ -17,7 +17,7 @@ export function Header() {
           </Link>
           <Link
             href="/signup"
-            className="rounded-[10px] bg-gradient-to-br from-blue-600 to-indigo-700 px-4 py-2 text-[13.5px] font-semibold text-white"
+            className="rounded-[8px] bg-gold px-4 py-2 text-[13.5px] font-semibold text-bg transition-opacity hover:opacity-90"
           >
             Sign up
           </Link>
