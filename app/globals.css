@@ -6,5 +6,7 @@
 body {
   background:
     radial-gradient(ellipse at top left, #241a0d80, transparent 60%),
+    linear-gradient(rgba(12, 10, 8, 0.88), rgba(12, 10, 8, 0.93)),
+    url('/illustrations/app-bg.webp') center / cover fixed no-repeat,
     #0c0a08;
 }
