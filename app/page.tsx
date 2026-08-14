@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Flame, TreeDeciduous, BarChart3 } from "lucide-react";
 import { Header } from "@/components/marketing/Header";
-import { ScrollScrubHero } from "@/components/marketing/ScrollScrubHero";
 
 export default function HomePage() {
   return (
@@ -31,8 +30,6 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
-
-      <ScrollScrubHero />
 
       <section className="mx-auto grid w-full max-w-[1000px] gap-4 px-6 py-16 md:grid-cols-3">
         <div className="rounded-card border border-border bg-panel p-6">
