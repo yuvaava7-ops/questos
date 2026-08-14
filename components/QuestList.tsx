@@ -10,7 +10,7 @@ export function QuestList({ quests }: { quests: Quest[] }) {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="rounded-card border border-border/60 bg-panel p-6">
+    <div id="today-quests" className="rounded-card border border-border/60 bg-panel p-6 scroll-mt-4">
       <SectionHeading title="Today's Quests" />
 
       {quests.length === 0 && (

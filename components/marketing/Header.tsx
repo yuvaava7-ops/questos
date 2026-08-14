@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { GAME_ICONS } from "@/icons/game";
+import { adaptSize } from "@/icons/game/adapt-size";
+import CrossedSwordsSvg from "@/icons/game/lorc/crossed-swords.svg";
 
-const Logo = GAME_ICONS["crossed-swords"];
+const Logo = adaptSize(CrossedSwordsSvg);
 
 export function Header() {
   return (

@@ -11,9 +11,10 @@ import {
 } from "lucide-react";
 import type { UserSummary } from "@/lib/types";
 import { SignOutButton } from "@/components/SignOutButton";
-import { GAME_ICONS } from "@/icons/game";
+import { adaptSize } from "@/icons/game/adapt-size";
+import CrossedSwordsSvg from "@/icons/game/lorc/crossed-swords.svg";
 
-const Logo = GAME_ICONS["crossed-swords"];
+const Logo = adaptSize(CrossedSwordsSvg);
 
 const NAV_ITEMS = [
   { label: "Home", icon: Home, active: true },

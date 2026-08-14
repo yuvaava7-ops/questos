@@ -9,8 +9,20 @@ import type {
   UserSummary,
 } from "@/lib/types";
 
+const DAY_MS = 86_400_000;
+
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
+}
+
+function yesterdayISO(): string {
+  return new Date(Date.now() - DAY_MS).toISOString().slice(0, 10);
+}
+
+function donePercent(quests: Quest[]): number {
+  const totalXp = quests.reduce((sum, q) => sum + q.xp, 0);
+  const earnedXp = quests.filter((q) => q.done).reduce((sum, q) => sum + q.xp, 0);
+  return totalXp > 0 ? Math.round((earnedXp / totalXp) * 100) : 0;
 }
 
 export async function getProfile(): Promise<Omit<UserSummary, "streakDays"> | null> {
@@ -94,22 +106,29 @@ export async function getSkills(): Promise<SkillProgress[]> {
   }));
 }
 
+// Yesterday's Quest Score, for the hero card's "+N pts from yesterday" line.
+// Returns null (not 0) when there's no baseline to compare against, so the
+// UI can omit the trend rather than imply a misleading "+82".
+export async function getQuestScoreTrend(todayQuests: Quest[]): Promise<number | null> {
+  const yesterdayQuests = await getQuests(yesterdayISO());
+  if (yesterdayQuests.length === 0) return null;
+  return donePercent(todayQuests) - donePercent(yesterdayQuests);
+}
+
 // "Quest Score" is always computed live from today's quests; any rows in
 // stat_cards (Training, Nutrition, custom trackers, ...) are appended after it.
 export async function getStatCards(quests: Quest[]): Promise<StatCard[]> {
-  const totalXp = quests.reduce((sum, q) => sum + q.xp, 0);
-  const earnedXp = quests.filter((q) => q.done).reduce((sum, q) => sum + q.xp, 0);
-  const donePercent = totalXp > 0 ? Math.round((earnedXp / totalXp) * 100) : 0;
+  const percent = donePercent(quests);
   const doneCount = quests.filter((q) => q.done).length;
 
   const questScore: StatCard = {
     id: "quest-score",
     label: "Quest Score",
     icon: "Target",
-    value: String(donePercent),
+    value: String(percent),
     unit: "/100",
     sub: quests.length > 0 ? `${doneCount}/${quests.length} quests done today` : "No quests logged today",
-    percent: donePercent,
+    percent,
     color: "green",
   };
 
@@ -139,7 +158,6 @@ export async function getStatCards(quests: Quest[]): Promise<StatCard[]> {
 }
 
 const ACTIVITY_WEEKS = 53;
-const DAY_MS = 86_400_000;
 
 // Buckets a day's completed-quest count into a heatmap intensity level,
 // mirroring GitHub's contribution-graph tiering.

@@ -17,7 +17,7 @@ export async function toggleQuest(id: string, done: boolean) {
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) throw error;
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function addQuest(formData: FormData) {
@@ -36,7 +36,7 @@ export async function addQuest(formData: FormData) {
     quest_date: todayISO(),
   });
   if (error) throw error;
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function deleteQuest(id: string) {
@@ -44,7 +44,7 @@ export async function deleteQuest(id: string) {
   const supabase = createClient();
   const { error } = await supabase.from("quests").delete().eq("id", id).eq("user_id", user.id);
   if (error) throw error;
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function toggleTask(id: string, done: boolean) {
@@ -52,7 +52,7 @@ export async function toggleTask(id: string, done: boolean) {
   const supabase = createClient();
   const { error } = await supabase.from("tasks").update({ done }).eq("id", id).eq("user_id", user.id);
   if (error) throw error;
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function addTask(formData: FormData) {
@@ -64,7 +64,7 @@ export async function addTask(formData: FormData) {
   const supabase = createClient();
   const { error } = await supabase.from("tasks").insert({ user_id: user.id, label, priority });
   if (error) throw error;
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function deleteTask(id: string) {
@@ -72,5 +72,5 @@ export async function deleteTask(id: string) {
   const supabase = createClient();
   const { error } = await supabase.from("tasks").delete().eq("id", id).eq("user_id", user.id);
   if (error) throw error;
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }

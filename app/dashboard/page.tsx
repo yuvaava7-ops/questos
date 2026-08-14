@@ -1,14 +1,27 @@
-import { Bell, Settings, Flame, Star } from "lucide-react";
+import { Bell, Search, Settings, Flame, Star } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import { StatCard } from "@/components/StatCard";
+import { QuestScoreHero } from "@/components/QuestScoreHero";
 import { QuestList } from "@/components/QuestList";
 import { SkillProgressPanel } from "@/components/SkillProgressPanel";
 import { ActivityHeatmap } from "@/components/ActivityHeatmap";
 import { TaskList } from "@/components/TaskList";
+import { QuickActions } from "@/components/QuickActions";
 import { QuickOverview } from "@/components/QuickOverview";
+import { HealthOverview } from "@/components/HealthOverview";
+import { RecentAchievements } from "@/components/RecentAchievements";
+import { NextLevelReward } from "@/components/NextLevelReward";
 import { SetupNotice } from "@/components/SetupNotice";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { getProfile, getQuests, getTasks, getSkills, getStatCards, getActivity } from "@/lib/queries";
+import {
+  getProfile,
+  getQuests,
+  getTasks,
+  getSkills,
+  getStatCards,
+  getActivity,
+  getQuestScoreTrend,
+} from "@/lib/queries";
 import type { UserSummary } from "@/lib/types";
 
 // Always render fresh: streak/activity are relative to "today", and data can
@@ -34,7 +47,7 @@ export default async function DashboardPage() {
     getSkills(),
     getActivity(),
   ]);
-  const stats = await getStatCards(quests);
+  const [stats, trend] = await Promise.all([getStatCards(quests), getQuestScoreTrend(quests)]);
 
   const user: UserSummary = {
     name: profile?.name ?? "You",
@@ -45,11 +58,15 @@ export default async function DashboardPage() {
     streakDays,
   };
 
+  const [questScore, ...customStats] = stats;
+  const mainQuest = quests.find((q) => !q.done) ?? null;
+  const allQuestsDone = quests.length > 0 && mainQuest === null;
+
   return (
     <>
       <Sidebar user={user} />
 
-      <main className="max-w-[1100px] flex-1 px-8 py-10 md:px-12">
+      <main className="max-w-[1400px] flex-1 px-8 py-10 md:px-12">
         <div className="mb-9 flex items-start justify-between">
           <div>
             <h1 className="font-display text-[26px] font-semibold tracking-wide">
@@ -66,6 +83,9 @@ export default async function DashboardPage() {
           </div>
           <div className="flex gap-2">
             <button className="flex h-9 w-9 items-center justify-center rounded-full text-text-faint transition-colors hover:bg-white/[0.05] hover:text-text-dim">
+              <Search size={17} strokeWidth={1.75} />
+            </button>
+            <button className="flex h-9 w-9 items-center justify-center rounded-full text-text-faint transition-colors hover:bg-white/[0.05] hover:text-text-dim">
               <Bell size={17} strokeWidth={1.75} />
             </button>
             <button className="flex h-9 w-9 items-center justify-center rounded-full text-text-faint transition-colors hover:bg-white/[0.05] hover:text-text-dim">
@@ -80,24 +100,33 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <StatCard key={stat.id} stat={stat} />
-          ))}
-        </div>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+          <div className="flex flex-col gap-4">
+            <QuestScoreHero score={questScore.percent} trend={trend} mainQuest={mainQuest} allDone={allQuestsDone} />
 
-        <div className="mb-6 grid gap-4 lg:grid-cols-2">
-          <QuestList quests={quests} />
-          <SkillProgressPanel skills={skills} />
-        </div>
+            {customStats.length > 0 && (
+              <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+                {customStats.map((stat) => (
+                  <StatCard key={stat.id} stat={stat} />
+                ))}
+              </div>
+            )}
 
-        <div className="mb-6">
-          <ActivityHeatmap days={days} streakDays={streakDays} />
-        </div>
+            <SkillProgressPanel skills={skills} />
+            <ActivityHeatmap days={days} streakDays={streakDays} />
 
-        <div className="grid gap-4 lg:grid-cols-2">
-          <TaskList tasks={tasks} />
-          <QuickOverview user={user} quests={quests} tasks={tasks} />
+            <div className="grid gap-4 lg:grid-cols-2">
+              <TaskList tasks={tasks} />
+              <QuickActions />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <HealthOverview />
+            <RecentAchievements />
+            <NextLevelReward user={user} />
+            <QuickOverview user={user} quests={quests} tasks={tasks} />
+          </div>
         </div>
       </main>
     </>
