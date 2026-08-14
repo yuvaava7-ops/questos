@@ -25,22 +25,24 @@ Create a Supabase project, run [`supabase/schema.sql`](./supabase/schema.sql) in
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Without Supabase configured, the app shows a setup screen instead of the dashboard. Otherwise you'll land on `/login` — sign up for an account to see the dashboard.
+Open [http://localhost:3000](http://localhost:3000). `/` is the public marketing page; sign up from there to reach `/dashboard`. Without Supabase configured, `/dashboard` shows a setup screen instead of your data.
 
 ## Project structure
 
 ```
 app/                Next.js App Router pages
+  page.tsx           Public marketing/landing page (header, scroll-scrub hero, CTA)
+  dashboard/page.tsx  The actual dashboard (Server Component, fetches from Supabase) — protected
   (auth)/             Login + sign-up (no Sidebar chrome)
     login/page.tsx
     signup/page.tsx
   auth/callback/       Route Handler for email-confirmation redirects
   layout.tsx
-  page.tsx           Home dashboard (Server Component, fetches from Supabase)
   error.tsx           Error boundary for failed Supabase queries
   globals.css
 components/          UI components (Sidebar, StatCard, QuestList, etc.)
   auth/                Login/sign-up UI (CameraHero, LoginForm, SignUpForm, AuthCard)
+  marketing/            Landing page UI (Header, ScrollScrubHero)
 lib/
   types.ts            Shared TypeScript types (SkillTree, Quest, etc.)
   supabase/            Supabase clients — server.ts, client.ts, middleware.ts, config.ts
@@ -48,7 +50,7 @@ lib/
   auth-actions.ts       Sign up/in/out server actions
   queries.ts           Server-side data fetching + derived stats/streak/activity, scoped per user
   actions.ts           Server actions for quest/task CRUD, scoped per user
-middleware.ts        Gates the dashboard behind login
+middleware.ts        Gates /dashboard behind login, bounces logged-in users off / and /login
 supabase/
   schema.sql           Table definitions + per-user RLS policies — run once per project
 docs/

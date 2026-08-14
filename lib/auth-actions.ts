@@ -23,7 +23,7 @@ export async function signUpAction(formData: FormData): Promise<{ error?: string
   if (error) return { error: error.message };
 
   if (data.session) {
-    redirect("/");
+    redirect("/dashboard");
   }
   redirect("/login?message=check-email");
 }
@@ -38,11 +38,11 @@ export async function signInAction(formData: FormData): Promise<{ error?: string
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: error.message };
 
-  redirect("/");
+  redirect("/dashboard");
 }
 
 export async function signOutAction() {
   const supabase = createClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  redirect("/");
 }
