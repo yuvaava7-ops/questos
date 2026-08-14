@@ -33,15 +33,18 @@ export function QuestScoreHero({
         <Image src="/illustrations/quest-hero.jpg" alt="" fill className="object-cover" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/70 to-bg/20" />
         <div className="relative flex h-full flex-col justify-between">
-          <div className="flex items-center gap-2">
-            <Compass size={16} className="text-gold" />
-            <span className="font-display text-[12px] font-semibold uppercase tracking-[0.14em] text-gold">
+          <div className="relative flex items-center gap-2">
+            <div className="absolute -left-2 -top-2 h-8 w-8 rounded-full bg-gold/30 blur-lg" aria-hidden />
+            <Compass size={16} className="relative text-gold drop-shadow-[0_0_6px_rgba(200,161,92,0.7)]" />
+            <span className="relative font-display text-[12px] font-semibold uppercase tracking-[0.14em] text-gold">
               Quest Score
             </span>
           </div>
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-[44px] font-semibold leading-none tracking-tight text-text">{score}</span>
+              <span className="text-[44px] font-semibold leading-none tracking-tight text-text drop-shadow-[0_0_20px_rgba(200,161,92,0.35)]">
+                {score}
+              </span>
               <span className="text-[15px] text-text-faint">/100</span>
             </div>
             <div className={`mt-1.5 text-[13px] font-semibold ${rating.className}`}>{rating.label}</div>
