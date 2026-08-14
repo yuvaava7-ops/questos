@@ -7,11 +7,11 @@ Working notes for Claude Code sessions in this repo: [`CLAUDE.md`](./CLAUDE.md)
 
 ## Status
 
-🚧 MVP — home dashboard backed by Supabase, no mock data. Single-user, no auth yet. Skill tree page and live integrations (GitHub, health data) are planned but not built (see roadmap in the scope doc).
+🚧 MVP — home dashboard backed by Supabase, no mock data. Real accounts via Supabase Auth, data isolated per user via RLS. Skill tree page and live integrations (GitHub, health data) are planned but not built (see roadmap in the scope doc).
 
 ## Stack
 
-Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · lucide-react · Supabase
+Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · lucide-react · Supabase (Postgres + Auth) · anime.js
 
 ## Getting started
 
@@ -19,30 +19,38 @@ Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · lucide-reac
 npm install
 ```
 
-Create a Supabase project, run [`supabase/schema.sql`](./supabase/schema.sql) in its SQL editor, then copy `.env.example` to `.env.local` and fill in your project URL + anon key.
+Create a Supabase project, run [`supabase/schema.sql`](./supabase/schema.sql) in its SQL editor, then copy `.env.example` to `.env.local` and fill in your project URL + anon key (and `NEXT_PUBLIC_SITE_URL` if deploying).
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Without Supabase configured, the app shows a setup screen instead of the dashboard.
+Open [http://localhost:3000](http://localhost:3000). Without Supabase configured, the app shows a setup screen instead of the dashboard. Otherwise you'll land on `/login` — sign up for an account to see the dashboard.
 
 ## Project structure
 
 ```
 app/                Next.js App Router pages
+  (auth)/             Login + sign-up (no Sidebar chrome)
+    login/page.tsx
+    signup/page.tsx
+  auth/callback/       Route Handler for email-confirmation redirects
   layout.tsx
   page.tsx           Home dashboard (Server Component, fetches from Supabase)
   error.tsx           Error boundary for failed Supabase queries
   globals.css
 components/          UI components (Sidebar, StatCard, QuestList, etc.)
+  auth/                Login/sign-up UI (CameraHero, LoginForm, SignUpForm, AuthCard)
 lib/
   types.ts            Shared TypeScript types (SkillTree, Quest, etc.)
-  supabase.ts          Supabase client
-  queries.ts           Server-side data fetching + derived stats/streak/activity
-  actions.ts           Server actions for quest/task CRUD
+  supabase/            Supabase clients — server.ts, client.ts, middleware.ts, config.ts
+  auth.ts              getCurrentUser / requireUser (server-side)
+  auth-actions.ts       Sign up/in/out server actions
+  queries.ts           Server-side data fetching + derived stats/streak/activity, scoped per user
+  actions.ts           Server actions for quest/task CRUD, scoped per user
+middleware.ts        Gates the dashboard behind login
 supabase/
-  schema.sql           Table definitions + RLS policies — run once per project
+  schema.sql           Table definitions + per-user RLS policies — run once per project
 docs/
   PROJECT_SCOPE.md     Goal, features, data model, stack, roadmap
 ```

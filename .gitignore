@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Raw source frames for public/camera-hero/*.mp4|webm - not needed once encoded
+/home camera/

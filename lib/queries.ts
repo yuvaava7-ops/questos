@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth";
 import type {
   Quest,
   Task,
@@ -13,7 +14,15 @@ function todayISO(): string {
 }
 
 export async function getProfile(): Promise<Omit<UserSummary, "streakDays"> | null> {
-  const { data, error } = await supabase.from("profile").select("*").limit(1).maybeSingle();
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("profile")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
   if (error) throw error;
   if (!data) return null;
   return {
@@ -26,9 +35,14 @@ export async function getProfile(): Promise<Omit<UserSummary, "streakDays"> | nu
 }
 
 export async function getQuests(date = todayISO()): Promise<Quest[]> {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("quests")
     .select("*")
+    .eq("user_id", user.id)
     .eq("quest_date", date)
     .order("time", { ascending: true });
   if (error) throw error;
@@ -42,9 +56,14 @@ export async function getQuests(date = todayISO()): Promise<Quest[]> {
 }
 
 export async function getTasks(): Promise<Task[]> {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("tasks")
     .select("*")
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((t) => ({
@@ -56,9 +75,14 @@ export async function getTasks(): Promise<Task[]> {
 }
 
 export async function getSkills(): Promise<SkillProgress[]> {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("skills")
     .select("*")
+    .eq("user_id", user.id)
     .order("sort_order", { ascending: true });
   if (error) throw error;
   return (data ?? []).map((s) => ({
@@ -89,9 +113,14 @@ export async function getStatCards(quests: Quest[]): Promise<StatCard[]> {
     color: "green",
   };
 
+  const user = await getCurrentUser();
+  if (!user) return [questScore];
+
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("stat_cards")
     .select("*")
+    .eq("user_id", user.id)
     .order("sort_order", { ascending: true });
   if (error) throw error;
 
@@ -130,18 +159,24 @@ export async function getActivity(): Promise<{ days: DayActivity[]; streakDays: 
   const naiveStart = new Date(today.getTime() - (ACTIVITY_WEEKS * 7 - 1) * DAY_MS);
   const start = new Date(naiveStart.getTime() - naiveStart.getUTCDay() * DAY_MS);
 
-  const { data, error } = await supabase
-    .from("quests")
-    .select("completed_at")
-    .eq("done", true)
-    .gte("completed_at", start.toISOString());
-  if (error) throw error;
+  const user = await getCurrentUser();
 
   const countByDate = new Map<string, number>();
-  for (const row of data ?? []) {
-    if (!row.completed_at) continue;
-    const date = row.completed_at.slice(0, 10);
-    countByDate.set(date, (countByDate.get(date) ?? 0) + 1);
+  if (user) {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("quests")
+      .select("completed_at")
+      .eq("user_id", user.id)
+      .eq("done", true)
+      .gte("completed_at", start.toISOString());
+    if (error) throw error;
+
+    for (const row of data ?? []) {
+      if (!row.completed_at) continue;
+      const date = row.completed_at.slice(0, 10);
+      countByDate.set(date, (countByDate.get(date) ?? 0) + 1);
+    }
   }
 
   const days: DayActivity[] = [];

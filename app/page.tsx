@@ -7,7 +7,7 @@ import { ActivityHeatmap } from "@/components/ActivityHeatmap";
 import { TaskList } from "@/components/TaskList";
 import { QuickOverview } from "@/components/QuickOverview";
 import { SetupNotice } from "@/components/SetupNotice";
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getProfile, getQuests, getTasks, getSkills, getStatCards, getActivity } from "@/lib/queries";
 import type { UserSummary } from "@/lib/types";
 

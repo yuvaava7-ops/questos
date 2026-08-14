@@ -11,6 +11,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { UserSummary } from "@/lib/types";
+import { SignOutButton } from "@/components/SignOutButton";
 
 const NAV_ITEMS = [
   { label: "Home", icon: Home, active: true },
@@ -69,6 +70,7 @@ export function Sidebar({ user }: { user: UserSummary }) {
             />
           </div>
         </div>
+        <SignOutButton />
       </div>
     </aside>
   );
