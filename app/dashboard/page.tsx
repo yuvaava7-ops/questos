@@ -1,4 +1,4 @@
-import { Bell, Home as HomeIcon, Flame, Star } from "lucide-react";
+import { Bell, Settings, Flame, Star } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import { StatCard } from "@/components/StatCard";
 import { QuestList } from "@/components/QuestList";
@@ -14,6 +14,13 @@ import type { UserSummary } from "@/lib/types";
 // Always render fresh: streak/activity are relative to "today", and data can
 // change from outside the app (Supabase Studio, another session).
 export const dynamic = "force-dynamic";
+
+function timeOfDayGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+}
 
 export default async function DashboardPage() {
   if (!isSupabaseConfigured) {
@@ -45,7 +52,9 @@ export default async function DashboardPage() {
       <main className="max-w-[1100px] flex-1 px-6 py-8 md:px-10">
         <div className="mb-7 flex items-start justify-between">
           <div>
-            <h1 className="text-[26px] font-extrabold tracking-tight">Good morning, {user.name}</h1>
+            <h1 className="text-[26px] font-extrabold tracking-tight">
+              {timeOfDayGreeting()}, {user.name}
+            </h1>
             <div className="mt-2 flex gap-3.5 text-[13px] font-medium text-text-dim">
               <span className="flex items-center gap-1.5">
                 <Flame size={14} className="text-orange" /> Streak: <strong className="text-text">{user.streakDays} days</strong>
@@ -56,11 +65,11 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div className="flex gap-2.5">
-            <button className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-border bg-panel2 text-text-dim">
+            <button className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-border bg-panel2 text-text-dim transition-colors hover:text-text">
               <Bell size={16} />
             </button>
-            <button className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-border bg-panel2 text-text-dim">
-              <HomeIcon size={16} />
+            <button className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-border bg-panel2 text-text-dim transition-colors hover:text-text">
+              <Settings size={16} />
             </button>
           </div>
         </div>

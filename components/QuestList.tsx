@@ -10,8 +10,8 @@ export function QuestList({ quests }: { quests: Quest[] }) {
 
   return (
     <div className="rounded-card border border-border bg-panel p-5">
-      <div className="mb-3.5 flex items-center justify-between">
-        <h3 className="text-[14.5px] font-bold">Today&apos;s Quests</h3>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-[15px] font-bold">Today&apos;s Quests</h3>
       </div>
 
       {quests.length === 0 && (
@@ -19,17 +19,17 @@ export function QuestList({ quests }: { quests: Quest[] }) {
       )}
 
       {quests.map((quest) => (
-        <div key={quest.id} className="group flex items-center gap-2.5 py-2 text-[13.5px]">
+        <div key={quest.id} className="group flex items-center gap-3 py-2.5 text-[13.5px]">
           <button
             onClick={() => startTransition(() => toggleQuest(quest.id, !quest.done))}
             disabled={isPending}
             aria-pressed={quest.done}
             aria-label={`Mark "${quest.label}" as ${quest.done ? "not done" : "done"}`}
-            className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-colors ${
+            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] border-2 transition-colors ${
               quest.done ? "border-green bg-green text-bg" : "border-text-faint"
             }`}
           >
-            {quest.done && <Check size={12} strokeWidth={3} />}
+            {quest.done && <Check size={13} strokeWidth={3} />}
           </button>
           <span className={`flex-1 ${quest.done ? "text-text-dim line-through" : ""}`}>
             {quest.label}

@@ -8,14 +8,14 @@ export function SignOutButton() {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <form action={() => startTransition(() => signOutAction())}>
+    <form action={() => startTransition(() => signOutAction())} className="mt-3">
       <button
         type="submit"
         disabled={isPending}
-        aria-label="Sign out"
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] text-text-faint transition-colors hover:bg-panel2 hover:text-text disabled:opacity-60"
+        className="flex w-full items-center gap-2 rounded-[8px] px-1 py-1.5 text-[12.5px] font-medium text-text-faint transition-colors hover:text-text disabled:opacity-60"
       >
-        <LogOut size={15} />
+        <LogOut size={14} />
+        {isPending ? "Signing out..." : "Log out"}
       </button>
     </form>
   );

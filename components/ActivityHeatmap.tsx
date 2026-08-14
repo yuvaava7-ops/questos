@@ -4,6 +4,8 @@ import type { DayActivity } from "@/lib/types";
 const LEVEL_COLORS = ["#171d2c", "#123324", "#155a37", "#1a9150", "#22c55e"];
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
+const CELL = 13;
+const GAP = 4;
 
 export function ActivityHeatmap({
   days,
@@ -30,41 +32,41 @@ export function ActivityHeatmap({
 
   return (
     <div className="mb-3.5 rounded-card border border-border bg-panel p-5">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-[14.5px] font-bold">Activity</h3>
-        <span className="flex items-center gap-1 text-xs text-blue">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-[15px] font-bold">Activity</h3>
+        <span className="flex items-center gap-1.5 rounded-full bg-orange-dim px-2.5 py-1 text-[11.5px] font-semibold text-orange">
           <Flame size={12} /> {streakDays} day streak
         </span>
       </div>
       <div className="overflow-x-auto">
-        <div className="inline-flex gap-[3px]">
-          <div className="mt-[18px] flex flex-col gap-[3px] text-[10px] leading-[10px] text-text-faint">
+        <div className="inline-flex" style={{ gap: GAP }}>
+          <div className="flex flex-col text-[10px] leading-[10px] text-text-faint" style={{ marginTop: 18, gap: GAP }}>
             {WEEKDAY_LABELS.map((label, i) => (
-              <div key={i} className="h-[10px] w-6">
+              <div key={i} style={{ height: CELL, width: 24 }}>
                 {label}
               </div>
             ))}
           </div>
-          <div className="flex flex-col gap-1">
-            <div className="flex gap-[3px] text-[10px] leading-[10px] text-text-faint">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex text-[10px] leading-[10px] text-text-faint" style={{ gap: GAP }}>
               {monthLabels.map((label, wi) => (
-                <div key={wi} className="w-[10px]">
+                <div key={wi} style={{ width: CELL }}>
                   {label}
                 </div>
               ))}
             </div>
-            <div className="grid grid-flow-col grid-rows-7 gap-[3px]">
+            <div className="grid grid-flow-col grid-rows-7" style={{ gap: GAP }}>
               {weeks.map((week, wi) =>
                 week.map((day, di) =>
                   day.date ? (
                     <div
                       key={`${wi}-${di}`}
-                      className="h-[10px] w-[10px] rounded-[2px]"
-                      style={{ background: LEVEL_COLORS[day.level] }}
+                      className="rounded-[3px]"
+                      style={{ height: CELL, width: CELL, background: LEVEL_COLORS[day.level] }}
                       title={`${day.count} quest${day.count === 1 ? "" : "s"} completed on ${day.date}`}
                     />
                   ) : (
-                    <div key={`${wi}-${di}`} className="h-[10px] w-[10px]" />
+                    <div key={`${wi}-${di}`} style={{ height: CELL, width: CELL }} />
                   )
                 )
               )}
@@ -72,7 +74,7 @@ export function ActivityHeatmap({
           </div>
         </div>
       </div>
-      <div className="mt-3 text-[11.5px] text-text-faint">
+      <div className="mt-4 text-[11.5px] text-text-faint">
         Each square is a day. The more quests completed, the greener it gets.
       </div>
     </div>

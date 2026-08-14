@@ -54,21 +54,21 @@ export function Sidebar({ user }: { user: UserSummary }) {
         ))}
       </nav>
 
-      <div className="flex items-center gap-2.5 border-t border-border pt-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gradient-to-br from-purple to-blue text-sm font-bold">
-          {user.name[0]}
+      <div className="border-t border-border pt-4">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-purple to-blue text-sm font-bold">
+            {user.name[0]}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-[13px] font-semibold">{user.name}</div>
+            <div className="text-[11px] text-text-dim">Level {user.level}</div>
+          </div>
         </div>
-        <div className="flex-1">
-          <div className="text-[13px] font-semibold">{user.name}</div>
-          <div className="text-[11px] text-text-dim">
-            Level {user.level} · {user.levelTitle}
-          </div>
-          <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-[#1c2233]">
-            <div
-              className="h-full bg-gradient-to-r from-blue to-purple"
-              style={{ width: `${xpPercent}%` }}
-            />
-          </div>
+        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-[#1c2233]">
+          <div className="h-full bg-gradient-to-r from-blue to-purple" style={{ width: `${xpPercent}%` }} />
+        </div>
+        <div className="mt-1 text-[10.5px] text-text-faint">
+          {user.xp.toLocaleString()} / {user.xpToNextLevel.toLocaleString()} XP
         </div>
         <SignOutButton />
       </div>
