@@ -1,9 +1,6 @@
-import { adaptSize } from "@/icons/game/adapt-size";
-import LockedChestSvg from "@/icons/game/lorc/locked-chest.svg";
+import Image from "next/image";
 import { SectionHeading } from "@/components/SectionHeading";
 import type { UserSummary } from "@/lib/types";
-
-const LockedChest = adaptSize(LockedChestSvg);
 
 export function NextLevelReward({ user }: { user: UserSummary }) {
   const percent = Math.min(100, Math.round((user.xp / user.xpToNextLevel) * 100));
@@ -13,8 +10,10 @@ export function NextLevelReward({ user }: { user: UserSummary }) {
     <div className="rounded-card border border-border/60 bg-panel p-6">
       <SectionHeading title="Next Level" />
       <div className="flex flex-col items-center text-center">
-        <LockedChest size={40} className="mb-3 text-gold" />
-        <div className="font-display text-[16px] font-semibold tracking-wide">Level {user.level + 1}</div>
+        <div className="relative h-32 w-32">
+          <Image src="/illustrations/chest.webp" alt="" fill className="object-contain" />
+        </div>
+        <div className="-mt-2 font-display text-[16px] font-semibold tracking-wide">Level {user.level + 1}</div>
         <div className="mt-3 w-full">
           <div className="h-[3px] overflow-hidden rounded-full bg-white/[0.06]">
             <div className="h-full rounded-full bg-gold" style={{ width: `${percent}%` }} />

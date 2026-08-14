@@ -61,39 +61,44 @@ export function QuestScoreHero({
         </div>
       </div>
 
-      <div className="flex w-full flex-col justify-between border-t border-border/60 p-6 md:w-[280px] md:border-l md:border-t-0">
-        <span className="font-display text-[12px] font-semibold uppercase tracking-[0.14em] text-gold">
-          Today&apos;s Focus
-        </span>
-        {mainQuest ? (
-          <>
-            <div className="mt-3">
-              <div className="text-[15px] font-semibold text-text">{mainQuest.label}</div>
-              {mainQuest.time && <div className="mt-1 text-[12px] text-text-faint">{mainQuest.time}</div>}
+      <div className="relative flex w-full flex-col justify-between overflow-hidden border-t border-border/60 p-6 md:w-[280px] md:border-l md:border-t-0">
+        <div className="pointer-events-none absolute -right-6 -top-10 h-[220px] w-[110px] opacity-25">
+          <Image src="/illustrations/banner.webp" alt="" fill className="object-contain object-top" />
+        </div>
+        <div className="relative z-10 flex flex-1 flex-col justify-between">
+          <span className="font-display text-[12px] font-semibold uppercase tracking-[0.14em] text-gold">
+            Today&apos;s Focus
+          </span>
+          {mainQuest ? (
+            <>
+              <div className="mt-3">
+                <div className="text-[15px] font-semibold text-text">{mainQuest.label}</div>
+                {mainQuest.time && <div className="mt-1 text-[12px] text-text-faint">{mainQuest.time}</div>}
+              </div>
+              <div className="mt-4">
+                <div className="mb-2 font-mono text-[12px] text-text-faint">+{mainQuest.xp} XP</div>
+                <form action={toggleQuest.bind(null, mainQuest.id, true)}>
+                  <button
+                    type="submit"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-[8px] bg-gold py-2.5 text-[13px] font-semibold text-bg transition-opacity hover:opacity-90"
+                  >
+                    Mark Complete
+                  </button>
+                </form>
+              </div>
+            </>
+          ) : allDone ? (
+            <div className="mt-3 flex flex-1 flex-col items-center justify-center text-center">
+              <PartyPopper size={22} className="mb-2 text-gold" />
+              <p className="text-[13px] font-medium text-text">All quests complete</p>
+              <p className="mt-1 text-[12px] text-text-faint">Come back tomorrow for more.</p>
             </div>
-            <div className="mt-4">
-              <div className="mb-2 font-mono text-[12px] text-text-faint">+{mainQuest.xp} XP</div>
-              <form action={toggleQuest.bind(null, mainQuest.id, true)}>
-                <button
-                  type="submit"
-                  className="flex w-full items-center justify-center gap-1.5 rounded-[8px] bg-gold py-2.5 text-[13px] font-semibold text-bg transition-opacity hover:opacity-90"
-                >
-                  Mark Complete
-                </button>
-              </form>
+          ) : (
+            <div className="mt-3 flex flex-1 items-center">
+              <p className="text-[13px] text-text-faint">No quests logged yet — add one below.</p>
             </div>
-          </>
-        ) : allDone ? (
-          <div className="mt-3 flex flex-1 flex-col items-center justify-center text-center">
-            <PartyPopper size={22} className="mb-2 text-gold" />
-            <p className="text-[13px] font-medium text-text">All quests complete</p>
-            <p className="mt-1 text-[12px] text-text-faint">Come back tomorrow for more.</p>
-          </div>
-        ) : (
-          <div className="mt-3 flex flex-1 items-center">
-            <p className="text-[13px] text-text-faint">No quests logged yet — add one below.</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
