@@ -34,7 +34,23 @@ export async function signUpAction(formData: FormData): Promise<{ error?: string
   if (data.session) {
     redirect("/dashboard");
   }
-  redirect("/login?message=check-email");
+  redirect(`/login?message=check-email&email=${encodeURIComponent(email)}`);
+}
+
+export async function resendConfirmationAction(
+  formData: FormData
+): Promise<{ error?: string; success?: boolean }> {
+  const email = String(formData.get("email") ?? "").trim();
+  if (!email) return { error: "Enter your email first." };
+
+  const supabase = createClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: { emailRedirectTo: `${getSiteUrl()}/auth/callback` },
+  });
+  if (error) return { error: error.message };
+  return { success: true };
 }
 
 export async function signInAction(formData: FormData): Promise<{ error?: string } | undefined> {
