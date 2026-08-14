@@ -3,15 +3,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-// NEXT_PUBLIC_SITE_URL wins if set (needed for a custom domain). Otherwise
-// fall back to Vercel's auto-provided deployment URL rather than localhost,
-// so confirmation links don't silently break on a deploy that forgot to set it.
-function getSiteUrl(): string {
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return "http://localhost:3000";
-}
-
 export async function signUpAction(formData: FormData): Promise<{ error?: string } | undefined> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
@@ -20,37 +11,20 @@ export async function signUpAction(formData: FormData): Promise<{ error?: string
   if (!email || !password) return { error: "Email and password are required." };
 
   const supabase = createClient();
-  const siteUrl = getSiteUrl();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: name ? { name } : undefined,
-      emailRedirectTo: `${siteUrl}/auth/callback`,
-    },
+    options: { data: name ? { name } : undefined },
   });
   if (error) return { error: error.message };
 
-  if (data.session) {
-    redirect("/dashboard");
+  // Requires "Confirm email" to be turned off in Supabase Auth settings —
+  // otherwise signUp() succeeds but returns no session yet.
+  if (!data.session) {
+    return { error: "Account created, but no session came back — check that Confirm email is off in Supabase Auth settings." };
   }
-  redirect(`/login?message=check-email&email=${encodeURIComponent(email)}`);
-}
 
-export async function resendConfirmationAction(
-  formData: FormData
-): Promise<{ error?: string; success?: boolean }> {
-  const email = String(formData.get("email") ?? "").trim();
-  if (!email) return { error: "Enter your email first." };
-
-  const supabase = createClient();
-  const { error } = await supabase.auth.resend({
-    type: "signup",
-    email,
-    options: { emailRedirectTo: `${getSiteUrl()}/auth/callback` },
-  });
-  if (error) return { error: error.message };
-  return { success: true };
+  redirect("/dashboard");
 }
 
 export async function signInAction(formData: FormData): Promise<{ error?: string } | undefined> {

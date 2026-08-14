@@ -19,7 +19,7 @@ Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · lucide-reac
 npm install
 ```
 
-Create a Supabase project, run [`supabase/schema.sql`](./supabase/schema.sql) in its SQL editor, then copy `.env.example` to `.env.local` and fill in your project URL + anon key (and `NEXT_PUBLIC_SITE_URL` if deploying).
+Create a Supabase project, run [`supabase/schema.sql`](./supabase/schema.sql) in its SQL editor, then copy `.env.example` to `.env.local` and fill in your project URL + anon key. Also turn **Confirm email** off under Authentication > Providers > Email in the Supabase dashboard — sign-up expects an immediate session, not an email-confirmation step.
 
 ```bash
 npm run dev
@@ -36,7 +36,6 @@ app/                Next.js App Router pages
   (auth)/             Login + sign-up (no Sidebar chrome)
     login/page.tsx
     signup/page.tsx
-  auth/callback/       Route Handler for email-confirmation redirects
   layout.tsx
   error.tsx           Error boundary for failed Supabase queries
   globals.css

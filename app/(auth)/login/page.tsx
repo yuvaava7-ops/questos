@@ -1,13 +1,8 @@
 import { AuthCard } from "@/components/auth/AuthCard";
 import { CameraHero } from "@/components/auth/CameraHero";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { CheckEmailNotice } from "@/components/auth/CheckEmailNotice";
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: { message?: string; email?: string };
-}) {
+export default function LoginPage() {
   return (
     <div className="grid w-full max-w-[920px] gap-5 md:grid-cols-2">
       <div className="hidden md:block">
@@ -15,7 +10,6 @@ export default function LoginPage({
       </div>
       <div className="flex items-center justify-center">
         <AuthCard title="Welcome back" subtitle="Log in to pick up your streak.">
-          {searchParams.message === "check-email" && <CheckEmailNotice email={searchParams.email} />}
           <LoginForm />
         </AuthCard>
       </div>
