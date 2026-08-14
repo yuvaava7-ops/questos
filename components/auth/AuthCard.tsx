@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { Zap } from "lucide-react";
+import { GAME_ICONS } from "@/icons/game";
+
+const Logo = GAME_ICONS["crossed-swords"];
 
 export function AuthCard({
   title,
@@ -14,7 +16,7 @@ export function AuthCard({
     <div className="w-full max-w-[400px] rounded-card border border-border bg-panel p-7">
       <Link href="/" className="mb-6 flex items-center gap-2.5 font-display text-[16px] font-semibold tracking-wide">
         <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gold text-bg">
-          <Zap size={15} />
+          <Logo size={15} />
         </div>
         QuestOS
       </Link>

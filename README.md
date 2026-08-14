@@ -13,6 +13,8 @@ Working notes for Claude Code sessions in this repo: [`CLAUDE.md`](./CLAUDE.md)
 
 Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · lucide-react · Supabase (Postgres + Auth) · anime.js
 
+Fantasy icon set from [game-icons.net](https://game-icons.net) (`icons/game/`, CC BY 3.0) — icons currently used are credited by author as they're added; see `icons/license.txt` for the full contributor list. Register new ones in `icons/game/index.tsx`.
+
 ## Getting started
 
 ```bash

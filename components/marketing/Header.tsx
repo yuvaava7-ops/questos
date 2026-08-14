@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { Zap } from "lucide-react";
+import { GAME_ICONS } from "@/icons/game";
+
+const Logo = GAME_ICONS["crossed-swords"];
 
 export function Header() {
   return (
@@ -7,7 +9,7 @@ export function Header() {
       <div className="mx-auto flex max-w-[1100px] items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2.5 font-display text-[15px] font-semibold tracking-wide">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gold text-bg">
-            <Zap size={14} />
+            <Logo size={15} />
           </div>
           QuestOS
         </Link>

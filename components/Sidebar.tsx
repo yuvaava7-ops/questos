@@ -8,10 +8,12 @@ import {
   Trophy,
   BookOpen,
   Settings,
-  Zap,
 } from "lucide-react";
 import type { UserSummary } from "@/lib/types";
 import { SignOutButton } from "@/components/SignOutButton";
+import { GAME_ICONS } from "@/icons/game";
+
+const Logo = GAME_ICONS["crossed-swords"];
 
 const NAV_ITEMS = [
   { label: "Home", icon: Home, active: true },
@@ -32,7 +34,7 @@ export function Sidebar({ user }: { user: UserSummary }) {
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border/60 p-5 md:flex">
       <div className="flex items-center gap-2.5 px-1 pb-9 pt-1 font-display text-[15px] font-semibold tracking-wide">
         <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gold text-bg">
-          <Zap size={14} />
+          <Logo size={15} />
         </div>
         QuestOS
       </div>
