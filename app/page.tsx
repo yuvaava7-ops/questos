@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Flame, TreeDeciduous, BarChart3 } from "lucide-react";
 import { Header } from "@/components/marketing/Header";
+import { AnimatedHeadline } from "@/components/marketing/AnimatedHeadline";
 
 export default function HomePage() {
   return (
@@ -8,9 +9,10 @@ export default function HomePage() {
       <Header />
 
       <section className="border-b border-border px-6 pb-16 pt-14 text-center md:pt-20">
-        <h1 className="mx-auto max-w-[720px] font-display text-[32px] font-semibold leading-tight tracking-wide md:text-[42px]">
-          Turn your daily life into an RPG.
-        </h1>
+        <AnimatedHeadline
+          text="Turn your daily life into an RPG."
+          className="mx-auto max-w-[720px] font-display text-[32px] font-semibold leading-tight tracking-wide md:text-[42px]"
+        />
         <p className="mx-auto mt-4 max-w-[520px] text-[15px] text-text-dim">
           Log quests, earn XP, and level up skill trees for fitness, coding, and creative work — one dashboard for
           the game you&apos;re actually playing.

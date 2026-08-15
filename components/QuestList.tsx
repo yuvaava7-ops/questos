@@ -5,6 +5,7 @@ import { Check, Plus, X } from "lucide-react";
 import type { Quest } from "@/lib/types";
 import { toggleQuest, addQuest, deleteQuest } from "@/lib/actions";
 import { SectionHeading } from "@/components/SectionHeading";
+import { celebrateAt } from "@/lib/celebrate";
 
 export function QuestList({ quests }: { quests: Quest[] }) {
   const [isPending, startTransition] = useTransition();
@@ -20,7 +21,10 @@ export function QuestList({ quests }: { quests: Quest[] }) {
       {quests.map((quest) => (
         <div key={quest.id} className="group flex items-center gap-3 py-2.5 text-[13.5px]">
           <button
-            onClick={() => startTransition(() => toggleQuest(quest.id, !quest.done))}
+            onClick={(e) => {
+              if (!quest.done) celebrateAt(e.currentTarget);
+              startTransition(() => toggleQuest(quest.id, !quest.done));
+            }}
             disabled={isPending}
             aria-pressed={quest.done}
             aria-label={`Mark "${quest.label}" as ${quest.done ? "not done" : "done"}`}

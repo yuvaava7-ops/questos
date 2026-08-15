@@ -5,6 +5,7 @@ import { Check, Plus, X } from "lucide-react";
 import type { Task } from "@/lib/types";
 import { toggleTask, addTask, deleteTask } from "@/lib/actions";
 import { SectionHeading } from "@/components/SectionHeading";
+import { celebrateAt } from "@/lib/celebrate";
 
 const PRIORITY_STYLES = {
   high: "bg-[#3a1a1e] text-[#f87171]",
@@ -37,7 +38,10 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
           className="group flex items-center gap-3 border-b border-border/40 py-2.5 text-[13.5px] last:border-none"
         >
           <button
-            onClick={() => startTransition(() => toggleTask(task.id, !task.done))}
+            onClick={(e) => {
+              if (!task.done) celebrateAt(e.currentTarget);
+              startTransition(() => toggleTask(task.id, !task.done));
+            }}
             disabled={isPending}
             aria-pressed={task.done}
             aria-label={`Mark "${task.label}" as ${task.done ? "not done" : "done"}`}
