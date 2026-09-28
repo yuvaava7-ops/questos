@@ -32,7 +32,7 @@ export function QuickOverview({
 
   const items = [
     { icon: Flame, value: `${user.streakDays}`, label: "Day Streak" },
-    { icon: Zap, value: user.xp.toLocaleString(), label: "XP this level" },
+    { icon: Zap, value: user.totalXp.toLocaleString(), label: "Total XP" },
     { icon: CheckCircle2, value: `${questsDone}/${quests.length}`, label: "Quests done" },
     { icon: ListChecks, value: `${tasksDone}/${tasks.length}`, label: "Tasks done" },
   ];

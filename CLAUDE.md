@@ -8,7 +8,7 @@ QuestOS — a personal RPG-styled life tracker. Full goal/scope/roadmap lives in
 
 ## Current state
 
-MVP stage: Next.js + TypeScript dashboard backed by Supabase (Postgres) — no mock data, no `data/` directory. `/` is the public marketing/landing page; the actual dashboard lives at `/dashboard`. Real accounts via Supabase Auth (email/password), every table scoped by `user_id` with `auth.uid()`-enforced RLS (see `supabase/schema.sql`), `middleware.ts` gates `/dashboard` behind login. Don't assume the skill tree page or live integrations (GitHub, health data) exist until they're actually added — check `docs/PROJECT_SCOPE.md`'s "Current Status" section, which should be kept up to date as phases land.
+MVP stage: Next.js + TypeScript dashboard backed by Supabase (Postgres) — no mock data, no `data/` directory. `/` is the public marketing/landing page; the actual dashboard lives at `/dashboard`. Real accounts via Supabase Auth (email/password), every table scoped by `user_id` with `auth.uid()`-enforced RLS (see `supabase/schema.sql`), `middleware.ts` gates `/dashboard` behind login. Skill trees (graph of nodes with prerequisites), the XP ledger, leveling, and the MCP server at `/api/mcp` exist; live integrations (GitHub, health data) don't yet — check `docs/PROJECT_SCOPE.md`'s "Current Status" section, which should be kept up to date as phases land.
 
 ## Stack & conventions
 
@@ -25,7 +25,12 @@ Dark theme, RPG/quest framing throughout (quests not "tasks" where user-facing, 
 
 ## When adding a skill tree or data model change
 
-Any change to `SkillTree` / `SkillTier` / `Perk` shapes (see `lib/types.ts`) should stay compatible with the "one generic tree-rendering component handles every tree" principle from the scope doc — don't special-case a specific tree in the renderer.
+Any change to `SkillTreeView` / `SkillNodeView` (see `lib/types.ts`) should stay compatible with the "one generic tree-rendering component handles every tree" principle from the scope doc (`components/skills/SkillTreeGraph.tsx`); don't special-case a specific tree in the renderer.
+
+- XP lives only in the `xp_events` ledger; level and node progress are derived from it (`lib/leveling.ts`, `lib/skill-trees.ts`). Don't store derived XP elsewhere.
+- Aggregate in Postgres (`xp_summary`, `activity_counts`), never by fetching raw rows: PostgREST caps selects at 1000 rows.
+- Skill-tree data access goes through `lib/skill-data.ts`, which takes `(db, userId)` so the web app and the MCP endpoint share it. On the MCP side the client is service-role, so the explicit `user_id` filter is the only scoping. Never drop it.
+- New schema goes in `supabase/schema.sql` **and** a new idempotent file in `supabase/migrations/`.
 
 ## Before committing
 

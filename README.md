@@ -7,7 +7,7 @@ Working notes for Claude Code sessions in this repo: [`CLAUDE.md`](./CLAUDE.md)
 
 ## Status
 
-🚧 MVP — home dashboard backed by Supabase, no mock data. Real accounts via Supabase Auth, data isolated per user via RLS. Skill tree page and live integrations (GitHub, health data) are planned but not built (see roadmap in the scope doc).
+🚧 MVP: dashboard, quests/tasks, XP ledger and leveling, skill trees, and an MCP server so Claude can generate skill trees and plan quests. Real accounts via Supabase Auth, data isolated per user via RLS. GitHub/health integrations are planned but not built (see the scope doc).
 
 ## Stack
 
@@ -23,9 +23,20 @@ npm install
 
 Create a Supabase project, run [`supabase/schema.sql`](./supabase/schema.sql) in its SQL editor, then copy `.env.example` to `.env.local` and fill in your project URL + anon key. Also turn **Confirm email** off under Authentication > Providers > Email in the Supabase dashboard — sign-up expects an immediate session, not an email-confirmation step.
 
+Existing project from before skill trees? Run [`supabase/migrations/001_skill_trees_xp_mcp.sql`](./supabase/migrations/001_skill_trees_xp_mcp.sql) in the SQL editor instead (it's idempotent).
+
 ```bash
 npm run dev
 ```
+
+### Connecting Claude (MCP)
+
+1. Set `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (server-only; Project Settings > API).
+2. Open `/dashboard/settings`, create a token, and copy the generated command, e.g.
+   `claude mcp add --transport http questos https://<your-host>/api/mcp --header "Authorization: Bearer qos_..."`
+3. Ask Claude: "Build me a skill tree for learning Rust" or "Plan today's quests around my rusty skills."
+
+Token auth works with Claude Code and any MCP client that can send headers. claude.ai web connectors require OAuth, which isn't implemented yet.
 
 Open [http://localhost:3000](http://localhost:3000). `/` is the public marketing page; sign up from there to reach `/dashboard`. Without Supabase configured, `/dashboard` shows a setup screen instead of your data.
 
@@ -34,7 +45,11 @@ Open [http://localhost:3000](http://localhost:3000). `/` is the public marketing
 ```
 app/                Next.js App Router pages
   page.tsx           Public marketing/landing page (header, animated headline, features, CTA)
-  dashboard/page.tsx  The actual dashboard (Server Component, fetches from Supabase) — protected
+  dashboard/          Protected app (layout has Sidebar/MobileTopBar)
+    page.tsx           Dashboard
+    skills/            Skill tree list + [treeId] graph view
+    settings/          MCP API tokens + connection instructions
+  api/mcp/route.ts    MCP endpoint (Streamable HTTP, bearer-token auth)
   (auth)/             Login + sign-up (no Sidebar chrome)
     login/page.tsx
     signup/page.tsx
@@ -49,14 +64,22 @@ lib/
   supabase/            Supabase clients — server.ts, client.ts, middleware.ts, config.ts
   auth.ts              getCurrentUser / requireUser (server-side)
   auth-actions.ts       Sign up/in/out server actions
-  queries.ts           Server-side data fetching + streak/activity, scoped per user
+  queries.ts           Server-side reads for the web app (request-cached)
+  skill-data.ts        Skill tree + XP ledger data access, shared by web app and MCP
+  skill-trees.ts       Pure tree logic: validation, tiers, node states
+  tree-layout.ts       Pure graph layout for the tree renderer
+  leveling.ts          Level curve + titles from total XP
+  activity.ts          Heatmap/streak computation
+  mcp/server.ts        MCP tools + instructions for Claude
+  api-tokens.ts        Token generation/hashing
   quest-score.ts       Pure Quest Score / trend / XP-percent helpers
   dates.ts             UTC date helpers shared by queries and actions
   theme.ts             Accent color class maps + shared input/button classes
   actions.ts           Server actions for quest/task CRUD, scoped per user
 middleware.ts        Gates /dashboard behind login, bounces logged-in users off / and /login
 supabase/
-  schema.sql           Table definitions + per-user RLS policies — run once per project
+  schema.sql           Full schema + per-user RLS policies for a fresh project
+  migrations/          Incremental, idempotent upgrades for existing projects
 docs/
   PROJECT_SCOPE.md     Goal, features, data model, stack, roadmap
 ```

@@ -9,6 +9,7 @@ export interface Quest {
   time: string;
   done: boolean;
   xp: number;
+  skillNodeId: string | null;
 }
 
 export interface Task {
@@ -16,14 +17,6 @@ export interface Task {
   label: string;
   priority: "high" | "medium" | "low";
   done: boolean;
-}
-
-export interface SkillProgress {
-  id: string;
-  name: string;
-  icon: string; // lucide-react icon name
-  percent: number; // 0-100
-  color: Accent;
 }
 
 export interface StatCard {
@@ -47,31 +40,53 @@ export interface UserSummary {
   name: string;
   level: number;
   levelTitle: string;
-  xp: number;
+  totalXp: number;
+  xp: number; // XP inside the current level
   xpToNextLevel: number;
   streakDays: number;
 }
 
-// --- Skill tree shapes (Phase 3+, not rendered yet in the MVP) ---
+// --- Skill trees ---
+// Trees are graphs: each node lists the nodes it requires. One generic
+// renderer (components/skills/SkillTreeGraph) draws every tree from these
+// shapes; never special-case a specific tree.
 
-export interface Perk {
+export type SkillNodeState = "locked" | "available" | "complete" | "rusty";
+
+export interface SkillNodeView {
+  id: string;
+  treeId: string;
   name: string;
   description: string;
-  unlockCondition: "count" | "streak" | "manual";
   icon: string;
-}
-
-export interface SkillTier {
-  level: number;
+  xp: number; // earned, capped at xpRequired
   xpRequired: number;
-  perks: Perk[];
+  tier: number; // depth from the roots, derived from prerequisites
+  position: number; // order within the tier
+  maintenanceDays: number | null;
+  lastPracticedAt: string | null;
+  prerequisites: string[]; // node ids
+  complete: boolean; // earned XP has reached xpRequired (stays true when rusty)
+  state: SkillNodeState;
 }
 
-export interface SkillTree {
+export interface SkillTreeView {
   id: string;
   name: string;
-  icon: string;
   description: string;
-  trunkStat: string;
-  tiers: SkillTier[];
+  icon: string;
+  color: Accent;
+  source: "manual" | "mcp";
+  createdAt: string;
+  nodes: SkillNodeView[];
+  completeCount: number;
+  rustyCount: number;
+  percent: number; // share of the tree's total required XP earned
+}
+
+// Minimal node reference for pickers (quest form, etc.).
+export interface SkillNodeOption {
+  id: string;
+  name: string;
+  treeName: string;
 }

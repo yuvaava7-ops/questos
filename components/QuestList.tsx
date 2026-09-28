@@ -1,8 +1,8 @@
 "use client";
 
 import { useOptimistic, useRef, useTransition } from "react";
-import { Plus } from "lucide-react";
-import type { Quest } from "@/lib/types";
+import { Plus, Sprout } from "lucide-react";
+import type { Quest, SkillNodeOption } from "@/lib/types";
 import { toggleQuest, addQuest, deleteQuest } from "@/lib/actions";
 import { celebrateAt } from "@/lib/celebrate";
 import { INPUT_CLASS, PRIMARY_BUTTON_CLASS } from "@/lib/theme";
@@ -28,7 +28,7 @@ function reduce(quests: Quest[], update: QuestUpdate): Quest[] {
   }
 }
 
-export function QuestList({ quests }: { quests: Quest[] }) {
+export function QuestList({ quests, nodeOptions }: { quests: Quest[]; nodeOptions: SkillNodeOption[] }) {
   const [optimisticQuests, applyUpdate] = useOptimistic(quests, reduce);
   const [, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
@@ -49,12 +49,14 @@ export function QuestList({ quests }: { quests: Quest[] }) {
       time: String(formData.get("time") ?? "").trim(),
       xp: Number(formData.get("xp")) || 10,
       done: false,
+      skillNodeId: String(formData.get("skill_node_id") ?? "") || null,
     };
     formRef.current?.reset();
     run({ type: "add", quest }, () => addQuest(formData));
   }
 
   const doneCount = optimisticQuests.filter((q) => q.done).length;
+  const nodeName = new Map(nodeOptions.map((n) => [n.id, n.name]));
 
   return (
     <Panel
@@ -90,6 +92,11 @@ export function QuestList({ quests }: { quests: Quest[] }) {
               <span className={`min-w-0 flex-1 break-words ${quest.done ? "text-text-faint line-through" : "text-text-dim"}`}>
                 {quest.label}
                 {quest.time && <span className="ml-2 text-[11px] text-text-faint">{quest.time}</span>}
+                {quest.skillNodeId && nodeName.has(quest.skillNodeId) && (
+                  <span className="ml-2 inline-flex items-center gap-1 rounded bg-green-dim px-1.5 py-px align-middle text-[10.5px] text-green">
+                    <Sprout size={10} aria-hidden /> {nodeName.get(quest.skillNodeId)}
+                  </span>
+                )}
               </span>
               <span className="shrink-0 font-mono text-[11px] text-text-faint">+{quest.xp} XP</span>
               <RowDeleteButton
@@ -104,6 +111,16 @@ export function QuestList({ quests }: { quests: Quest[] }) {
 
       <form ref={formRef} action={handleAdd} className="mt-4 flex flex-wrap items-center gap-2 border-t border-border/60 pt-4 sm:flex-nowrap">
         <input name="label" placeholder="Add a quest..." aria-label="Quest name" required maxLength={200} className={`${INPUT_CLASS} min-w-0 flex-1 basis-full sm:basis-auto`} />
+        {nodeOptions.length > 0 && (
+          <select name="skill_node_id" defaultValue="" aria-label="Skill this quest trains" className={`${INPUT_CLASS} w-full max-w-full px-2 sm:w-[170px]`}>
+            <option value="">No skill</option>
+            {nodeOptions.map((n) => (
+              <option key={n.id} value={n.id}>
+                {n.treeName}: {n.name}
+              </option>
+            ))}
+          </select>
+        )}
         <input name="time" placeholder="7:00 AM" aria-label="Time (optional)" maxLength={20} className={`${INPUT_CLASS} w-[92px] flex-1 sm:flex-none`} />
         <input name="xp" type="number" defaultValue={10} min={1} max={1000} aria-label="XP reward" className={`${INPUT_CLASS} w-[68px] px-2`} />
         <button type="submit" aria-label="Add quest" className={`${PRIMARY_BUTTON_CLASS} flex h-9 w-9 shrink-0 items-center justify-center`}>

@@ -1,21 +1,20 @@
 import Image from "next/image";
-import { Home, Heart, TreeDeciduous, Calendar, BarChart3, Trophy, BookOpen, Settings } from "lucide-react";
+import { Heart, Calendar, BarChart3, Trophy, BookOpen } from "lucide-react";
 import type { UserSummary } from "@/lib/types";
 import { xpPercent } from "@/lib/quest-score";
 import { BrandMark } from "@/components/BrandMark";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SignOutButton } from "@/components/SignOutButton";
+import { NavLinks } from "@/components/NavLinks";
 
-// Only the dashboard exists today. The rest are listed (not linked) so the
-// roadmap is visible without shipping dead "#" links.
+// Not built yet: listed (not linked) so the roadmap is visible without
+// shipping dead "#" links.
 const UPCOMING = [
-  { label: "Skill Trees", icon: TreeDeciduous },
   { label: "Health", icon: Heart },
   { label: "Calendar", icon: Calendar },
   { label: "Analytics", icon: BarChart3 },
   { label: "Achievements", icon: Trophy },
   { label: "Journal", icon: BookOpen },
-  { label: "Settings", icon: Settings },
 ];
 
 export function Sidebar({ user }: { user: UserSummary }) {
@@ -24,14 +23,7 @@ export function Sidebar({ user }: { user: UserSummary }) {
       <BrandMark href="/dashboard" className="px-1 pb-9 pt-1" />
 
       <nav aria-label="Main" className="flex flex-1 flex-col gap-0.5 overflow-y-auto">
-        <a
-          href="/dashboard"
-          aria-current="page"
-          className="flex items-center gap-3 rounded-[6px] border-l-2 border-gold bg-white/[0.05] px-3 py-2 text-[13.5px] font-medium text-text"
-        >
-          <Home size={16} strokeWidth={1.75} />
-          Dashboard
-        </a>
+        <NavLinks variant="sidebar" />
 
         <div className="mb-1 mt-6 px-3 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-text-faint/70">
           Coming soon

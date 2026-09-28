@@ -19,33 +19,21 @@ Long-term: a daily-use tool that also becomes a strong portfolio/job-search piec
   - **Expandable** — describe any new tree in plain English, Claude generates it (tiers, XP curve, perks) in a shared schema
 - **XP & leveling** — every logged/pulled action awards XP on a rising cost curve per tier
 - **Goal → path breakdown** — set a goal, Claude breaks it into a tree/path using the same generation engine as custom trees
-- **Claude integration** — powers (1) tree generation from a description, (2) goal breakdown, (3) optionally converting free-text logs into XP/category automatically
+- **Claude integration (MCP)**: QuestOS is an MCP server (`/api/mcp`). Claude reads progress and (1) generates trees from a description, (2) breaks goals into paths, (3) plans daily quests for available/rusty skills, (4) logs free-text activity as XP
+- **Skill maintenance**: nodes can have a maintenance interval; unpracticed nodes turn "rusty" (XP kept) and surface as practice quests
 
-## Data Model (draft)
+## Data Model
 
-```ts
-interface SkillTree {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-  trunkStat: string; // what drives base progression, e.g. "commit count", "manual XP"
-  tiers: SkillTier[];
-}
+Implemented in `supabase/schema.sql` (types in `lib/types.ts`):
 
-interface SkillTier {
-  level: number;
-  xpRequired: number;
-  perks: Perk[];
-}
+- `skill_trees`: name, description, icon, color, source (`manual` | `mcp`)
+- `skill_nodes`: one capability in a tree: `xp_required`, `tier` (derived depth), `position`, optional `maintenance_days`
+- `skill_node_prereqs`: edges; a node unlocks when all its prerequisites are complete (trees are graphs, not fixed tiers)
+- `xp_events`: the XP ledger, the single source of truth. Completing a quest writes one row (to its skill node if linked); un-completing removes it. MCP `log_activity` writes rows with no quest.
+- `quests.skill_node_id`: links a quest to the node it trains
+- `api_tokens`: hashed personal access tokens for the MCP endpoint
 
-interface Perk {
-  name: string;
-  description: string;
-  unlockCondition: "count" | "streak" | "manual";
-  icon: string;
-}
-```
+Derived, never stored: user level (`lib/leveling.ts`: level L→L+1 costs 100 + 50·(L−1) XP), node state (`locked` / `available` / `complete` / `rusty`, in `lib/skill-trees.ts`).
 
 One generic tree-rendering component handles every tree, built-in or custom.
 
@@ -59,11 +47,19 @@ One generic tree-rendering component handles every tree, built-in or custom.
 
 ## Rough Roadmap
 
-1. **MVP** — dashboard shell + manual logging + one working skill tree (Coding), XP/leveling logic
+1. **MVP**: dashboard shell, manual logging, skill trees, XP/leveling logic, MCP server for Claude-generated trees _(done)_
 2. **Phase 2** — GitHub commit pull, Fitness tree, day-box heatmap wired to real data
 3. **Phase 3** — expandable tree engine (describe a tree, Claude generates it), goal → path breakdown
 4. **Phase 4** — YouTube/Creative tree, health data import, polish (rewards, titles, achievements)
 
 ## Current Status
 
-This repo contains the **MVP dashboard** at `/dashboard`, wired to Supabase (Postgres) for all data — no mock/placeholder data left. `/` is a public marketing/landing page (header with Log in/Sign up, animated headline, feature highlights, CTA) — it's the actual home page, not the dashboard. Accounts are real: email/password sign-up and login via Supabase Auth, with every table scoped to `user_id` and RLS enforcing `auth.uid() = user_id` (see `supabase/schema.sql`) — each account's data is isolated, not just single-user-global. `middleware.ts` gates `/dashboard` behind login and redirects signed-in users away from `/`, `/login`, `/signup`. Quests and tasks support add/toggle/delete via server actions with optimistic UI updates; the activity heatmap and streak are computed live from completed quests. The dashboard loads all its data in a single parallel round of queries. Phones get a compact top bar (level/XP, sign-out) in place of the sidebar; sidebar sections other than Dashboard are listed as "Coming soon" rather than linked. The skill tree page and live integrations (GitHub commits, health data) are not built yet. See README for what's implemented.
+This repo contains the **MVP dashboard** at `/dashboard`, wired to Supabase for all data (no mock data). `/` is the public landing page. Accounts are real (Supabase Auth, email/password) with RLS enforcing `auth.uid() = user_id` on every table. `middleware.ts` gates `/dashboard`.
+
+Built:
+- Quests and tasks with add/toggle/delete and optimistic UI; activity heatmap and streak from completed quests
+- **XP & leveling**: `xp_events` ledger; completing a quest awards XP; level and title derived from total XP
+- **Skill trees**: `/dashboard/skills` (list) and `/dashboard/skills/[id]` (generic graph renderer, node detail, "Practice" adds a linked quest). Quests can be linked to a node. Rusty nodes appear on the dashboard with practice buttons.
+- **MCP server** at `/api/mcp` (Streamable HTTP, stateless) with token auth from `/dashboard/settings`. Tools: get_overview, list_skill_trees, get_skill_tree, create_skill_tree, add_skill_nodes, update_skill_node, delete_skill_tree, add_quests, log_activity, get_xp_history. Requires `SUPABASE_SERVICE_ROLE_KEY`.
+
+Not built: GitHub/health integrations, achievements, level-up rewards, OAuth for MCP (claude.ai web connectors need OAuth; Claude Code works with the bearer token), user-timezone handling (days are UTC), goal → path breakdown as a first-class feature.

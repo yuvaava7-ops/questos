@@ -1,11 +1,11 @@
 import type { Accent } from "@/lib/types";
 
 // Full class strings (not template-built) so Tailwind's scanner keeps them.
-export const ACCENT_CLASSES: Record<Accent, { bar: string; text: string; border: string }> = {
-  green: { bar: "bg-green", text: "text-green", border: "border-green/30" },
-  blue: { bar: "bg-blue", text: "text-blue", border: "border-blue/30" },
-  orange: { bar: "bg-orange", text: "text-orange", border: "border-orange/30" },
-  purple: { bar: "bg-purple", text: "text-purple", border: "border-purple/30" },
+export const ACCENT_CLASSES: Record<Accent, { bar: string; text: string; border: string; dim: string; stroke: string }> = {
+  green: { bar: "bg-green", text: "text-green", border: "border-green/30", dim: "bg-green-dim", stroke: "stroke-green" },
+  blue: { bar: "bg-blue", text: "text-blue", border: "border-blue/30", dim: "bg-blue-dim", stroke: "stroke-blue" },
+  orange: { bar: "bg-orange", text: "text-orange", border: "border-orange/30", dim: "bg-orange-dim", stroke: "stroke-orange" },
+  purple: { bar: "bg-purple", text: "text-purple", border: "border-purple/30", dim: "bg-purple-dim", stroke: "stroke-purple" },
 };
 
 export const INPUT_CLASS =
