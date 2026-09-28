@@ -1,32 +1,32 @@
-import { Flame, Star, Zap } from "lucide-react";
+/* eslint-disable @next/next/no-img-element -- small static sprites */
 import type { UserSummary } from "@/lib/types";
 
-// Page title plus the player's headline stats as chips.
+// Page title plus the player's headline stats on painted orbs.
 export function DashboardHeader({ user }: { user: UserSummary }) {
-  const chips = [
-    {
-      icon: Flame,
-      label: `${user.streakDays}-day streak`,
-      className: "border-orange/30 bg-orange-dim/60 text-orange",
-    },
-    { icon: Star, label: `Level ${user.level} · ${user.levelTitle}`, className: "border-purple/30 bg-purple-dim/60 text-purple" },
-    { icon: Zap, label: `${user.totalXp.toLocaleString()} XP`, className: "border-gold/30 bg-gold-dim/60 text-gold" },
+  const stats = [
+    { sprite: "/ui/orb-heart.webp", value: user.streakDays, label: "Day streak" },
+    { sprite: "/ui/orb-mana.webp", value: user.totalXp.toLocaleString(), label: "Total XP" },
+    { sprite: "/ui/star.webp", value: user.level, label: user.levelTitle },
   ];
 
   return (
-    <header className="mb-7 animate-fade-up md:mb-9">
-      <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-text-faint">Your adventure</p>
-      {/* Server clock isn't the user's clock, so no time-of-day greeting. */}
-      <h1 className="mt-1.5 font-display text-[26px] font-semibold tracking-wide md:text-[32px]">
-        Welcome back,{" "}
-        <span className="bg-gradient-to-r from-gold-bright to-gold bg-clip-text text-transparent">{user.name}</span>
-      </h1>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {chips.map(({ icon: Icon, label, className }) => (
-          <span key={label} className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12.5px] font-medium ${className}`}>
-            <Icon size={13} strokeWidth={2.25} />
-            {label}
-          </span>
+    <header className="mb-6 flex flex-wrap items-end justify-between gap-5 md:mb-8">
+      <div>
+        <p className="font-display text-[12px] font-bold uppercase tracking-[0.22em] text-text-faint">Your adventure</p>
+        {/* Server clock isn't the user's clock, so no time-of-day greeting. */}
+        <h1 className="engraved mt-1 font-display text-[28px] font-bold tracking-wide md:text-[34px]">
+          Welcome back, <span className="text-gold">{user.name}</span>
+        </h1>
+      </div>
+      <div className="flex gap-2 sm:gap-3">
+        {stats.map(({ sprite, value, label }) => (
+          <div key={label} className="tile flex items-center gap-2.5 py-1.5 pl-1.5 pr-4">
+            <img src={sprite} alt="" className="h-11 w-11 object-contain" />
+            <div>
+              <div className="engraved font-display text-[18px] font-bold leading-none">{value}</div>
+              <div className="mt-1 text-[12px] leading-none text-text-faint">{label}</div>
+            </div>
+          </div>
         ))}
       </div>
     </header>

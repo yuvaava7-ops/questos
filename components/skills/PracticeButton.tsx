@@ -20,7 +20,7 @@ export function PracticeButton({ nodeId, nodeName, xp = 15 }: { nodeId: string; 
           setAdded(true);
         })
       }
-      className="flex shrink-0 items-center gap-1 rounded-full border border-gold/35 bg-gold/10 px-3 py-1 text-[11.5px] font-semibold text-gold transition-all hover:bg-gold/20 hover:shadow-[0_0_14px_-4px_rgb(var(--gold)/0.8)] disabled:opacity-60"
+      className="flex shrink-0 items-center gap-1 rounded-[6px] border border-gold/50 bg-black/40 px-3 py-1 font-display text-[12px] font-semibold text-gold transition-colors hover:border-gold hover:bg-black/60 disabled:opacity-60"
     >
       {added ? <Check size={12} /> : <Plus size={12} />}
       {added ? "Added to today" : isPending ? "Adding..." : "Practice"}

@@ -1,5 +1,6 @@
-import { BAR_TONES, type BarTone } from "@/lib/theme";
+import { BAR_FILLS, type BarTone } from "@/lib/theme";
 
+// Steel track (9-slice sprite) with a painted fill.
 export function ProgressBar({
   percent,
   tone = "gold",
@@ -19,9 +20,13 @@ export function ProgressBar({
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label={label}
-      className={`overflow-hidden rounded-full bg-white/[0.06] ring-1 ring-inset ring-white/[0.03] ${size === "sm" ? "h-1" : "h-1.5"}`}
+      className={`relative w-full bg-black/60 ${size === "sm" ? "h-2.5" : "h-3.5"}`}
+      style={{ border: "4px solid transparent", borderImage: "url(/ui/bar-track.webp) 18 fill / 4px stretch" }}
     >
-      <div className={`h-full rounded-full transition-[width] duration-700 ease-out ${BAR_TONES[tone]}`} style={{ width: `${value}%` }} />
+      <div
+        className="h-full transition-[width] duration-700 ease-out"
+        style={{ width: `${value}%`, backgroundImage: `url(${BAR_FILLS[tone]})`, backgroundSize: "100% 100%" }}
+      />
     </div>
   );
 }

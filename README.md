@@ -13,7 +13,7 @@ Working notes for Claude Code sessions in this repo: [`CLAUDE.md`](./CLAUDE.md)
 
 Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · lucide-react · Supabase (Postgres + Auth) · anime.js
 
-Fantasy icon set from [game-icons.net](https://game-icons.net) (`icons/game/`, CC BY 3.0) — icons currently used are credited by author as they're added; see `icons/license.txt` for the full contributor list. Register new ones in `icons/game/index.tsx`.
+Painted UI sprites (panels, parchment, gem buttons, orbs, bars) in `public/ui/` are from [FANTASY GUI by MELLE](https://opengameart.org/content/fantasy-gui-0) (CC0). Fantasy icon set from [game-icons.net](https://game-icons.net) (`icons/game/`, CC BY 3.0) — icons currently used are credited by author as they're added; see `icons/license.txt` for the full contributor list. Register new ones in `icons/game/index.tsx`.
 
 ## Getting started
 

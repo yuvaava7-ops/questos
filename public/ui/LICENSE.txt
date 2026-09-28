@@ -1,0 +1,6 @@
+UI sprites in this folder are cut from "FANTASY GUI" by MELLE
+https://opengameart.org/content/fantasy-gui-0
+License: CC0 1.0 (public domain) - https://creativecommons.org/publicdomain/zero/1.0/
+
+panel.webp is a recolor (leather -> charcoal slate, copper line -> gold) of
+the small panel from that pack. All other files are unmodified crops.

@@ -31,16 +31,15 @@ const config: Config = {
         "red-dim": token("red-dim"),
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
+        sans: ["var(--font-body)", "sans-serif"],
         display: ["var(--font-cinzel)", "serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
       borderRadius: {
-        card: "14px",
+        card: "6px",
       },
       boxShadow: {
         panel: "0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -12px rgb(0 0 0 / 0.6)",
-        glow: "0 0 24px -4px rgb(var(--gold) / 0.45)",
       },
       keyframes: {
         "fade-up": { from: { opacity: "0", transform: "translateY(6px)" }, to: { opacity: "1", transform: "none" } },

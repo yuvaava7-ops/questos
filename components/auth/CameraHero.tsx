@@ -15,25 +15,27 @@ export function CameraHero() {
   }, []);
 
   return (
-    <div className="relative h-full min-h-[420px] w-full overflow-hidden rounded-card border border-border/70 shadow-panel bg-blue-dim">
-      <video
-        ref={videoRef}
-        className="h-full w-full object-cover opacity-75 mix-blend-luminosity brightness-75 contrast-125"
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-      >
-        <source src="/camera-hero/camera-loop.webm" type="video/webm" />
-        <source src="/camera-hero/camera-loop.mp4" type="video/mp4" />
-      </video>
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg via-bg/30 to-transparent" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(420px_260px_at_50%_45%,rgb(var(--gold)/0.12),transparent)]" />
-      <div className="pointer-events-none absolute bottom-5 left-5 right-5">
-        <p className="font-display text-[20px] font-semibold tracking-wide text-text drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
-          Every rep, every commit, every frame counts.
-        </p>
+    <div className="frame h-full min-h-[420px] w-full">
+      <div className="relative h-full min-h-[376px] w-full overflow-hidden rounded-[3px] bg-blue-dim">
+        <video
+          ref={videoRef}
+          className="h-full w-full object-cover opacity-75 mix-blend-luminosity brightness-75 contrast-125"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+        >
+          <source src="/camera-hero/camera-loop.webm" type="video/webm" />
+          <source src="/camera-hero/camera-loop.mp4" type="video/mp4" />
+        </video>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg via-bg/30 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(420px_260px_at_50%_45%,rgb(var(--gold)/0.12),transparent)]" />
+        <div className="pointer-events-none absolute bottom-5 left-5 right-5">
+          <p className="font-display text-[20px] font-semibold tracking-wide text-text drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+            Every rep, every commit, every frame counts.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -51,10 +51,10 @@ export default function HomePage() {
             the game you&apos;re actually playing.
           </p>
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/signup" className={`${PRIMARY_BUTTON_CLASS} px-6 py-3 text-[14.5px]`}>
+            <Link href="/signup" className={`${PRIMARY_BUTTON_CLASS} px-6 py-2 text-[15px]`}>
               Start your first quest
             </Link>
-            <Link href="/login" className={`${SECONDARY_BUTTON_CLASS} px-6 py-3 text-[14.5px]`}>
+            <Link href="/login" className={`${SECONDARY_BUTTON_CLASS} px-6 py-3 text-[15px]`}>
               Log in
             </Link>
           </div>
@@ -62,7 +62,7 @@ export default function HomePage() {
 
         <section className="mx-auto grid w-full max-w-[1060px] gap-4 px-4 pb-16 sm:px-6 md:grid-cols-3">
           {FEATURES.map(({ icon: Icon, tint, title, body }) => (
-            <div key={title} className="surface p-6">
+            <div key={title} className="frame p-6">
               <span className={`mb-4 flex h-10 w-10 items-center justify-center rounded-[11px] border ${tint}`}>
                 <Icon size={19} strokeWidth={2} aria-hidden />
               </span>
@@ -76,8 +76,8 @@ export default function HomePage() {
           <h2 className="text-center font-display text-[22px] font-semibold tracking-wide md:text-[26px]">How it works</h2>
           <ol className="mt-8 grid gap-4 md:grid-cols-3">
             {STEPS.map(({ icon: Icon, title, body }, i) => (
-              <li key={title} className="relative rounded-card border border-border/60 bg-panel/50 p-6">
-                <span className="font-mono text-[12px] text-gold/80">0{i + 1}</span>
+              <li key={title} className="tile relative p-6">
+                <span className="font-display text-[13px] font-bold text-gold">0{i + 1}</span>
                 <div className="mt-2 flex items-center gap-2">
                   <Icon size={16} className="text-gold" aria-hidden />
                   <h3 className="text-[15px] font-semibold">{title}</h3>
@@ -89,10 +89,9 @@ export default function HomePage() {
         </section>
 
         <section className="relative overflow-hidden border-t border-border/50 px-4 py-16 text-center sm:px-6">
-          <div aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 h-64 w-[600px] -translate-x-1/2 rounded-full bg-purple/10 blur-3xl" />
           <h2 className="relative font-display text-[24px] font-semibold tracking-wide">Ready to start your streak?</h2>
           <p className="relative mx-auto mt-2 max-w-[420px] text-[14px] text-text-dim">Free to use, single sign-up, your data stays yours.</p>
-          <Link href="/signup" className={`${PRIMARY_BUTTON_CLASS} relative mt-6 inline-block px-6 py-3 text-[14.5px]`}>
+          <Link href="/signup" className={`${PRIMARY_BUTTON_CLASS} relative mt-6 inline-block px-6 py-2 text-[15px]`}>
             Create your account
           </Link>
         </section>

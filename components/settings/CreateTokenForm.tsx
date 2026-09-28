@@ -34,7 +34,7 @@ export function CreateTokenForm({ endpoint }: { endpoint: string }) {
         className="flex flex-wrap items-center gap-2"
       >
         <input name="name" placeholder="Token name, e.g. Claude Code laptop" maxLength={60} aria-label="Token name" className={`${INPUT_CLASS} min-w-0 flex-1`} />
-        <button type="submit" disabled={isPending} className={`${PRIMARY_BUTTON_CLASS} flex items-center gap-1.5 px-3.5 py-2 text-[13px]`}>
+        <button type="submit" disabled={isPending} className={`${PRIMARY_BUTTON_CLASS} flex items-center gap-1.5 px-3 py-1 text-[13px]`}>
           <KeyRound size={14} />
           {isPending ? "Creating..." : "Create token"}
         </button>

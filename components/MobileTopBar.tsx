@@ -15,7 +15,7 @@ export function MobileTopBar({ user }: { user: UserSummary }) {
         <div className="flex items-center gap-2">
           <NavLinks variant="compact" />
           <div className="w-16">
-            <div className="mb-1 text-right font-mono text-[10.5px] font-semibold text-gold">Lv {user.level}</div>
+            <div className="mb-1 text-right font-display text-[10.5px] font-semibold text-gold">Lv {user.level}</div>
             <ProgressBar percent={xpPercent(user.xp, user.xpToNextLevel)} label="XP to next level" />
           </div>
           <SignOutButton compact />

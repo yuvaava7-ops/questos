@@ -7,7 +7,7 @@ const LEVEL_CLASSES = [
   "bg-green/25",
   "bg-green/45",
   "bg-green/70",
-  "bg-green shadow-[0_0_8px_-1px_rgb(var(--green)/0.8)]",
+  "bg-green",
 ];
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];

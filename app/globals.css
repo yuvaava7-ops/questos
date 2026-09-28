@@ -2,29 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Palette: "night sky" base with luminous gold and gem-toned accents.
-   Values are space-separated RGB so Tailwind opacity modifiers work. */
+/* Dark-fantasy palette: charcoal stone, steel, warm parchment-white text,
+   old-gold accents. Space-separated RGB so Tailwind opacity modifiers work.
+   Painted UI sprites live in /public/ui (CC0, see LICENSE.txt there). */
 :root {
-  --bg: 8 10 17;
-  --panel: 16 19 30;
-  --panel2: 23 27 42;
-  --border: 40 46 66;
-  --text: 236 234 244;
-  --text-dim: 168 170 192;
-  --text-faint: 112 117 145;
-  --gold: 232 185 92;
-  --gold-bright: 250 214 135;
-  --gold-dim: 45 36 20;
-  --green: 74 214 145;
-  --green-dim: 14 42 31;
-  --blue: 96 170 255;
-  --blue-dim: 15 32 56;
-  --orange: 255 141 77;
-  --orange-dim: 51 28 16;
-  --purple: 170 132 255;
-  --purple-dim: 33 24 58;
-  --red: 255 107 107;
-  --red-dim: 56 20 24;
+  --bg: 11 12 15;
+  --panel: 26 28 33;
+  --panel2: 34 36 42;
+  --border: 62 64 70;
+  --text: 234 227 212;
+  --text-dim: 184 175 158;
+  --text-faint: 128 121 108;
+  --gold: 214 176 102;
+  --gold-bright: 242 212 146;
+  --gold-dim: 46 38 24;
+  --green: 88 190 128;
+  --green-dim: 22 44 32;
+  --blue: 98 160 222;
+  --blue-dim: 20 34 50;
+  --orange: 226 134 66;
+  --orange-dim: 52 32 18;
+  --purple: 168 122 232;
+  --purple-dim: 36 26 54;
+  --red: 222 78 72;
+  --red-dim: 56 22 22;
+  --on-gem: 255 250 240;
   color-scheme: dark;
 }
 
@@ -34,11 +36,17 @@ html {
 
 body {
   background-color: rgb(var(--bg));
+  font-size: 16px;
+  /* Alegreya Sans has a small x-height; normalize it so px sizes read like
+     a typical UI font. Cinzel (all small caps) opts out below. */
+  font-size-adjust: 0.52;
+}
+.font-display {
+  font-size-adjust: none;
 }
 
-/* Background art and color wash on fixed pseudo-elements rather than
-   `background-attachment: fixed`, which repaints on every scroll frame. The
-   illustration is desaturated so it reads as texture, not brown. */
+/* Background art and vignette on fixed pseudo-elements rather than
+   `background-attachment: fixed`, which repaints on every scroll frame. */
 body::before,
 body::after {
   content: "";
@@ -49,15 +57,13 @@ body::after {
 body::before {
   z-index: -2;
   background: url("/illustrations/app-bg.webp") center / cover no-repeat;
-  filter: grayscale(1) brightness(0.35) contrast(1.1);
-  opacity: 0.35;
+  filter: grayscale(0.7) brightness(0.45);
+  opacity: 0.5;
 }
 body::after {
   z-index: -1;
   background:
-    radial-gradient(900px 600px at 0% 0%, rgb(var(--gold) / 0.10), transparent 60%),
-    radial-gradient(900px 700px at 100% 100%, rgb(var(--purple) / 0.12), transparent 60%),
-    radial-gradient(700px 500px at 100% 0%, rgb(var(--blue) / 0.06), transparent 60%),
+    radial-gradient(ellipse at center, transparent 30%, rgb(0 0 0 / 0.75) 100%),
     linear-gradient(rgb(var(--bg) / 0.72), rgb(var(--bg) / 0.9));
 }
 
@@ -66,13 +72,77 @@ body::after {
 }
 
 @layer components {
-  /* Standard raised surface. */
-  .surface {
-    @apply rounded-card border border-border/70 bg-gradient-to-b from-panel to-panel/80 shadow-panel;
+  /* Steel-framed charcoal panel (9-slice). The frame is drawn in the
+     border area; the gold inner line sits ~17px in. */
+  .frame {
+    border: 22px solid transparent;
+    border-image: url("/ui/panel.webp") 44 fill / 22px stretch;
+    filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.55));
   }
-  /* Inset tile inside a surface. */
+
+  /* Torn parchment scroll. Redefines the text/border tokens to ink so
+     everything inside adapts without per-component overrides. */
+  .parchment {
+    border: 20px solid transparent;
+    border-image: url("/ui/parchment.webp") 36 fill / 20px stretch;
+    filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.55));
+    --text: 43 31 18;
+    --text-dim: 74 56 36;
+    --text-faint: 118 96 68;
+    --border: 150 124 88;
+    --gold: 128 82 22;
+    --gold-bright: 150 100 30;
+    --gold-dim: 222 200 158;
+    --green: 40 110 60;
+    --green-dim: 210 214 170;
+    --orange: 160 72 18;
+    --orange-dim: 236 206 164;
+    --red: 150 34 30;
+    --red-dim: 236 196 180;
+    --blue: 34 84 140;
+    --blue-dim: 208 214 214;
+    --bg: 236 222 190;
+    --panel2: 226 208 170;
+    color: rgb(var(--text));
+  }
+
+  /* Controls on parchment: ink-stained paper instead of dark steel slots. */
+  .parchment .tile,
+  .parchment input,
+  .parchment select,
+  .parchment button:not(.btn-gem):not([aria-pressed]) {
+    background-color: rgb(120 88 48 / 0.12);
+    border-color: rgb(110 80 42 / 0.45);
+    box-shadow: inset 0 1px 3px rgb(90 60 20 / 0.25);
+  }
+  .parchment input::placeholder {
+    color: rgb(118 96 68);
+  }
+
+  /* Recessed slot inside a panel. */
   .tile {
-    @apply rounded-[12px] border border-border/60 bg-panel2/70;
+    @apply rounded-[6px] border border-black/60 bg-black/25 shadow-[inset_0_2px_6px_rgb(0_0_0/0.5),0_1px_0_rgb(255_255_255/0.04)];
+  }
+
+  /* Gold gem button (9-slice), swaps to the lit sprite on hover. */
+  .btn-gem {
+    border: solid transparent;
+    border-width: 8px 14px;
+    border-image: url("/ui/btn-gold.webp") 36 46 fill / 8px 14px stretch;
+    color: rgb(var(--on-gem));
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.8);
+    filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.5));
+  }
+  .btn-gem:hover:not(:disabled) {
+    border-image-source: url("/ui/btn-gold-hover.webp");
+  }
+  .btn-gem:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  /* Engraved heading text. */
+  .engraved {
+    text-shadow: 0 1px 0 rgb(0 0 0 / 0.9), 0 0 12px rgb(0 0 0 / 0.6);
   }
 }
 

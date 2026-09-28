@@ -11,7 +11,7 @@ export function Header() {
           <Link href="/login" className="text-[13.5px] font-medium text-text-dim transition-colors hover:text-text">
             Log in
           </Link>
-          <Link href="/signup" className={`${PRIMARY_BUTTON_CLASS} px-4 py-2 text-[13.5px]`}>
+          <Link href="/signup" className={`${PRIMARY_BUTTON_CLASS} px-4 py-1 text-[14px]`}>
             Sign up
           </Link>
         </nav>

@@ -38,19 +38,19 @@ export function SkillTreesPanel({ trees }: { trees: SkillTreeView[] }) {
               <Link
                 key={tree.id}
                 href={`/dashboard/skills/${tree.id}`}
-                className={`group rounded-[12px] border bg-panel2/70 p-4 transition-all hover:-translate-y-0.5 ${accent.border} ${accent.glow}`}
+                className={`group rounded-[12px] border bg-panel2/70 p-4 transition-all hover:-translate-y-0.5 ${accent.border}`}
               >
                 <div className="flex items-center gap-2.5">
                   <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] ${accent.dim} ${accent.text}`}>
                     <DynamicIcon name={tree.icon} size={16} strokeWidth={2} />
                   </span>
                   <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold text-text">{tree.name}</span>
-                  <span className={`font-mono text-[12px] font-semibold ${accent.text}`}>{tree.percent}%</span>
+                  <span className={`font-display text-[12px] font-semibold ${accent.text}`}>{tree.percent}%</span>
                 </div>
                 <div className="mt-3">
                   <ProgressBar percent={tree.percent} tone={tree.color} label={`${tree.name} progress`} />
                 </div>
-                <div className="mt-1.5 flex justify-between font-mono text-[11px] text-text-faint">
+                <div className="mt-1.5 flex justify-between font-display text-[11px] text-text-faint">
                   <span>
                     {tree.completeCount}/{tree.nodes.length} nodes
                   </span>

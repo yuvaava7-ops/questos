@@ -6,6 +6,7 @@ import type { Accent, SkillNodeView, SkillNodeState } from "@/lib/types";
 import { ACCENT_CLASSES } from "@/lib/theme";
 import { layoutTree, NODE_H, NODE_W } from "@/lib/tree-layout";
 import { NodeDetail } from "@/components/skills/NodeDetail";
+import { ProgressBar } from "@/components/ProgressBar";
 
 const STATE_LABEL: Record<SkillNodeState, string> = {
   locked: "Locked",
@@ -17,17 +18,17 @@ const STATE_LABEL: Record<SkillNodeState, string> = {
 function nodeClasses(state: SkillNodeState, accent: Accent, selected: boolean): string {
   const a = ACCENT_CLASSES[accent];
   const base =
-    "absolute flex flex-col justify-between rounded-[12px] border px-3 py-2.5 text-left transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60";
+    "absolute flex flex-col justify-between rounded-[6px] border-2 px-3 py-2 text-left shadow-[inset_0_2px_8px_rgb(0_0_0/0.55),0_4px_10px_rgb(0_0_0/0.5)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60";
   const ring = selected ? " ring-2 ring-gold ring-offset-2 ring-offset-bg" : "";
   switch (state) {
     case "complete":
-      return `${base} ${a.dim} ${a.border} ${a.glow}${ring}`;
+      return `${base} ${a.dim} ${a.border}${ring}`;
     case "rusty":
-      return `${base} border-dashed border-orange/70 bg-orange-dim/70 shadow-[0_0_20px_-8px_rgb(var(--orange)/0.7)]${ring}`;
+      return `${base} border-dashed border-orange/80 bg-orange-dim${ring}`;
     case "available":
-      return `${base} border-gold/60 bg-panel2 shadow-[0_0_22px_-8px_rgb(var(--gold)/0.7)] hover:border-gold${ring}`;
+      return `${base} border-gold/70 bg-black/50 hover:border-gold${ring}`;
     case "locked":
-      return `${base} border-border/60 bg-bg/70 opacity-55 hover:opacity-90${ring}`;
+      return `${base} border-[#3a3c40] bg-black/60 opacity-60 hover:opacity-90${ring}`;
   }
 }
 
@@ -51,7 +52,7 @@ export function SkillTreeGraph({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="surface overflow-x-auto bg-[radial-gradient(ellipse_at_top,rgb(var(--gold)/0.06),transparent_70%)]">
+      <div className="frame overflow-x-auto">
         <div className="relative mx-auto" style={{ width: layout.width, height: layout.height }}>
           <svg className="absolute inset-0" width={layout.width} height={layout.height} aria-hidden>
             {layout.edges.map(({ from, to }) => {
@@ -85,14 +86,12 @@ export function SkillTreeGraph({
                 style={{ left: x, top: y, width: NODE_W, height: NODE_H }}
               >
                 <span className="flex items-start justify-between gap-1.5">
-                  <span className="line-clamp-2 text-[12.5px] font-semibold leading-tight text-text">{node.name}</span>
+                  <span className="line-clamp-2 font-display text-[12.5px] font-bold leading-tight text-text">{node.name}</span>
                   {node.state === "complete" && <Check size={13} className={`shrink-0 ${a.text}`} />}
                   {node.state === "locked" && <Lock size={12} className="shrink-0 text-text-faint" />}
                   {node.state === "rusty" && <Hourglass size={12} className="shrink-0 text-orange" />}
                 </span>
-                <span className="block h-1 overflow-hidden rounded-full bg-white/[0.08]">
-                  <span className={`block h-full rounded-full ${node.state === "rusty" ? "bg-orange" : a.bar}`} style={{ width: `${pct}%` }} />
-                </span>
+                <ProgressBar percent={pct} tone={node.state === "rusty" ? "orange" : accent} size="sm" label={`${node.name} XP`} />
               </button>
             );
           })}

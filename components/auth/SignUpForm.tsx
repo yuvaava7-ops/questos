@@ -65,7 +65,7 @@ export function SignUpForm() {
           onPointerDown={button.onPointerDown}
           type="submit"
           disabled={isPending}
-          className={`${PRIMARY_BUTTON_CLASS} flex w-full items-center justify-center gap-2 py-2.5 text-[13.5px]`}
+          className={`${PRIMARY_BUTTON_CLASS} flex w-full items-center justify-center gap-2 py-1.5 text-[15px]`}
         >
           <UserPlus size={15} />
           {isPending ? "Creating account..." : "Create account"}

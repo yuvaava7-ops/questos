@@ -40,20 +40,20 @@ export default async function SkillTreesPage() {
               <Link
                 key={tree.id}
                 href={`/dashboard/skills/${tree.id}`}
-                className={`surface group p-5 transition-all hover:-translate-y-0.5 ${accent.border} ${accent.glow}`}
+                className={`frame group p-5 transition-all hover:-translate-y-0.5 ${accent.border}`}
               >
                 <div className="flex items-center gap-3">
                   <span className={`flex h-10 w-10 items-center justify-center rounded-[11px] ${accent.dim} ${accent.text}`}>
                     <DynamicIcon name={tree.icon} size={20} strokeWidth={2} />
                   </span>
                   <h2 className="min-w-0 flex-1 truncate font-display text-[16px] font-semibold tracking-wide">{tree.name}</h2>
-                  <span className={`font-mono text-[14px] font-bold ${accent.text}`}>{tree.percent}%</span>
+                  <span className={`font-display text-[14px] font-bold ${accent.text}`}>{tree.percent}%</span>
                 </div>
                 {tree.description && <p className="mt-2 line-clamp-2 text-[12.5px] text-text-faint">{tree.description}</p>}
                 <div className="mt-4">
                   <ProgressBar percent={tree.percent} tone={tree.color} label={`${tree.name} progress`} />
                 </div>
-                <div className="mt-2 flex flex-wrap gap-x-4 font-mono text-[11px] text-text-faint">
+                <div className="mt-2 flex flex-wrap gap-x-4 font-display text-[11px] text-text-faint">
                   <span>
                     {tree.completeCount}/{tree.nodes.length} nodes
                   </span>

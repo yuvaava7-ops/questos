@@ -1,25 +1,29 @@
-// The standard dashboard card: raised surface with an optional gold
-// small-caps heading (diamond ornament + fading rule) and an action slot.
+// The standard card: steel-framed charcoal panel, or a parchment scroll.
+// Title is engraved gold small caps over a thin gold rule.
 export function Panel({
   title,
   action,
   id,
+  variant = "frame",
   className = "",
   children,
 }: {
   title?: string;
   action?: React.ReactNode;
   id?: string;
+  variant?: "frame" | "parchment";
   className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className={`surface p-5 md:p-6 ${className}`}>
+    <section id={id} className={`${variant} px-3 pb-3 pt-2 md:px-4 md:pb-4 ${className}`}>
       {title && (
-        <div className="mb-5 flex items-center gap-3">
-          <span aria-hidden className="h-1.5 w-1.5 rotate-45 bg-gold shadow-[0_0_8px_rgb(var(--gold)/0.8)]" />
-          <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.16em] text-gold">{title}</h2>
-          <span aria-hidden className="h-px flex-1 bg-gradient-to-r from-gold/25 to-transparent" />
+        <div className="mb-4 flex items-center gap-3 border-b border-gold/30 pb-2.5">
+          <h2
+            className={`flex-1 font-display text-[14px] font-bold uppercase tracking-[0.18em] text-gold ${variant === "frame" ? "engraved" : ""}`}
+          >
+            {title}
+          </h2>
           {action}
         </div>
       )}

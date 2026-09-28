@@ -1,6 +1,6 @@
-import { Check } from "lucide-react";
+/* eslint-disable @next/next/no-img-element -- tiny static sprites; next/image adds nothing here */
 
-// Round completion checkbox shared by quest and task rows.
+// Steel ring checkbox (painted sprites) shared by quest and task rows.
 export function CheckToggle({
   checked,
   label,
@@ -19,13 +19,9 @@ export function CheckToggle({
       disabled={disabled}
       aria-pressed={checked}
       aria-label={`Mark "${label}" as ${checked ? "not done" : "done"}`}
-      className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 disabled:cursor-not-allowed ${
-        checked
-          ? "border-green bg-green text-bg shadow-[0_0_14px_-2px_rgb(var(--green)/0.8)]"
-          : "border-text-faint/50 hover:border-gold hover:shadow-[0_0_12px_-3px_rgb(var(--gold)/0.7)]"
-      }`}
+      className="h-7 w-7 shrink-0 rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 disabled:cursor-not-allowed"
     >
-      {checked && <Check size={13} strokeWidth={3.25} />}
+      <img src={checked ? "/ui/check-done.webp" : "/ui/check-empty.webp"} alt="" className="h-full w-full" draggable={false} />
     </button>
   );
 }

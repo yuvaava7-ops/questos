@@ -33,7 +33,7 @@ export function NodeDetail({
   const lockedBy = node.prerequisites.map((id) => nameById.get(id) ?? "Unknown");
 
   return (
-    <Panel>
+    <Panel variant="parchment">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <span className={ACCENT_CLASSES[accent].text}>{icon}</span>
@@ -53,7 +53,7 @@ export function NodeDetail({
           tone={node.state === "rusty" ? "orange" : accent}
           label={`${node.name} XP`}
         />
-        <div className="mt-1.5 font-mono text-[11px] text-text-faint">
+        <div className="mt-1.5 font-display text-[11px] text-text-faint">
           {node.xp} / {node.xpRequired} XP
         </div>
       </div>

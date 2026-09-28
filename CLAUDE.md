@@ -21,7 +21,7 @@ MVP stage: Next.js + TypeScript dashboard backed by Supabase (Postgres) — no m
 
 ## Design direction
 
-Dark theme, RPG/quest framing throughout (quests not "tasks" where user-facing, XP/levels not generic "points"). Palette is "night sky": deep blue-black base, luminous gold as the signature color, gem-toned accents (green/blue/purple/orange). All colors are CSS variables in `app/globals.css` (`:root`), mapped to Tailwind tokens in `tailwind.config.ts`; change the palette there, never with hardcoded hex in components. Use the `surface` / `tile` classes, `Panel`, and `ProgressBar` (`tone` prop) rather than re-styling cards ad hoc. Reference the original static HTML prototypes in `docs/reference/` for the visual language (colors, spacing, card style) if rebuilding a section — match that direction rather than defaulting to generic dashboard UI.
+Dark theme, RPG/quest framing throughout (quests not "tasks" where user-facing, XP/levels not generic "points"). Look is dark fantasy: charcoal stone panels in steel frames, parchment scrolls, painted gems/orbs, Cinzel headings, Alegreya Sans body. Painted sprites live in `public/ui/` (CC0, "FANTASY GUI" by MELLE, see `public/ui/LICENSE.txt`); colors are CSS variables in `app/globals.css` mapped to Tailwind tokens. Use the `frame` / `parchment` / `tile` / `btn-gem` classes, `Panel` (`variant`), `ProgressBar` (`tone`), and `CheckToggle` rather than restyling cards ad hoc, and avoid neon glows and gradient chrome. Reference the original static HTML prototypes in `docs/reference/` for the visual language (colors, spacing, card style) if rebuilding a section — match that direction rather than defaulting to generic dashboard UI.
 
 ## When adding a skill tree or data model change
 

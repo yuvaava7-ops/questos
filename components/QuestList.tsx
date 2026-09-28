@@ -5,7 +5,7 @@ import { Plus, Sprout } from "lucide-react";
 import type { Quest, SkillNodeOption } from "@/lib/types";
 import { toggleQuest, addQuest, deleteQuest } from "@/lib/actions";
 import { celebrateAt } from "@/lib/celebrate";
-import { INPUT_CLASS, PRIMARY_BUTTON_CLASS } from "@/lib/theme";
+import { ICON_BUTTON_CLASS, INPUT_CLASS } from "@/lib/theme";
 import { Panel } from "@/components/Panel";
 import { CheckToggle } from "@/components/CheckToggle";
 import { RowDeleteButton } from "@/components/RowDeleteButton";
@@ -62,10 +62,11 @@ export function QuestList({ quests, nodeOptions }: { quests: Quest[]; nodeOption
     <Panel
       id="today-quests"
       title="Today's Quests"
+      variant="parchment"
       className="scroll-mt-20"
       action={
         optimisticQuests.length > 0 && (
-          <span className="rounded-full bg-green-dim px-2.5 py-0.5 font-mono text-[11px] text-green">
+          <span className="rounded-full bg-green-dim px-2.5 py-0.5 font-display text-[11px] text-green">
             {doneCount}/{optimisticQuests.length} done
           </span>
         )
@@ -102,7 +103,7 @@ export function QuestList({ quests, nodeOptions }: { quests: Quest[]; nodeOption
                 )}
               </span>
               <span
-                className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] ${quest.done ? "bg-white/[0.04] text-text-faint" : "bg-gold/10 text-gold"}`}
+                className={`shrink-0 rounded-full px-2 py-0.5 font-display text-[11px] ${quest.done ? "bg-white/[0.04] text-text-faint" : "bg-gold/10 text-gold"}`}
               >
                 +{quest.xp} XP
               </span>
@@ -130,7 +131,7 @@ export function QuestList({ quests, nodeOptions }: { quests: Quest[]; nodeOption
         )}
         <input name="time" placeholder="7:00 AM" aria-label="Time (optional)" maxLength={20} className={`${INPUT_CLASS} w-[92px] flex-1 sm:flex-none`} />
         <input name="xp" type="number" defaultValue={10} min={1} max={1000} aria-label="XP reward" className={`${INPUT_CLASS} w-[68px] px-2`} />
-        <button type="submit" aria-label="Add quest" className={`${PRIMARY_BUTTON_CLASS} flex h-9 w-9 shrink-0 items-center justify-center`}>
+        <button type="submit" aria-label="Add quest" className={ICON_BUTTON_CLASS}>
           <Plus size={15} />
         </button>
       </form>

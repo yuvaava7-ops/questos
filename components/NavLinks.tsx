@@ -28,7 +28,9 @@ export function NavLinks({ variant }: { variant: "sidebar" | "compact" }) {
               href={href}
               aria-label={label}
               aria-current={active ? "page" : undefined}
-              className={`rounded-[9px] p-2 transition-colors ${active ? "bg-gold/15 text-gold" : "text-text-faint hover:bg-white/[0.04] hover:text-text"}`}
+              className={`rounded-[6px] border p-2 transition-colors ${
+                active ? "border-gold/50 bg-black/40 text-gold" : "border-transparent text-text-faint hover:text-text"
+              }`}
             >
               <Icon size={17} strokeWidth={1.75} />
             </Link>
@@ -47,15 +49,12 @@ export function NavLinks({ variant }: { variant: "sidebar" | "compact" }) {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`group relative flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[13.5px] font-medium transition-colors ${
+            className={`group flex items-center gap-3 rounded-[6px] border px-3 py-2 font-display text-[14px] font-semibold tracking-wide transition-colors ${
               active
-                ? "bg-gradient-to-r from-gold/[0.16] to-gold/[0.02] text-text"
-                : "text-text-dim hover:bg-white/[0.04] hover:text-text"
+                ? "border-gold/45 bg-black/40 text-gold shadow-[inset_0_2px_6px_rgb(0_0_0/0.5)]"
+                : "border-transparent text-text-dim hover:border-white/10 hover:bg-black/20 hover:text-text"
             }`}
           >
-            {active && (
-              <span aria-hidden className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-gold shadow-[0_0_10px_rgb(var(--gold)/0.9)]" />
-            )}
             <Icon size={17} strokeWidth={1.75} className={active ? "text-gold" : "text-text-faint group-hover:text-text-dim"} />
             {label}
           </Link>

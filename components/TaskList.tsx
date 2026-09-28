@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import type { Task } from "@/lib/types";
 import { toggleTask, addTask, deleteTask } from "@/lib/actions";
 import { celebrateAt } from "@/lib/celebrate";
-import { INPUT_CLASS, PRIMARY_BUTTON_CLASS } from "@/lib/theme";
+import { ICON_BUTTON_CLASS, INPUT_CLASS } from "@/lib/theme";
 import { Panel } from "@/components/Panel";
 import { CheckToggle } from "@/components/CheckToggle";
 import { RowDeleteButton } from "@/components/RowDeleteButton";
@@ -117,7 +117,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
             <option value="medium">Medium</option>
             <option value="low">Low</option>
           </select>
-          <button type="submit" aria-label="Add task" className={`${PRIMARY_BUTTON_CLASS} flex h-9 w-9 shrink-0 items-center justify-center`}>
+          <button type="submit" aria-label="Add task" className={ICON_BUTTON_CLASS}>
             <Plus size={15} />
           </button>
         </form>
