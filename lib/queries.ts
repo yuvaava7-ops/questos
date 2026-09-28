@@ -1,38 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
-import type {
-  Quest,
-  Task,
-  SkillProgress,
-  StatCard,
-  DayActivity,
-  UserSummary,
-} from "@/lib/types";
-
-const DAY_MS = 86_400_000;
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function yesterdayISO(): string {
-  return new Date(Date.now() - DAY_MS).toISOString().slice(0, 10);
-}
-
-function donePercent(quests: Quest[]): number {
-  const totalXp = quests.reduce((sum, q) => sum + q.xp, 0);
-  const earnedXp = quests.filter((q) => q.done).reduce((sum, q) => sum + q.xp, 0);
-  return totalXp > 0 ? Math.round((earnedXp / totalXp) * 100) : 0;
-}
+import { DAY_MS, isoDate, todayISO } from "@/lib/dates";
+import type { Quest, Task, SkillProgress, StatCard, DayActivity, UserSummary } from "@/lib/types";
 
 export async function getProfile(): Promise<Omit<UserSummary, "streakDays"> | null> {
   const user = await getCurrentUser();
   if (!user) return null;
 
-  const supabase = createClient();
-  const { data, error } = await supabase
+  const { data, error } = await createClient()
     .from("profile")
-    .select("*")
+    .select("name, level, level_title, xp, xp_to_next_level")
     .eq("user_id", user.id)
     .maybeSingle();
   if (error) throw error;
@@ -50,111 +27,55 @@ export async function getQuests(date = todayISO()): Promise<Quest[]> {
   const user = await getCurrentUser();
   if (!user) return [];
 
-  const supabase = createClient();
-  const { data, error } = await supabase
+  const { data, error } = await createClient()
     .from("quests")
-    .select("*")
+    .select("id, label, time, done, xp")
     .eq("user_id", user.id)
     .eq("quest_date", date)
     .order("time", { ascending: true });
   if (error) throw error;
-  return (data ?? []).map((q) => ({
-    id: q.id,
-    label: q.label,
-    time: q.time ?? "",
-    done: q.done,
-    xp: q.xp,
-  }));
+  return (data ?? []).map((q) => ({ id: q.id, label: q.label, time: q.time ?? "", done: q.done, xp: q.xp }));
 }
 
 export async function getTasks(): Promise<Task[]> {
   const user = await getCurrentUser();
   if (!user) return [];
 
-  const supabase = createClient();
-  const { data, error } = await supabase
+  const { data, error } = await createClient()
     .from("tasks")
-    .select("*")
+    .select("id, label, priority, done")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []).map((t) => ({
-    id: t.id,
-    label: t.label,
-    priority: t.priority,
-    done: t.done,
-  }));
+  return data ?? [];
 }
 
 export async function getSkills(): Promise<SkillProgress[]> {
   const user = await getCurrentUser();
   if (!user) return [];
 
-  const supabase = createClient();
-  const { data, error } = await supabase
+  const { data, error } = await createClient()
     .from("skills")
-    .select("*")
+    .select("id, name, icon, percent, color")
     .eq("user_id", user.id)
     .order("sort_order", { ascending: true });
   if (error) throw error;
-  return (data ?? []).map((s) => ({
-    id: s.id,
-    name: s.name,
-    icon: s.icon,
-    percent: s.percent,
-    color: s.color,
-  }));
+  return data ?? [];
 }
 
-// Yesterday's Quest Score, for the hero card's "+N pts from yesterday" line.
-// Returns null (not 0) when there's no baseline to compare against, so the
-// UI can omit the trend rather than imply a misleading "+82".
-export async function getQuestScoreTrend(todayQuests: Quest[]): Promise<number | null> {
-  const yesterdayQuests = await getQuests(yesterdayISO());
-  if (yesterdayQuests.length === 0) return null;
-  return donePercent(todayQuests) - donePercent(yesterdayQuests);
-}
-
-// "Quest Score" is always computed live from today's quests; any rows in
-// stat_cards (Training, Nutrition, custom trackers, ...) are appended after it.
-export async function getStatCards(quests: Quest[]): Promise<StatCard[]> {
-  const percent = donePercent(quests);
-  const doneCount = quests.filter((q) => q.done).length;
-
-  const questScore: StatCard = {
-    id: "quest-score",
-    label: "Quest Score",
-    icon: "Target",
-    value: String(percent),
-    unit: "/100",
-    sub: quests.length > 0 ? `${doneCount}/${quests.length} quests done today` : "No quests logged today",
-    percent,
-    color: "green",
-  };
-
+// User-defined stat cards (Training, Nutrition, ...). The Quest Score is
+// computed live from quests (lib/quest-score.ts), not stored here.
+export async function getStatCards(): Promise<StatCard[]> {
   const user = await getCurrentUser();
-  if (!user) return [questScore];
+  if (!user) return [];
 
-  const supabase = createClient();
-  const { data, error } = await supabase
+  const { data, error } = await createClient()
     .from("stat_cards")
-    .select("*")
+    .select("id, label, icon, value, unit, sub, percent, color")
     .eq("user_id", user.id)
     .order("sort_order", { ascending: true });
   if (error) throw error;
-
-  const custom: StatCard[] = (data ?? []).map((s) => ({
-    id: s.id,
-    label: s.label,
-    icon: s.icon,
-    value: s.value,
-    unit: s.unit ?? undefined,
-    sub: s.sub ?? "",
-    percent: s.percent,
-    color: s.color,
-  }));
-
-  return [questScore, ...custom];
+  return (data ?? []).map((s) => ({ ...s, unit: s.unit ?? undefined, sub: s.sub ?? "" }));
 }
 
 const ACTIVITY_WEEKS = 53;
@@ -173,7 +94,8 @@ function levelForCount(count: number): DayActivity["level"] {
 // contribution graph: full calendar weeks as columns, with the current
 // (partial) week padded out with blank future cells so every column has 7 rows.
 export async function getActivity(): Promise<{ days: DayActivity[]; streakDays: number }> {
-  const today = new Date(`${todayISO()}T00:00:00Z`);
+  const todayStr = todayISO();
+  const today = new Date(`${todayStr}T00:00:00Z`);
   const naiveStart = new Date(today.getTime() - (ACTIVITY_WEEKS * 7 - 1) * DAY_MS);
   const start = new Date(naiveStart.getTime() - naiveStart.getUTCDay() * DAY_MS);
 
@@ -181,8 +103,7 @@ export async function getActivity(): Promise<{ days: DayActivity[]; streakDays: 
 
   const countByDate = new Map<string, number>();
   if (user) {
-    const supabase = createClient();
-    const { data, error } = await supabase
+    const { data, error } = await createClient()
       .from("quests")
       .select("completed_at")
       .eq("user_id", user.id)
@@ -200,7 +121,7 @@ export async function getActivity(): Promise<{ days: DayActivity[]; streakDays: 
   const days: DayActivity[] = [];
   const totalPastDays = Math.round((today.getTime() - start.getTime()) / DAY_MS) + 1;
   for (let i = 0; i < totalPastDays; i++) {
-    const date = new Date(start.getTime() + i * DAY_MS).toISOString().slice(0, 10);
+    const date = isoDate(new Date(start.getTime() + i * DAY_MS));
     const count = countByDate.get(date) ?? 0;
     days.push({ date, level: levelForCount(count), count });
   }
@@ -209,10 +130,11 @@ export async function getActivity(): Promise<{ days: DayActivity[]; streakDays: 
     days.push({ date: "", level: 0, count: -1 });
   }
 
+  // Today not being done yet doesn't break the streak; any earlier gap does.
   let streakDays = 0;
   for (let i = totalPastDays - 1; i >= 0; i--) {
     if (days[i].level > 0) streakDays++;
-    else if (days[i].date !== todayISO()) break;
+    else if (days[i].date !== todayStr) break;
   }
 
   return { days, streakDays };

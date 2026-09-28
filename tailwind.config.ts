@@ -4,6 +4,7 @@ const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
+    "./lib/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {
@@ -23,13 +24,15 @@ const config: Config = {
         "blue-dim": "#16232a",
         orange: "#c8703f",
         "orange-dim": "#2c1c12",
+        red: "#f87171",
+        "red-dim": "#3a1a1e",
         purple: "#8b6fa8",
         "purple-dim": "#241c2e",
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        display: ["Cinzel", "serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        sans: ["var(--font-inter)", "sans-serif"],
+        display: ["var(--font-cinzel)", "serif"],
+        mono: ["var(--font-mono)", "monospace"],
       },
       borderRadius: {
         card: "10px",

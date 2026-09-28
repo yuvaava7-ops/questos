@@ -3,6 +3,7 @@ import { TrendingUp, TrendingDown, PartyPopper } from "lucide-react";
 import { adaptSize } from "@/icons/game/adapt-size";
 import CompassSvg from "@/icons/game/lorc/compass.svg";
 import { toggleQuest } from "@/lib/actions";
+import { PRIMARY_BUTTON_CLASS } from "@/lib/theme";
 import type { Quest } from "@/lib/types";
 
 const Compass = adaptSize(CompassSvg);
@@ -29,8 +30,8 @@ export function QuestScoreHero({
 
   return (
     <div className="flex flex-col overflow-hidden rounded-card border border-border/60 bg-panel md:flex-row">
-      <div className="relative min-h-[220px] flex-1 p-6">
-        <Image src="/illustrations/quest-hero.jpg" alt="" fill className="object-cover" priority />
+      <div className="relative min-h-[200px] flex-1 p-5 md:min-h-[220px] md:p-6">
+        <Image src="/illustrations/quest-hero.jpg" alt="" fill sizes="(min-width: 768px) 60vw, 100vw" className="object-cover" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/70 to-bg/20" />
         <div className="relative flex h-full flex-col justify-between">
           <div className="relative flex items-center gap-2">
@@ -61,9 +62,9 @@ export function QuestScoreHero({
         </div>
       </div>
 
-      <div className="relative flex w-full flex-col justify-between overflow-hidden border-t border-border/60 p-6 md:w-[280px] md:border-l md:border-t-0">
+      <div className="relative flex w-full flex-col justify-between overflow-hidden border-t border-border/60 p-5 md:w-[280px] md:p-6 md:border-l md:border-t-0">
         <div className="pointer-events-none absolute -right-6 -top-10 h-[220px] w-[110px] opacity-25">
-          <Image src="/illustrations/banner.webp" alt="" fill className="object-contain object-top" />
+          <Image src="/illustrations/banner.webp" alt="" fill sizes="110px" className="object-contain object-top" />
         </div>
         <div className="relative z-10 flex flex-1 flex-col justify-between">
           <span className="font-display text-[12px] font-semibold uppercase tracking-[0.14em] text-gold">
@@ -80,7 +81,7 @@ export function QuestScoreHero({
                 <form action={toggleQuest.bind(null, mainQuest.id, true)}>
                   <button
                     type="submit"
-                    className="flex w-full items-center justify-center gap-1.5 rounded-[8px] bg-gold py-2.5 text-[13px] font-semibold text-bg transition-opacity hover:opacity-90"
+                    className={`${PRIMARY_BUTTON_CLASS} flex w-full items-center justify-center gap-1.5 py-2.5 text-[13px]`}
                   >
                     Mark Complete
                   </button>
@@ -95,7 +96,7 @@ export function QuestScoreHero({
             </div>
           ) : (
             <div className="mt-3 flex flex-1 items-center">
-              <p className="text-[13px] text-text-faint">No quests logged yet — add one below.</p>
+              <p className="text-[13px] text-text-faint">No quests logged yet. Add one below.</p>
             </div>
           )}
         </div>

@@ -1,6 +1,8 @@
 // Shared types. Keep these in sync with docs/PROJECT_SCOPE.md's data model
 // section — that doc is the source of truth for the eventual Supabase schema.
 
+export type Accent = "green" | "blue" | "purple" | "orange";
+
 export interface Quest {
   id: string;
   label: string;
@@ -21,7 +23,7 @@ export interface SkillProgress {
   name: string;
   icon: string; // lucide-react icon name
   percent: number; // 0-100
-  color: "green" | "blue" | "purple" | "orange";
+  color: Accent;
 }
 
 export interface StatCard {
@@ -32,7 +34,7 @@ export interface StatCard {
   unit?: string;
   sub: string;
   percent: number;
-  color: "green" | "blue" | "purple" | "orange";
+  color: Accent;
 }
 
 export interface DayActivity {

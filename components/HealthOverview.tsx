@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import { SectionHeading } from "@/components/SectionHeading";
+import { Panel } from "@/components/Panel";
 
 const METRICS = [
   { label: "Steps", color: "#7c9a6b" },
@@ -18,7 +18,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 // exists yet, so nothing implies otherwise.
 function RingGauge({ color }: { color: string }) {
   return (
-    <svg width={SIZE} height={SIZE} className="-rotate-90">
+    <svg width={SIZE} height={SIZE} className="-rotate-90" aria-hidden>
       <circle
         cx={SIZE / 2}
         cy={SIZE / 2}
@@ -45,12 +45,14 @@ function RingGauge({ color }: { color: string }) {
 
 export function HealthOverview() {
   return (
-    <div className="rounded-card border border-border/60 bg-panel p-6">
-      <SectionHeading title="Health Overview">
+    <Panel
+      title="Health"
+      action={
         <span className="rounded-full border border-border/60 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-text-faint">
           Coming soon
         </span>
-      </SectionHeading>
+      }
+    >
       <div className="grid grid-cols-2 gap-3">
         {METRICS.map(({ label, color }) => (
           <div
@@ -68,6 +70,6 @@ export function HealthOverview() {
       <p className="mt-4 flex items-center gap-1.5 text-[12px] text-text-faint">
         <Heart size={13} /> Manual health logging is planned for a future update.
       </p>
-    </div>
+    </Panel>
   );
 }

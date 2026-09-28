@@ -29,7 +29,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <div className="flex items-center justify-center gap-2">
           <button
             onClick={reset}
-            className="rounded-[10px] border border-border bg-panel2 px-4 py-2 text-[13px] font-medium text-text"
+            className="rounded-[10px] border border-border bg-panel2 px-4 py-2 text-[13px] font-medium text-text transition-colors hover:border-gold/40"
           >
             Try again
           </button>

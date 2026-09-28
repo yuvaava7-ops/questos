@@ -33,7 +33,7 @@ Open [http://localhost:3000](http://localhost:3000). `/` is the public marketing
 
 ```
 app/                Next.js App Router pages
-  page.tsx           Public marketing/landing page (header, scroll-scrub hero, CTA)
+  page.tsx           Public marketing/landing page (header, animated headline, features, CTA)
   dashboard/page.tsx  The actual dashboard (Server Component, fetches from Supabase) — protected
   (auth)/             Login + sign-up (no Sidebar chrome)
     login/page.tsx
@@ -41,15 +41,18 @@ app/                Next.js App Router pages
   layout.tsx
   error.tsx           Error boundary for failed Supabase queries
   globals.css
-components/          UI components (Sidebar, StatCard, QuestList, etc.)
+components/          UI components (Sidebar, QuestList, etc.) + shared primitives (Panel, ProgressBar, BrandMark, CheckToggle, DynamicIcon)
   auth/                Login/sign-up UI (CameraHero, LoginForm, SignUpForm, AuthCard)
-  marketing/            Landing page UI (Header, ScrollScrubHero)
+  marketing/            Landing page UI (Header, AnimatedHeadline)
 lib/
   types.ts            Shared TypeScript types (SkillTree, Quest, etc.)
   supabase/            Supabase clients — server.ts, client.ts, middleware.ts, config.ts
   auth.ts              getCurrentUser / requireUser (server-side)
   auth-actions.ts       Sign up/in/out server actions
-  queries.ts           Server-side data fetching + derived stats/streak/activity, scoped per user
+  queries.ts           Server-side data fetching + streak/activity, scoped per user
+  quest-score.ts       Pure Quest Score / trend / XP-percent helpers
+  dates.ts             UTC date helpers shared by queries and actions
+  theme.ts             Accent color class maps + shared input/button classes
   actions.ts           Server actions for quest/task CRUD, scoped per user
 middleware.ts        Gates /dashboard behind login, bounces logged-in users off / and /login
 supabase/

@@ -1,6 +1,6 @@
 import { Flame, Zap, CheckCircle2, ListChecks } from "lucide-react";
 import type { UserSummary, Quest, Task } from "@/lib/types";
-import { SectionHeading } from "@/components/SectionHeading";
+import { Panel } from "@/components/Panel";
 
 const QUOTES = [
   "Every quest completed is XP that never disappears.",
@@ -32,14 +32,13 @@ export function QuickOverview({
 
   const items = [
     { icon: Flame, value: `${user.streakDays}`, label: "Day Streak" },
-    { icon: Zap, value: `${user.xp}`, label: "Total XP" },
+    { icon: Zap, value: user.xp.toLocaleString(), label: "XP this level" },
     { icon: CheckCircle2, value: `${questsDone}/${quests.length}`, label: "Quests done" },
     { icon: ListChecks, value: `${tasksDone}/${tasks.length}`, label: "Tasks done" },
   ];
 
   return (
-    <div className="rounded-card border border-border/60 bg-panel p-6">
-      <SectionHeading title="Quick Overview" />
+    <Panel title="Overview">
       <div className="grid grid-cols-2 gap-x-6 gap-y-5">
         {items.map(({ icon: Icon, value, label }) => (
           <div key={label} className="flex items-center gap-3">
@@ -54,6 +53,6 @@ export function QuickOverview({
       <p className="mt-6 border-t border-border/60 pt-4 text-[12.5px] italic leading-relaxed text-text-faint">
         {quoteOfTheDay()}
       </p>
-    </div>
+    </Panel>
   );
 }

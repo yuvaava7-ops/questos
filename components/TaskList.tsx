@@ -1,106 +1,127 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Check, Plus, X } from "lucide-react";
+import { useOptimistic, useState, useTransition } from "react";
+import { Plus } from "lucide-react";
 import type { Task } from "@/lib/types";
 import { toggleTask, addTask, deleteTask } from "@/lib/actions";
-import { SectionHeading } from "@/components/SectionHeading";
 import { celebrateAt } from "@/lib/celebrate";
+import { INPUT_CLASS, PRIMARY_BUTTON_CLASS } from "@/lib/theme";
+import { Panel } from "@/components/Panel";
+import { CheckToggle } from "@/components/CheckToggle";
+import { RowDeleteButton } from "@/components/RowDeleteButton";
 
-const PRIORITY_STYLES = {
-  high: "bg-[#3a1a1e] text-[#f87171]",
+const PRIORITY_STYLES: Record<Task["priority"], string> = {
+  high: "bg-red-dim text-red",
   medium: "bg-orange-dim text-orange",
-  low: "bg-[#182636] text-blue",
-} as const;
+  low: "bg-blue-dim text-blue",
+};
+
+type TaskUpdate =
+  | { type: "toggle"; id: string; done: boolean }
+  | { type: "delete"; id: string }
+  | { type: "add"; task: Task };
+
+const PENDING_PREFIX = "pending-";
+
+function reduce(tasks: Task[], update: TaskUpdate): Task[] {
+  switch (update.type) {
+    case "toggle":
+      return tasks.map((t) => (t.id === update.id ? { ...t, done: update.done } : t));
+    case "delete":
+      return tasks.filter((t) => t.id !== update.id);
+    case "add":
+      return [update.task, ...tasks];
+  }
+}
 
 export function TaskList({ tasks }: { tasks: Task[] }) {
-  const [isPending, startTransition] = useTransition();
+  const [optimisticTasks, applyUpdate] = useOptimistic(tasks, reduce);
+  const [, startTransition] = useTransition();
   const [isAdding, setIsAdding] = useState(false);
 
+  function run(update: TaskUpdate, action: () => Promise<void>) {
+    startTransition(async () => {
+      applyUpdate(update);
+      await action();
+    });
+  }
+
+  function handleAdd(formData: FormData) {
+    const label = String(formData.get("label") ?? "").trim();
+    if (!label) return;
+    const raw = String(formData.get("priority"));
+    const priority: Task["priority"] = raw === "high" || raw === "low" ? raw : "medium";
+    setIsAdding(false);
+    run({ type: "add", task: { id: `${PENDING_PREFIX}${crypto.randomUUID()}`, label, priority, done: false } }, () =>
+      addTask(formData)
+    );
+  }
+
   return (
-    <div className="rounded-card border border-border/60 bg-panel p-6">
-      <SectionHeading title="Today's Tasks">
+    <Panel
+      title="Tasks"
+      action={
         <button
+          type="button"
           onClick={() => setIsAdding((v) => !v)}
+          aria-expanded={isAdding}
           className="flex items-center gap-1 rounded-[8px] px-2 py-1 text-[12px] font-medium text-text-faint transition-colors hover:text-gold"
         >
-          <Plus size={13} /> Add Task
+          <Plus size={13} /> Add task
         </button>
-      </SectionHeading>
-
-      {tasks.length === 0 && !isAdding && (
-        <p className="py-2 text-[13px] text-text-faint">No tasks yet — add one below.</p>
+      }
+    >
+      {optimisticTasks.length === 0 && !isAdding && (
+        <p className="py-2 text-[13px] text-text-faint">No tasks yet. Use &ldquo;Add task&rdquo; to create one.</p>
       )}
 
-      {tasks.map((task) => (
-        <div
-          key={task.id}
-          className="group flex items-center gap-3 border-b border-border/40 py-2.5 text-[13.5px] last:border-none"
-        >
-          <button
-            onClick={(e) => {
-              if (!task.done) celebrateAt(e.currentTarget);
-              startTransition(() => toggleTask(task.id, !task.done));
-            }}
-            disabled={isPending}
-            aria-pressed={task.done}
-            aria-label={`Mark "${task.label}" as ${task.done ? "not done" : "done"}`}
-            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-[1.5px] transition-colors ${
-              task.done ? "border-green bg-green text-bg" : "border-text-faint/60"
-            }`}
-          >
-            {task.done && <Check size={12} strokeWidth={3} />}
-          </button>
-          <span className={`flex-1 ${task.done ? "text-text-faint line-through" : "text-text-dim"}`}>{task.label}</span>
-          <span
-            className={`rounded-md px-2 py-[3px] text-[10px] font-semibold uppercase tracking-wide ${PRIORITY_STYLES[task.priority]}`}
-          >
-            {task.priority}
-          </span>
-          <button
-            onClick={() => startTransition(() => deleteTask(task.id))}
-            aria-label={`Delete "${task.label}"`}
-            className="opacity-0 text-text-faint transition-opacity hover:text-text group-hover:opacity-100"
-          >
-            <X size={13} />
-          </button>
-        </div>
-      ))}
+      <ul>
+        {optimisticTasks.map((task) => {
+          const pending = task.id.startsWith(PENDING_PREFIX);
+          return (
+            <li
+              key={task.id}
+              className={`group flex items-center gap-3 border-b border-border/40 py-2.5 text-[13.5px] last:border-none ${pending ? "opacity-60" : ""}`}
+            >
+              <CheckToggle
+                checked={task.done}
+                label={task.label}
+                disabled={pending}
+                onToggle={(el) => {
+                  if (!task.done) celebrateAt(el);
+                  run({ type: "toggle", id: task.id, done: !task.done }, () => toggleTask(task.id, !task.done));
+                }}
+              />
+              <span className={`min-w-0 flex-1 break-words ${task.done ? "text-text-faint line-through" : "text-text-dim"}`}>
+                {task.label}
+              </span>
+              <span className={`shrink-0 rounded-md px-2 py-[3px] text-[10px] font-semibold uppercase tracking-wide ${PRIORITY_STYLES[task.priority]}`}>
+                {task.priority}
+              </span>
+              <RowDeleteButton
+                label={task.label}
+                disabled={pending}
+                onDelete={() => run({ type: "delete", id: task.id }, () => deleteTask(task.id))}
+              />
+            </li>
+          );
+        })}
+      </ul>
 
       {isAdding && (
-        <form
-          action={(formData) => {
-            startTransition(() => addTask(formData));
-            setIsAdding(false);
-          }}
-          className="mt-4 flex items-center gap-2 border-t border-border/60 pt-4"
-        >
+        <form action={handleAdd} className="mt-4 flex items-center gap-2 border-t border-border/60 pt-4">
           {/* eslint-disable-next-line jsx-a11y/no-autofocus -- form only mounts when the user explicitly opens it */}
-          <input
-            name="label"
-            placeholder="Add a task..."
-            required
-            autoFocus
-            className="min-w-0 flex-1 rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-gold/40"
-          />
-          <select
-            name="priority"
-            defaultValue="medium"
-            className="rounded-[8px] bg-panel2 px-2 py-2 text-[13px] text-text focus:outline-none focus:ring-1 focus:ring-gold/40"
-          >
+          <input name="label" placeholder="Add a task..." aria-label="Task name" required maxLength={200} autoFocus className={`${INPUT_CLASS} min-w-0 flex-1`} />
+          <select name="priority" defaultValue="medium" aria-label="Priority" className={`${INPUT_CLASS} px-2`}>
             <option value="high">High</option>
             <option value="medium">Medium</option>
             <option value="low">Low</option>
           </select>
-          <button
-            type="submit"
-            aria-label="Add task"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-gold text-bg transition-opacity hover:opacity-90"
-          >
+          <button type="submit" aria-label="Add task" className={`${PRIMARY_BUTTON_CLASS} flex h-9 w-9 shrink-0 items-center justify-center`}>
             <Plus size={15} />
           </button>
         </form>
       )}
-    </div>
+    </Panel>
   );
 }

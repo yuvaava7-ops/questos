@@ -1,13 +1,13 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Dumbbell } from "lucide-react";
 import { adaptSize } from "@/icons/game/adapt-size";
 import SwordBrandishSvg from "@/icons/game/delapouite/sword-brandish.svg";
 import OpenBookSvg from "@/icons/game/lorc/open-book.svg";
 import QuillSvg from "@/icons/game/lorc/quill.svg";
 import { addQuest } from "@/lib/actions";
-import { SectionHeading } from "@/components/SectionHeading";
+import { Panel } from "@/components/Panel";
 
 const SwordBrandish = adaptSize(SwordBrandishSvg);
 const OpenBook = adaptSize(OpenBookSvg);
@@ -25,41 +25,40 @@ const INSTANT_PRESETS = [
 
 export function QuickActions() {
   const [isPending, startTransition] = useTransition();
+  const [active, setActive] = useState<string | null>(null);
 
-  function handleClick(questLabel: string, xp: number) {
+  function handleClick(label: string, questLabel: string, xp: number) {
     const formData = new FormData();
     formData.set("label", questLabel);
     formData.set("xp", String(xp));
+    setActive(label);
     startTransition(() => addQuest(formData));
   }
 
+  const tileClass =
+    "flex flex-col items-center gap-2 rounded-[10px] border border-border/60 bg-panel2 px-2 py-4 text-center transition-colors hover:border-gold/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 disabled:opacity-60";
+
   return (
-    <div className="rounded-card border border-border/60 bg-panel p-6">
-      <SectionHeading title="Quick Actions" />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <a
-          href="#today-quests"
-          className="flex flex-col items-center gap-2 rounded-[10px] border border-border/60 bg-panel2 py-4 text-center transition-colors hover:border-gold/40"
-        >
+    <Panel title="Quick Log">
+      <div className="grid grid-cols-2 gap-3">
+        <a href="#today-quests" className={tileClass}>
           <span className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/30 text-gold">
             <SwordBrandish size={16} />
           </span>
           <span className="text-[11.5px] font-medium text-text-dim">Add Quest</span>
         </a>
         {INSTANT_PRESETS.map(({ label, questLabel, xp, Icon }) => (
-          <button
-            key={label}
-            onClick={() => handleClick(questLabel, xp)}
-            disabled={isPending}
-            className="flex flex-col items-center gap-2 rounded-[10px] border border-border/60 bg-panel2 py-4 text-center transition-colors hover:border-gold/40 disabled:opacity-60"
-          >
+          <button key={label} type="button" onClick={() => handleClick(label, questLabel, xp)} disabled={isPending} className={tileClass}>
             <span className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/30 text-gold">
               <Icon size={16} />
             </span>
-            <span className="text-[11.5px] font-medium text-text-dim">{label}</span>
+            <span className="text-[11.5px] font-medium text-text-dim">
+              {isPending && active === label ? "Logging..." : label}
+            </span>
+            <span className="font-mono text-[10px] text-text-faint">+{xp} XP</span>
           </button>
         ))}
       </div>
-    </div>
+    </Panel>
   );
 }

@@ -1,84 +1,115 @@
 "use client";
 
-import { useTransition } from "react";
-import { Check, Plus, X } from "lucide-react";
+import { useOptimistic, useRef, useTransition } from "react";
+import { Plus } from "lucide-react";
 import type { Quest } from "@/lib/types";
 import { toggleQuest, addQuest, deleteQuest } from "@/lib/actions";
-import { SectionHeading } from "@/components/SectionHeading";
 import { celebrateAt } from "@/lib/celebrate";
+import { INPUT_CLASS, PRIMARY_BUTTON_CLASS } from "@/lib/theme";
+import { Panel } from "@/components/Panel";
+import { CheckToggle } from "@/components/CheckToggle";
+import { RowDeleteButton } from "@/components/RowDeleteButton";
+
+type QuestUpdate =
+  | { type: "toggle"; id: string; done: boolean }
+  | { type: "delete"; id: string }
+  | { type: "add"; quest: Quest };
+
+const PENDING_PREFIX = "pending-";
+
+function reduce(quests: Quest[], update: QuestUpdate): Quest[] {
+  switch (update.type) {
+    case "toggle":
+      return quests.map((q) => (q.id === update.id ? { ...q, done: update.done } : q));
+    case "delete":
+      return quests.filter((q) => q.id !== update.id);
+    case "add":
+      return [...quests, update.quest];
+  }
+}
 
 export function QuestList({ quests }: { quests: Quest[] }) {
-  const [isPending, startTransition] = useTransition();
+  const [optimisticQuests, applyUpdate] = useOptimistic(quests, reduce);
+  const [, startTransition] = useTransition();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  function run(update: QuestUpdate, action: () => Promise<void>) {
+    startTransition(async () => {
+      applyUpdate(update);
+      await action();
+    });
+  }
+
+  function handleAdd(formData: FormData) {
+    const label = String(formData.get("label") ?? "").trim();
+    if (!label) return;
+    const quest: Quest = {
+      id: `${PENDING_PREFIX}${crypto.randomUUID()}`,
+      label,
+      time: String(formData.get("time") ?? "").trim(),
+      xp: Number(formData.get("xp")) || 10,
+      done: false,
+    };
+    formRef.current?.reset();
+    run({ type: "add", quest }, () => addQuest(formData));
+  }
+
+  const doneCount = optimisticQuests.filter((q) => q.done).length;
 
   return (
-    <div id="today-quests" className="rounded-card border border-border/60 bg-panel p-6 scroll-mt-4">
-      <SectionHeading title="Today's Quests" />
-
-      {quests.length === 0 && (
-        <p className="py-2 text-[13px] text-text-faint">No quests logged for today yet — add one below.</p>
+    <Panel
+      id="today-quests"
+      title="Today's Quests"
+      className="scroll-mt-20"
+      action={
+        optimisticQuests.length > 0 && (
+          <span className="font-mono text-[11px] text-text-faint">
+            {doneCount}/{optimisticQuests.length} done
+          </span>
+        )
+      }
+    >
+      {optimisticQuests.length === 0 && (
+        <p className="py-2 text-[13px] text-text-faint">No quests logged for today yet. Add one below.</p>
       )}
 
-      {quests.map((quest) => (
-        <div key={quest.id} className="group flex items-center gap-3 py-2.5 text-[13.5px]">
-          <button
-            onClick={(e) => {
-              if (!quest.done) celebrateAt(e.currentTarget);
-              startTransition(() => toggleQuest(quest.id, !quest.done));
-            }}
-            disabled={isPending}
-            aria-pressed={quest.done}
-            aria-label={`Mark "${quest.label}" as ${quest.done ? "not done" : "done"}`}
-            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-[1.5px] transition-colors ${
-              quest.done ? "border-green bg-green text-bg" : "border-text-faint/60"
-            }`}
-          >
-            {quest.done && <Check size={12} strokeWidth={3} />}
-          </button>
-          <span className={`flex-1 ${quest.done ? "text-text-faint line-through" : "text-text-dim"}`}>
-            {quest.label}
-            {quest.time && <span className="ml-2 text-[11px] text-text-faint">{quest.time}</span>}
-          </span>
-          <span className="font-mono text-[11px] text-text-faint">+{quest.xp} XP</span>
-          <button
-            onClick={() => startTransition(() => deleteQuest(quest.id))}
-            aria-label={`Delete "${quest.label}"`}
-            className="opacity-0 text-text-faint transition-opacity hover:text-text group-hover:opacity-100"
-          >
-            <X size={13} />
-          </button>
-        </div>
-      ))}
+      <ul>
+        {optimisticQuests.map((quest) => {
+          const pending = quest.id.startsWith(PENDING_PREFIX);
+          return (
+            <li key={quest.id} className={`group flex items-center gap-3 py-2.5 text-[13.5px] ${pending ? "opacity-60" : ""}`}>
+              <CheckToggle
+                checked={quest.done}
+                label={quest.label}
+                disabled={pending}
+                onToggle={(el) => {
+                  if (!quest.done) celebrateAt(el);
+                  run({ type: "toggle", id: quest.id, done: !quest.done }, () => toggleQuest(quest.id, !quest.done));
+                }}
+              />
+              <span className={`min-w-0 flex-1 break-words ${quest.done ? "text-text-faint line-through" : "text-text-dim"}`}>
+                {quest.label}
+                {quest.time && <span className="ml-2 text-[11px] text-text-faint">{quest.time}</span>}
+              </span>
+              <span className="shrink-0 font-mono text-[11px] text-text-faint">+{quest.xp} XP</span>
+              <RowDeleteButton
+                label={quest.label}
+                disabled={pending}
+                onDelete={() => run({ type: "delete", id: quest.id }, () => deleteQuest(quest.id))}
+              />
+            </li>
+          );
+        })}
+      </ul>
 
-      <form
-        action={(formData) => startTransition(() => addQuest(formData))}
-        className="mt-4 flex items-center gap-2 border-t border-border/60 pt-4"
-      >
-        <input
-          name="label"
-          placeholder="Add a quest..."
-          required
-          className="min-w-0 flex-1 rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-gold/40"
-        />
-        <input
-          name="time"
-          placeholder="7:00 AM"
-          className="w-[84px] rounded-[8px] bg-panel2 px-3 py-2 text-[13px] text-text placeholder:text-text-faint focus:outline-none focus:ring-1 focus:ring-gold/40"
-        />
-        <input
-          name="xp"
-          type="number"
-          defaultValue={10}
-          min={1}
-          className="w-[56px] rounded-[8px] bg-panel2 px-2 py-2 text-[13px] text-text focus:outline-none focus:ring-1 focus:ring-gold/40"
-        />
-        <button
-          type="submit"
-          aria-label="Add quest"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-gold text-bg transition-opacity hover:opacity-90"
-        >
+      <form ref={formRef} action={handleAdd} className="mt-4 flex flex-wrap items-center gap-2 border-t border-border/60 pt-4 sm:flex-nowrap">
+        <input name="label" placeholder="Add a quest..." aria-label="Quest name" required maxLength={200} className={`${INPUT_CLASS} min-w-0 flex-1 basis-full sm:basis-auto`} />
+        <input name="time" placeholder="7:00 AM" aria-label="Time (optional)" maxLength={20} className={`${INPUT_CLASS} w-[92px] flex-1 sm:flex-none`} />
+        <input name="xp" type="number" defaultValue={10} min={1} max={1000} aria-label="XP reward" className={`${INPUT_CLASS} w-[68px] px-2`} />
+        <button type="submit" aria-label="Add quest" className={`${PRIMARY_BUTTON_CLASS} flex h-9 w-9 shrink-0 items-center justify-center`}>
           <Plus size={15} />
         </button>
       </form>
-    </div>
+    </Panel>
   );
 }

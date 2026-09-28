@@ -1,12 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
+  background-color: #0c0a08;
+}
+
+/* Background art on a fixed pseudo-element rather than
+   `background-attachment: fixed`, which forces a full repaint on every
+   scroll frame (and is ignored entirely on iOS). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background:
     radial-gradient(ellipse at top left, #241a0d80, transparent 60%),
     linear-gradient(rgba(12, 10, 8, 0.88), rgba(12, 10, 8, 0.93)),
-    url('/illustrations/app-bg.webp') center / cover fixed no-repeat,
-    #0c0a08;
+    url("/illustrations/app-bg.webp") center / cover no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
 }

@@ -5,7 +5,9 @@ import Link from "next/link";
 import { animate, stagger } from "animejs";
 import { Mail, Lock, User, UserPlus } from "lucide-react";
 import { signUpAction } from "@/lib/auth-actions";
+import { PRIMARY_BUTTON_CLASS } from "@/lib/theme";
 import { useBouncyPress } from "@/components/auth/use-bouncy-press";
+import { AuthField } from "@/components/auth/AuthField";
 
 export function SignUpForm() {
   const [error, setError] = useState<string | null>(null);
@@ -37,52 +39,25 @@ export function SignUpForm() {
 
   return (
     <form ref={formRef} action={handleSubmit} className="flex flex-col gap-3.5">
-      <label data-animate className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim opacity-0">
-        Name
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
-          <User size={15} className="shrink-0 text-text-faint" />
-          <input
-            name="name"
-            type="text"
-            autoComplete="name"
-            placeholder="Your name"
-            className="w-full bg-transparent text-[13.5px] text-text placeholder:text-text-faint focus:outline-none"
-          />
-        </div>
-      </label>
+      <AuthField animate label="Name" icon={User} name="name" type="text" autoComplete="name" placeholder="Your name" />
+      <AuthField animate label="Email" icon={Mail} name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
+      <AuthField
+        animate
+        label="Password"
+        icon={Lock}
+        name="password"
+        type="password"
+        required
+        minLength={6}
+        autoComplete="new-password"
+        placeholder="At least 6 characters"
+      />
 
-      <label data-animate className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim opacity-0">
-        Email
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
-          <Mail size={15} className="shrink-0 text-text-faint" />
-          <input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="you@example.com"
-            className="w-full bg-transparent text-[13.5px] text-text placeholder:text-text-faint focus:outline-none"
-          />
-        </div>
-      </label>
-
-      <label data-animate className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim opacity-0">
-        Password
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
-          <Lock size={15} className="shrink-0 text-text-faint" />
-          <input
-            name="password"
-            type="password"
-            required
-            minLength={6}
-            autoComplete="new-password"
-            placeholder="At least 6 characters"
-            className="w-full bg-transparent text-[13.5px] text-text placeholder:text-text-faint focus:outline-none"
-          />
-        </div>
-      </label>
-
-      {error && <p className="text-[12.5px] text-[#f87171]">{error}</p>}
+      {error && (
+        <p role="alert" className="text-[12.5px] text-red">
+          {error}
+        </p>
+      )}
 
       <div data-animate className="mt-1.5 opacity-0">
         <button
@@ -90,7 +65,7 @@ export function SignUpForm() {
           onPointerDown={button.onPointerDown}
           type="submit"
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-[8px] bg-gold py-2.5 text-[13.5px] font-semibold text-bg transition-opacity hover:opacity-90 disabled:opacity-60"
+          className={`${PRIMARY_BUTTON_CLASS} flex w-full items-center justify-center gap-2 py-2.5 text-[13.5px]`}
         >
           <UserPlus size={15} />
           {isPending ? "Creating account..." : "Create account"}

@@ -4,7 +4,9 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Mail, Lock, LogIn } from "lucide-react";
 import { signInAction } from "@/lib/auth-actions";
+import { PRIMARY_BUTTON_CLASS } from "@/lib/theme";
 import { useBouncyPress } from "@/components/auth/use-bouncy-press";
+import { AuthField } from "@/components/auth/AuthField";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -21,44 +23,29 @@ export function LoginForm() {
 
   return (
     <form action={handleSubmit} className="flex flex-col gap-3.5">
-      <label className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim">
-        Email
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
-          <Mail size={15} className="shrink-0 text-text-faint" />
-          <input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="you@example.com"
-            className="w-full bg-transparent text-[13.5px] text-text placeholder:text-text-faint focus:outline-none"
-          />
-        </div>
-      </label>
+      <AuthField label="Email" icon={Mail} name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
+      <AuthField
+        label="Password"
+        icon={Lock}
+        name="password"
+        type="password"
+        required
+        autoComplete="current-password"
+        placeholder="••••••••"
+      />
 
-      <label className="flex flex-col gap-1.5 text-[13px] font-medium text-text-dim">
-        Password
-        <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 focus-within:border-gold">
-          <Lock size={15} className="shrink-0 text-text-faint" />
-          <input
-            name="password"
-            type="password"
-            required
-            autoComplete="current-password"
-            placeholder="••••••••"
-            className="w-full bg-transparent text-[13.5px] text-text placeholder:text-text-faint focus:outline-none"
-          />
-        </div>
-      </label>
-
-      {error && <p className="text-[12.5px] text-[#f87171]">{error}</p>}
+      {error && (
+        <p role="alert" className="text-[12.5px] text-red">
+          {error}
+        </p>
+      )}
 
       <button
         ref={button.ref}
         onPointerDown={button.onPointerDown}
         type="submit"
         disabled={isPending}
-        className="mt-1.5 flex items-center justify-center gap-2 rounded-[8px] bg-gold py-2.5 text-[13.5px] font-semibold text-bg transition-opacity hover:opacity-90 disabled:opacity-60"
+        className={`${PRIMARY_BUTTON_CLASS} mt-1.5 flex items-center justify-center gap-2 py-2.5 text-[13.5px]`}
       >
         <LogIn size={15} />
         {isPending ? "Signing in..." : "Sign in"}

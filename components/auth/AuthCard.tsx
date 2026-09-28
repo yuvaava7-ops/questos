@@ -1,8 +1,4 @@
-import Link from "next/link";
-import { adaptSize } from "@/icons/game/adapt-size";
-import CrossedSwordsSvg from "@/icons/game/lorc/crossed-swords.svg";
-
-const Logo = adaptSize(CrossedSwordsSvg);
+import { BrandMark } from "@/components/BrandMark";
 
 export function AuthCard({
   title,
@@ -14,13 +10,8 @@ export function AuthCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full max-w-[400px] rounded-card border border-border bg-panel p-7">
-      <Link href="/" className="mb-6 flex items-center gap-2.5 font-display text-[16px] font-semibold tracking-wide">
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gold text-bg">
-          <Logo size={15} />
-        </div>
-        QuestOS
-      </Link>
+    <div className="w-full max-w-[400px] rounded-card border border-border bg-panel p-6 sm:p-7">
+      <BrandMark className="mb-6 text-[16px]" />
       <h1 className="mb-1.5 font-display text-lg font-semibold tracking-wide">{title}</h1>
       <p className="mb-6 text-[13px] text-text-dim">{subtitle}</p>
       {children}

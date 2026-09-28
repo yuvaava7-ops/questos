@@ -1,27 +1,16 @@
 import Image from "next/image";
-import {
-  Home,
-  Heart,
-  TreeDeciduous,
-  CheckSquare,
-  Calendar,
-  BarChart3,
-  Trophy,
-  BookOpen,
-  Settings,
-} from "lucide-react";
+import { Home, Heart, TreeDeciduous, Calendar, BarChart3, Trophy, BookOpen, Settings } from "lucide-react";
 import type { UserSummary } from "@/lib/types";
+import { xpPercent } from "@/lib/quest-score";
+import { BrandMark } from "@/components/BrandMark";
+import { ProgressBar } from "@/components/ProgressBar";
 import { SignOutButton } from "@/components/SignOutButton";
-import { adaptSize } from "@/icons/game/adapt-size";
-import CrossedSwordsSvg from "@/icons/game/lorc/crossed-swords.svg";
 
-const Logo = adaptSize(CrossedSwordsSvg);
-
-const NAV_ITEMS = [
-  { label: "Home", icon: Home, active: true },
+// Only the dashboard exists today. The rest are listed (not linked) so the
+// roadmap is visible without shipping dead "#" links.
+const UPCOMING = [
+  { label: "Skill Trees", icon: TreeDeciduous },
   { label: "Health", icon: Heart },
-  { label: "Skills", icon: TreeDeciduous },
-  { label: "Tasks", icon: CheckSquare },
   { label: "Calendar", icon: Calendar },
   { label: "Analytics", icon: BarChart3 },
   { label: "Achievements", icon: Trophy },
@@ -30,46 +19,49 @@ const NAV_ITEMS = [
 ];
 
 export function Sidebar({ user }: { user: UserSummary }) {
-  const xpPercent = Math.min(100, Math.round((user.xp / user.xpToNextLevel) * 100));
-
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border/60 p-5 md:flex">
-      <div className="flex items-center gap-2.5 px-1 pb-9 pt-1 font-display text-[15px] font-semibold tracking-wide">
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gold text-bg">
-          <Logo size={15} />
-        </div>
-        QuestOS
-      </div>
+    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border/60 bg-bg/40 p-5 md:flex">
+      <BrandMark href="/dashboard" className="px-1 pb-9 pt-1" />
 
-      <nav className="flex flex-1 flex-col gap-0.5">
-        {NAV_ITEMS.map(({ label, icon: Icon, active }) => (
-          <a
+      <nav aria-label="Main" className="flex flex-1 flex-col gap-0.5 overflow-y-auto">
+        <a
+          href="/dashboard"
+          aria-current="page"
+          className="flex items-center gap-3 rounded-[6px] border-l-2 border-gold bg-white/[0.05] px-3 py-2 text-[13.5px] font-medium text-text"
+        >
+          <Home size={16} strokeWidth={1.75} />
+          Dashboard
+        </a>
+
+        <div className="mb-1 mt-6 px-3 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-text-faint/70">
+          Coming soon
+        </div>
+        {UPCOMING.map(({ label, icon: Icon }) => (
+          <span
             key={label}
-            href="#"
-            className={`flex items-center gap-3 rounded-[6px] border-l-2 px-3 py-2 text-[13.5px] font-medium transition-colors ${
-              active
-                ? "border-gold bg-white/[0.05] text-text"
-                : "border-transparent text-text-faint hover:bg-white/[0.03] hover:text-text-dim"
-            }`}
+            aria-disabled="true"
+            className="flex cursor-default items-center gap-3 border-l-2 border-transparent px-3 py-1.5 text-[13px] text-text-faint/60"
           >
-            <Icon size={16} strokeWidth={1.75} />
+            <Icon size={15} strokeWidth={1.75} />
             {label}
-          </a>
+          </span>
         ))}
       </nav>
 
       <div className="border-t border-border/60 pt-4">
         <div className="flex items-center gap-2.5">
           <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-gold/30">
-            <Image src="/illustrations/portrait.webp" alt="" fill className="object-cover" />
+            <Image src="/illustrations/portrait.webp" alt="" fill sizes="36px" className="object-cover" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="truncate text-[13px] font-medium">{user.name}</div>
-            <div className="text-[11px] text-text-faint">Level {user.level}</div>
+            <div className="text-[11px] text-text-faint">
+              Level {user.level} · {user.levelTitle}
+            </div>
           </div>
         </div>
-        <div className="mt-3 h-[3px] overflow-hidden rounded-full bg-white/[0.06]">
-          <div className="h-full rounded-full bg-gold" style={{ width: `${xpPercent}%` }} />
+        <div className="mt-3">
+          <ProgressBar percent={xpPercent(user.xp, user.xpToNextLevel)} label="XP to next level" />
         </div>
         <div className="mt-1.5 text-[10.5px] text-text-faint">
           {user.xp.toLocaleString()} / {user.xpToNextLevel.toLocaleString()} XP
