@@ -2,7 +2,13 @@ import { Flame } from "lucide-react";
 import type { DayActivity } from "@/lib/types";
 import { Panel } from "@/components/Panel";
 
-const LEVEL_CLASSES = ["bg-[#1c1712]", "bg-[#2c3018]", "bg-[#445a22]", "bg-[#6b8a2f]", "bg-[#94b83f]"];
+const LEVEL_CLASSES = [
+  "bg-white/[0.045]",
+  "bg-green/25",
+  "bg-green/45",
+  "bg-green/70",
+  "bg-green shadow-[0_0_8px_-1px_rgb(var(--green)/0.8)]",
+];
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 const CELL = 13;
@@ -35,8 +41,8 @@ export function ActivityHeatmap({
     <Panel
       title="Activity"
       action={
-        <span className="flex items-center gap-1.5 text-[12px] text-text-faint">
-          <Flame size={13} className="text-orange" /> {streakDays} day streak
+        <span className="flex items-center gap-1.5 rounded-full bg-orange-dim px-2.5 py-0.5 text-[12px] font-medium text-orange">
+          <Flame size={12} /> {streakDays} day streak
         </span>
       }
     >
@@ -84,7 +90,7 @@ export function ActivityHeatmap({
         <span className="flex shrink-0 items-center gap-1" aria-hidden>
           Less
           {LEVEL_CLASSES.map((cls) => (
-            <span key={cls} className={`h-2.5 w-2.5 rounded-[2px] ${cls}`} />
+            <span key={cls} className={`h-2.5 w-2.5 rounded-[3px] ${cls}`} />
           ))}
           More
         </span>

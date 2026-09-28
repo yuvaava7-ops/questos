@@ -31,26 +31,28 @@ export function QuickOverview({
   const tasksDone = tasks.filter((t) => t.done).length;
 
   const items = [
-    { icon: Flame, value: `${user.streakDays}`, label: "Day Streak" },
-    { icon: Zap, value: user.totalXp.toLocaleString(), label: "Total XP" },
-    { icon: CheckCircle2, value: `${questsDone}/${quests.length}`, label: "Quests done" },
-    { icon: ListChecks, value: `${tasksDone}/${tasks.length}`, label: "Tasks done" },
+    { icon: Flame, value: `${user.streakDays}`, label: "Day streak", tint: "text-orange bg-orange-dim" },
+    { icon: Zap, value: user.totalXp.toLocaleString(), label: "Total XP", tint: "text-gold bg-gold-dim" },
+    { icon: CheckCircle2, value: `${questsDone}/${quests.length}`, label: "Quests today", tint: "text-green bg-green-dim" },
+    { icon: ListChecks, value: `${tasksDone}/${tasks.length}`, label: "Tasks", tint: "text-blue bg-blue-dim" },
   ];
 
   return (
     <Panel title="Overview">
-      <div className="grid grid-cols-2 gap-x-6 gap-y-5">
-        {items.map(({ icon: Icon, value, label }) => (
-          <div key={label} className="flex items-center gap-3">
-            <Icon size={17} strokeWidth={1.75} className="shrink-0 text-text-faint" />
-            <div>
-              <div className="text-[17px] font-semibold leading-none tracking-tight">{value}</div>
-              <div className="mt-1 text-[11.5px] text-text-faint">{label}</div>
+      <div className="grid grid-cols-2 gap-2.5">
+        {items.map(({ icon: Icon, value, label, tint }) => (
+          <div key={label} className="tile flex items-center gap-3 p-3">
+            <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] ${tint}`}>
+              <Icon size={16} strokeWidth={2} />
+            </span>
+            <div className="min-w-0">
+              <div className="truncate text-[16px] font-bold leading-none tracking-tight">{value}</div>
+              <div className="mt-1 text-[11px] leading-tight text-text-faint">{label}</div>
             </div>
           </div>
         ))}
       </div>
-      <p className="mt-6 border-t border-border/60 pt-4 text-[12.5px] italic leading-relaxed text-text-faint">
+      <p className="mt-5 border-l-2 border-gold/40 pl-3 text-[12.5px] italic leading-relaxed text-text-dim">
         {quoteOfTheDay()}
       </p>
     </Panel>

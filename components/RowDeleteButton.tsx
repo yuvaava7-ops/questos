@@ -8,7 +8,7 @@ export function RowDeleteButton({ label, disabled, onDelete }: { label: string; 
       onClick={onDelete}
       disabled={disabled}
       aria-label={`Delete "${label}"`}
-      className="rounded p-1 text-text-faint transition-opacity hover:text-text focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 disabled:invisible [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100"
+      className="rounded-[8px] p-1.5 text-text-faint hover:bg-red-dim hover:text-red transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 disabled:invisible [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100"
     >
       <X size={13} />
     </button>

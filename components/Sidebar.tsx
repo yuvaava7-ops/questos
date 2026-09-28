@@ -19,20 +19,20 @@ const UPCOMING = [
 
 export function Sidebar({ user }: { user: UserSummary }) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border/60 bg-bg/40 p-5 md:flex">
-      <BrandMark href="/dashboard" className="px-1 pb-9 pt-1" />
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border/50 bg-panel/40 p-4 backdrop-blur-xl md:flex">
+      <BrandMark href="/dashboard" className="px-2 pb-8 pt-2" />
 
-      <nav aria-label="Main" className="flex flex-1 flex-col gap-0.5 overflow-y-auto">
+      <nav aria-label="Main" className="flex flex-1 flex-col gap-1 overflow-y-auto">
         <NavLinks variant="sidebar" />
 
-        <div className="mb-1 mt-6 px-3 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-text-faint/70">
+        <div className="mb-1.5 mt-7 px-3 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-text-faint/80">
           Coming soon
         </div>
         {UPCOMING.map(({ label, icon: Icon }) => (
           <span
             key={label}
             aria-disabled="true"
-            className="flex cursor-default items-center gap-3 border-l-2 border-transparent px-3 py-1.5 text-[13px] text-text-faint/60"
+            className="flex cursor-default items-center gap-3 px-3 py-1.5 text-[13px] text-text-faint/70"
           >
             <Icon size={15} strokeWidth={1.75} />
             {label}
@@ -40,26 +40,32 @@ export function Sidebar({ user }: { user: UserSummary }) {
         ))}
       </nav>
 
-      <div className="border-t border-border/60 pt-4">
-        <div className="flex items-center gap-2.5">
-          <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-gold/30">
-            <Image src="/illustrations/portrait.webp" alt="" fill sizes="36px" className="object-cover" />
+      <div className="tile mt-4 p-3.5">
+        <div className="flex items-center gap-3">
+          <div className="relative shrink-0">
+            <div className="relative h-11 w-11 overflow-hidden rounded-full ring-2 ring-gold/60 ring-offset-2 ring-offset-panel2">
+              <Image src="/illustrations/portrait.webp" alt="" fill sizes="44px" className="object-cover" />
+            </div>
+            <span className="absolute -bottom-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-b from-gold-bright to-gold px-1 font-mono text-[10px] font-bold text-bg shadow-glow">
+              {user.level}
+            </span>
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-[13px] font-medium">{user.name}</div>
-            <div className="text-[11px] text-text-faint">
-              Level {user.level} · {user.levelTitle}
-            </div>
+            <div className="truncate text-[13.5px] font-semibold">{user.name}</div>
+            <div className="text-[11.5px] text-gold/90">{user.levelTitle}</div>
           </div>
         </div>
-        <div className="mt-3">
+        <div className="mt-3.5">
           <ProgressBar percent={xpPercent(user.xp, user.xpToNextLevel)} label="XP to next level" />
         </div>
-        <div className="mt-1.5 text-[10.5px] text-text-faint">
-          {user.xp.toLocaleString()} / {user.xpToNextLevel.toLocaleString()} XP
+        <div className="mt-1.5 flex justify-between font-mono text-[10.5px] text-text-faint">
+          <span>
+            {user.xp.toLocaleString()} / {user.xpToNextLevel.toLocaleString()} XP
+          </span>
+          <span>Lv {user.level + 1}</span>
         </div>
-        <SignOutButton />
       </div>
+      <SignOutButton />
     </aside>
   );
 }

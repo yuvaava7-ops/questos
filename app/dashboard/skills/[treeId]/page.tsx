@@ -30,8 +30,10 @@ export default async function SkillTreePage({ params }: { params: { treeId: stri
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2.5">
-            <DynamicIcon name={tree.icon} size={22} strokeWidth={1.75} className={accent.text} />
-            <h1 className="font-display text-[22px] font-semibold tracking-wide md:text-[26px]">{tree.name}</h1>
+            <span className={`flex h-11 w-11 items-center justify-center rounded-[12px] ${accent.dim} ${accent.text} ${accent.glow}`}>
+              <DynamicIcon name={tree.icon} size={22} strokeWidth={2} />
+            </span>
+            <h1 className="font-display text-[26px] font-semibold tracking-wide md:text-[32px]">{tree.name}</h1>
           </div>
           {tree.description && <p className="mt-2 max-w-2xl text-[13px] text-text-faint">{tree.description}</p>}
           <div className="mt-2 flex flex-wrap gap-x-4 font-mono text-[11.5px] text-text-faint">

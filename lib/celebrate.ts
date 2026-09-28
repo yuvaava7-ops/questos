@@ -2,7 +2,7 @@
 
 import { animate } from "animejs";
 
-const COLORS = ["#c8a15c", "#e2c07a", "#7c9a6b"];
+const COLORS = ["#e8b95c", "#fad687", "#4ad691"];
 const PARTICLE_COUNT = 10;
 
 // Small gold particle burst for quest-complete moments. Particles are

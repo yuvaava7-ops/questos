@@ -27,7 +27,7 @@ export default async function SettingsPage() {
   return (
     <>
       <header className="mb-7">
-        <h1 className="font-display text-[22px] font-semibold tracking-wide md:text-[26px]">Settings</h1>
+        <h1 className="font-display text-[26px] font-semibold tracking-wide md:text-[32px]">Settings</h1>
       </header>
 
       <div className="flex max-w-3xl flex-col gap-4">

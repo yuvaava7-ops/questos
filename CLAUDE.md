@@ -21,7 +21,7 @@ MVP stage: Next.js + TypeScript dashboard backed by Supabase (Postgres) — no m
 
 ## Design direction
 
-Dark theme, RPG/quest framing throughout (quests not "tasks" where user-facing, XP/levels not generic "points"). Reference the original static HTML prototypes in `docs/reference/` for the visual language (colors, spacing, card style) if rebuilding a section — match that direction rather than defaulting to generic dashboard UI.
+Dark theme, RPG/quest framing throughout (quests not "tasks" where user-facing, XP/levels not generic "points"). Palette is "night sky": deep blue-black base, luminous gold as the signature color, gem-toned accents (green/blue/purple/orange). All colors are CSS variables in `app/globals.css` (`:root`), mapped to Tailwind tokens in `tailwind.config.ts`; change the palette there, never with hardcoded hex in components. Use the `surface` / `tile` classes, `Panel`, and `ProgressBar` (`tone` prop) rather than re-styling cards ad hoc. Reference the original static HTML prototypes in `docs/reference/` for the visual language (colors, spacing, card style) if rebuilding a section — match that direction rather than defaulting to generic dashboard UI.
 
 ## When adding a skill tree or data model change
 

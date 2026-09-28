@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Hourglass, Sparkles } from "lucide-react";
 import type { SkillTreeView } from "@/lib/types";
 import { ACCENT_CLASSES } from "@/lib/theme";
 import { Panel } from "@/components/Panel";
@@ -38,14 +38,17 @@ export function SkillTreesPanel({ trees }: { trees: SkillTreeView[] }) {
               <Link
                 key={tree.id}
                 href={`/dashboard/skills/${tree.id}`}
-                className={`rounded-[10px] border bg-panel2 p-4 transition-colors hover:bg-panel2/70 ${accent.border}`}
+                className={`group rounded-[12px] border bg-panel2/70 p-4 transition-all hover:-translate-y-0.5 ${accent.border} ${accent.glow}`}
               >
-                <div className="flex items-center gap-2">
-                  <DynamicIcon name={tree.icon} size={16} strokeWidth={1.75} className={accent.text} />
-                  <span className="truncate text-[13px] font-medium text-text">{tree.name}</span>
+                <div className="flex items-center gap-2.5">
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] ${accent.dim} ${accent.text}`}>
+                    <DynamicIcon name={tree.icon} size={16} strokeWidth={2} />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold text-text">{tree.name}</span>
+                  <span className={`font-mono text-[12px] font-semibold ${accent.text}`}>{tree.percent}%</span>
                 </div>
                 <div className="mt-3">
-                  <ProgressBar percent={tree.percent} barClassName={accent.bar} label={`${tree.name} progress`} />
+                  <ProgressBar percent={tree.percent} tone={tree.color} label={`${tree.name} progress`} />
                 </div>
                 <div className="mt-1.5 flex justify-between font-mono text-[11px] text-text-faint">
                   <span>
@@ -60,12 +63,14 @@ export function SkillTreesPanel({ trees }: { trees: SkillTreeView[] }) {
       )}
 
       {rusty.length > 0 && (
-        <div className="mt-5 border-t border-border/60 pt-4">
-          <h3 className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-orange">Needs practice</h3>
+        <div className="mt-5 rounded-[12px] border border-orange/25 bg-orange-dim/40 p-4">
+          <h3 className="mb-2.5 flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-orange">
+            <Hourglass size={13} /> Needs practice
+          </h3>
           <ul className="flex flex-col gap-2">
             {rusty.slice(0, MAX_RUSTY_SHOWN).map((n) => (
               <li key={n.id} className="flex items-center justify-between gap-3 text-[13px]">
-                <span className="min-w-0 truncate text-text-dim">
+                <span className="min-w-0 truncate text-text">
                   {n.name} <span className="text-text-faint">· {n.treeName}</span>
                 </span>
                 <PracticeButton nodeId={n.id} nodeName={n.name} />

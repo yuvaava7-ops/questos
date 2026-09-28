@@ -11,9 +11,9 @@ import { CheckToggle } from "@/components/CheckToggle";
 import { RowDeleteButton } from "@/components/RowDeleteButton";
 
 const PRIORITY_STYLES: Record<Task["priority"], string> = {
-  high: "bg-red-dim text-red",
-  medium: "bg-orange-dim text-orange",
-  low: "bg-blue-dim text-blue",
+  high: "border-red/30 bg-red-dim text-red",
+  medium: "border-orange/30 bg-orange-dim text-orange",
+  low: "border-blue/30 bg-blue-dim text-blue",
 };
 
 type TaskUpdate =
@@ -65,7 +65,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
           type="button"
           onClick={() => setIsAdding((v) => !v)}
           aria-expanded={isAdding}
-          className="flex items-center gap-1 rounded-[8px] px-2 py-1 text-[12px] font-medium text-text-faint transition-colors hover:text-gold"
+          className="flex items-center gap-1 rounded-full border border-border/70 px-2.5 py-1 text-[12px] font-medium text-text-dim transition-colors hover:border-gold/50 hover:text-gold"
         >
           <Plus size={13} /> Add task
         </button>
@@ -75,13 +75,13 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
         <p className="py-2 text-[13px] text-text-faint">No tasks yet. Use &ldquo;Add task&rdquo; to create one.</p>
       )}
 
-      <ul>
+      <ul className="-mx-2 flex flex-col gap-0.5">
         {optimisticTasks.map((task) => {
           const pending = task.id.startsWith(PENDING_PREFIX);
           return (
             <li
               key={task.id}
-              className={`group flex items-center gap-3 border-b border-border/40 py-2.5 text-[13.5px] last:border-none ${pending ? "opacity-60" : ""}`}
+              className={`group flex items-center gap-3 rounded-[10px] px-2 py-2.5 text-[13.5px] transition-colors hover:bg-white/[0.03] ${pending ? "opacity-60" : ""}`}
             >
               <CheckToggle
                 checked={task.done}
@@ -92,10 +92,10 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
                   run({ type: "toggle", id: task.id, done: !task.done }, () => toggleTask(task.id, !task.done));
                 }}
               />
-              <span className={`min-w-0 flex-1 break-words ${task.done ? "text-text-faint line-through" : "text-text-dim"}`}>
+              <span className={`min-w-0 flex-1 break-words ${task.done ? "text-text-faint line-through decoration-text-faint/60" : "text-text"}`}>
                 {task.label}
               </span>
-              <span className={`shrink-0 rounded-md px-2 py-[3px] text-[10px] font-semibold uppercase tracking-wide ${PRIORITY_STYLES[task.priority]}`}>
+              <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${PRIORITY_STYLES[task.priority]}`}>
                 {task.priority}
               </span>
               <RowDeleteButton
@@ -109,7 +109,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
       </ul>
 
       {isAdding && (
-        <form action={handleAdd} className="mt-4 flex items-center gap-2 border-t border-border/60 pt-4">
+        <form action={handleAdd} className="mt-4 flex items-center gap-2 border-t border-border/50 pt-4">
           {/* eslint-disable-next-line jsx-a11y/no-autofocus -- form only mounts when the user explicitly opens it */}
           <input name="label" placeholder="Add a task..." aria-label="Task name" required maxLength={200} autoFocus className={`${INPUT_CLASS} min-w-0 flex-1`} />
           <select name="priority" defaultValue="medium" aria-label="Priority" className={`${INPUT_CLASS} px-2`}>

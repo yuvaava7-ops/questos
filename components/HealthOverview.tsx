@@ -2,10 +2,10 @@ import { Heart } from "lucide-react";
 import { Panel } from "@/components/Panel";
 
 const METRICS = [
-  { label: "Steps", color: "#7c9a6b" },
-  { label: "Calories", color: "#c8703f" },
-  { label: "Water", color: "#6a94a8" },
-  { label: "Sleep", color: "#8b6fa8" },
+  { label: "Steps", color: "rgb(var(--green))" },
+  { label: "Calories", color: "rgb(var(--orange))" },
+  { label: "Water", color: "rgb(var(--blue))" },
+  { label: "Sleep", color: "rgb(var(--purple))" },
 ];
 
 const SIZE = 56;
@@ -25,7 +25,7 @@ function RingGauge({ color }: { color: string }) {
         r={RADIUS}
         fill="none"
         stroke={color}
-        strokeOpacity={0.18}
+        strokeOpacity={0.22}
         strokeWidth={STROKE}
       />
       <circle
@@ -57,7 +57,7 @@ export function HealthOverview() {
         {METRICS.map(({ label, color }) => (
           <div
             key={label}
-            className="flex flex-col items-center gap-2 rounded-[10px] border border-border/60 bg-panel2 py-4"
+            className="tile flex flex-col items-center gap-2 py-4"
           >
             <div className="relative flex items-center justify-center">
               <RingGauge color={color} />

@@ -5,10 +5,10 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { PracticeButton } from "@/components/skills/PracticeButton";
 
 const STATE_BADGE = {
-  locked: "border-border text-text-faint",
-  available: "border-gold/40 text-gold",
-  complete: "border-green/40 text-green",
-  rusty: "border-orange/40 text-orange",
+  locked: "border-border bg-white/[0.03] text-text-faint",
+  available: "border-gold/40 bg-gold/10 text-gold",
+  complete: "border-green/40 bg-green-dim text-green",
+  rusty: "border-orange/40 bg-orange-dim text-orange",
 } as const;
 
 function daysAgo(iso: string): string {
@@ -50,7 +50,7 @@ export function NodeDetail({
       <div className="mt-4 max-w-md">
         <ProgressBar
           percent={(node.xp / node.xpRequired) * 100}
-          barClassName={node.state === "rusty" ? "bg-orange" : ACCENT_CLASSES[accent].bar}
+          tone={node.state === "rusty" ? "orange" : accent}
           label={`${node.name} XP`}
         />
         <div className="mt-1.5 font-mono text-[11px] text-text-faint">
@@ -58,18 +58,18 @@ export function NodeDetail({
         </div>
       </div>
 
-      <dl className="mt-4 grid gap-x-6 gap-y-2 text-[12.5px] sm:grid-cols-3">
-        <div>
-          <dt className="text-text-faint">Requires</dt>
-          <dd className="text-text-dim">{lockedBy.length > 0 ? lockedBy.join(", ") : "Nothing (root skill)"}</dd>
+      <dl className="mt-5 grid gap-2.5 text-[12.5px] sm:grid-cols-3">
+        <div className="tile px-3 py-2.5">
+          <dt className="text-[11px] uppercase tracking-wide text-text-faint">Requires</dt>
+          <dd className="mt-0.5 text-text">{lockedBy.length > 0 ? lockedBy.join(", ") : "Nothing (root skill)"}</dd>
         </div>
-        <div>
-          <dt className="text-text-faint">Last practiced</dt>
-          <dd className="text-text-dim">{node.lastPracticedAt ? daysAgo(node.lastPracticedAt) : "Never"}</dd>
+        <div className="tile px-3 py-2.5">
+          <dt className="text-[11px] uppercase tracking-wide text-text-faint">Last practiced</dt>
+          <dd className="mt-0.5 text-text">{node.lastPracticedAt ? daysAgo(node.lastPracticedAt) : "Never"}</dd>
         </div>
-        <div>
-          <dt className="text-text-faint">Maintenance</dt>
-          <dd className="text-text-dim">{node.maintenanceDays ? `Every ${node.maintenanceDays} days` : "Not needed"}</dd>
+        <div className="tile px-3 py-2.5">
+          <dt className="text-[11px] uppercase tracking-wide text-text-faint">Maintenance</dt>
+          <dd className="mt-0.5 text-text">{node.maintenanceDays ? `Every ${node.maintenanceDays} days` : "Not needed"}</dd>
         </div>
       </dl>
 

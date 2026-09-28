@@ -16,17 +16,18 @@ const STATE_LABEL: Record<SkillNodeState, string> = {
 
 function nodeClasses(state: SkillNodeState, accent: Accent, selected: boolean): string {
   const a = ACCENT_CLASSES[accent];
-  const base = "absolute flex flex-col justify-between rounded-[10px] border px-3 py-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60";
-  const ring = selected ? " ring-2 ring-gold/70" : "";
+  const base =
+    "absolute flex flex-col justify-between rounded-[12px] border px-3 py-2.5 text-left transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60";
+  const ring = selected ? " ring-2 ring-gold ring-offset-2 ring-offset-bg" : "";
   switch (state) {
     case "complete":
-      return `${base} ${a.dim} ${a.border}${ring}`;
+      return `${base} ${a.dim} ${a.border} ${a.glow}${ring}`;
     case "rusty":
-      return `${base} border-dashed border-orange/60 bg-orange-dim/60${ring}`;
+      return `${base} border-dashed border-orange/70 bg-orange-dim/70 shadow-[0_0_20px_-8px_rgb(var(--orange)/0.7)]${ring}`;
     case "available":
-      return `${base} border-gold/50 bg-panel2 hover:border-gold${ring}`;
+      return `${base} border-gold/60 bg-panel2 shadow-[0_0_22px_-8px_rgb(var(--gold)/0.7)] hover:border-gold${ring}`;
     case "locked":
-      return `${base} border-border/60 bg-panel/80 opacity-60 hover:opacity-90${ring}`;
+      return `${base} border-border/60 bg-bg/70 opacity-55 hover:opacity-90${ring}`;
   }
 }
 
@@ -50,7 +51,7 @@ export function SkillTreeGraph({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="overflow-x-auto rounded-card border border-border/60 bg-panel/60">
+      <div className="surface overflow-x-auto bg-[radial-gradient(ellipse_at_top,rgb(var(--gold)/0.06),transparent_70%)]">
         <div className="relative mx-auto" style={{ width: layout.width, height: layout.height }}>
           <svg className="absolute inset-0" width={layout.width} height={layout.height} aria-hidden>
             {layout.edges.map(({ from, to }) => {
@@ -84,12 +85,12 @@ export function SkillTreeGraph({
                 style={{ left: x, top: y, width: NODE_W, height: NODE_H }}
               >
                 <span className="flex items-start justify-between gap-1.5">
-                  <span className="line-clamp-2 text-[12px] font-medium leading-tight text-text">{node.name}</span>
+                  <span className="line-clamp-2 text-[12.5px] font-semibold leading-tight text-text">{node.name}</span>
                   {node.state === "complete" && <Check size={13} className={`shrink-0 ${a.text}`} />}
                   {node.state === "locked" && <Lock size={12} className="shrink-0 text-text-faint" />}
                   {node.state === "rusty" && <Hourglass size={12} className="shrink-0 text-orange" />}
                 </span>
-                <span className="block h-[3px] overflow-hidden rounded-full bg-white/[0.06]">
+                <span className="block h-1 overflow-hidden rounded-full bg-white/[0.08]">
                   <span className={`block h-full rounded-full ${node.state === "rusty" ? "bg-orange" : a.bar}`} style={{ width: `${pct}%` }} />
                 </span>
               </button>

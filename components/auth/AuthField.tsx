@@ -17,7 +17,7 @@ export function AuthField({
       className={`flex flex-col gap-1.5 text-[13px] font-medium text-text-dim ${animate ? "opacity-0" : ""}`}
     >
       {label}
-      <div className="flex items-center gap-2 rounded-[8px] border border-border bg-panel2 px-3 py-2.5 transition-colors focus-within:border-gold">
+      <div className="flex items-center gap-2.5 rounded-[10px] border border-border/80 bg-bg/60 px-3 py-2.5 transition-all focus-within:border-gold/60 focus-within:ring-2 focus-within:ring-gold/15">
         <Icon size={15} className="shrink-0 text-text-faint" aria-hidden />
         <input {...input} className="w-full bg-transparent text-[13.5px] text-text placeholder:text-text-faint focus:outline-none" />
       </div>

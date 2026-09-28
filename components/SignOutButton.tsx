@@ -15,7 +15,7 @@ export function SignOutButton({ compact = false }: { compact?: boolean }) {
       disabled={isPending}
       aria-label={compact ? text : undefined}
       className={`flex items-center gap-2 rounded-[8px] text-[12.5px] font-medium text-text-faint transition-colors hover:text-text disabled:opacity-60 ${
-        compact ? "p-2" : "mt-3 w-full px-1 py-1.5"
+        compact ? "p-2" : "mt-2 w-full px-3 py-2"
       }`}
     >
       <LogOut size={14} />

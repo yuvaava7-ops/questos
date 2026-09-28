@@ -1,5 +1,5 @@
-import { Flame, Star } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
+import { DashboardHeader } from "@/components/DashboardHeader";
 import { QuestScoreHero } from "@/components/QuestScoreHero";
 import { QuestList } from "@/components/QuestList";
 import { SkillTreesPanel } from "@/components/skills/SkillTreesPanel";
@@ -44,22 +44,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      {/* Server clock isn't the user's clock, so no time-of-day greeting. */}
-      <header className="mb-7 md:mb-9">
-        <h1 className="font-display text-[22px] font-semibold tracking-wide md:text-[26px]">Welcome back, {user.name}</h1>
-        <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-text-faint">
-          <span className="flex items-center gap-1.5">
-            <Flame size={14} className="text-orange" /> Streak{" "}
-            <span className="font-medium text-text-dim">
-              {user.streakDays} {user.streakDays === 1 ? "day" : "days"}
-            </span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Star size={14} className="text-purple" /> Level <span className="font-medium text-text-dim">{user.level}</span>
-            <span className="text-text-faint">· {user.levelTitle}</span>
-          </span>
-        </div>
-      </header>
+      <DashboardHeader user={user} />
 
       {!user.hasProfile && (
         <div className="mb-6 rounded-card border border-dashed border-border/60 bg-panel/50 p-4 text-[13px] text-text-dim">

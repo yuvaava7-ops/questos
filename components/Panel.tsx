@@ -1,5 +1,5 @@
-// The standard dashboard card: bordered panel with an optional gold
-// small-caps heading and a right-aligned slot for actions/meta.
+// The standard dashboard card: raised surface with an optional gold
+// small-caps heading (diamond ornament + fading rule) and an action slot.
 export function Panel({
   title,
   action,
@@ -14,10 +14,12 @@ export function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className={`rounded-card border border-border/60 bg-panel p-5 md:p-6 ${className}`}>
+    <section id={id} className={`surface p-5 md:p-6 ${className}`}>
       {title && (
-        <div className="mb-5 flex items-center justify-between gap-3 border-b border-gold/20 pb-3">
-          <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.14em] text-gold">{title}</h2>
+        <div className="mb-5 flex items-center gap-3">
+          <span aria-hidden className="h-1.5 w-1.5 rotate-45 bg-gold shadow-[0_0_8px_rgb(var(--gold)/0.8)]" />
+          <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.16em] text-gold">{title}</h2>
+          <span aria-hidden className="h-px flex-1 bg-gradient-to-r from-gold/25 to-transparent" />
           {action}
         </div>
       )}

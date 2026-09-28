@@ -36,26 +36,26 @@ export function QuickActions() {
   }
 
   const tileClass =
-    "flex flex-col items-center gap-2 rounded-[10px] border border-border/60 bg-panel2 px-2 py-4 text-center transition-colors hover:border-gold/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 disabled:opacity-60";
+    "tile group flex flex-col items-center gap-2 px-2 py-4 text-center transition-all hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_8px_24px_-12px_rgb(var(--gold)/0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 disabled:opacity-60 disabled:hover:translate-y-0";
 
   return (
     <Panel title="Quick Log">
       <div className="grid grid-cols-2 gap-3">
         <a href="#today-quests" className={tileClass}>
-          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/30 text-gold">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-gradient-to-b from-gold/20 to-gold/5 text-gold transition-shadow group-hover:shadow-[0_0_16px_-2px_rgb(var(--gold)/0.7)]">
             <SwordBrandish size={16} />
           </span>
-          <span className="text-[11.5px] font-medium text-text-dim">Add Quest</span>
+          <span className="text-[12px] font-semibold text-text">Add Quest</span>
         </a>
         {INSTANT_PRESETS.map(({ label, questLabel, xp, Icon }) => (
           <button key={label} type="button" onClick={() => handleClick(label, questLabel, xp)} disabled={isPending} className={tileClass}>
-            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/30 text-gold">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-gradient-to-b from-gold/20 to-gold/5 text-gold transition-shadow group-hover:shadow-[0_0_16px_-2px_rgb(var(--gold)/0.7)]">
               <Icon size={16} />
             </span>
-            <span className="text-[11.5px] font-medium text-text-dim">
+            <span className="text-[12px] font-semibold text-text">
               {isPending && active === label ? "Logging..." : label}
             </span>
-            <span className="font-mono text-[10px] text-text-faint">+{xp} XP</span>
+            <span className="font-mono text-[10.5px] text-gold/80">+{xp} XP</span>
           </button>
         ))}
       </div>

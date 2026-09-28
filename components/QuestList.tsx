@@ -65,7 +65,7 @@ export function QuestList({ quests, nodeOptions }: { quests: Quest[]; nodeOption
       className="scroll-mt-20"
       action={
         optimisticQuests.length > 0 && (
-          <span className="font-mono text-[11px] text-text-faint">
+          <span className="rounded-full bg-green-dim px-2.5 py-0.5 font-mono text-[11px] text-green">
             {doneCount}/{optimisticQuests.length} done
           </span>
         )
@@ -75,11 +75,14 @@ export function QuestList({ quests, nodeOptions }: { quests: Quest[]; nodeOption
         <p className="py-2 text-[13px] text-text-faint">No quests logged for today yet. Add one below.</p>
       )}
 
-      <ul>
+      <ul className="-mx-2 flex flex-col gap-0.5">
         {optimisticQuests.map((quest) => {
           const pending = quest.id.startsWith(PENDING_PREFIX);
           return (
-            <li key={quest.id} className={`group flex items-center gap-3 py-2.5 text-[13.5px] ${pending ? "opacity-60" : ""}`}>
+            <li
+              key={quest.id}
+              className={`group flex items-center gap-3 rounded-[10px] px-2 py-2.5 text-[13.5px] transition-colors hover:bg-white/[0.03] ${pending ? "opacity-60" : ""}`}
+            >
               <CheckToggle
                 checked={quest.done}
                 label={quest.label}
@@ -89,16 +92,20 @@ export function QuestList({ quests, nodeOptions }: { quests: Quest[]; nodeOption
                   run({ type: "toggle", id: quest.id, done: !quest.done }, () => toggleQuest(quest.id, !quest.done));
                 }}
               />
-              <span className={`min-w-0 flex-1 break-words ${quest.done ? "text-text-faint line-through" : "text-text-dim"}`}>
+              <span className={`min-w-0 flex-1 break-words ${quest.done ? "text-text-faint line-through decoration-text-faint/60" : "text-text"}`}>
                 {quest.label}
                 {quest.time && <span className="ml-2 text-[11px] text-text-faint">{quest.time}</span>}
                 {quest.skillNodeId && nodeName.has(quest.skillNodeId) && (
-                  <span className="ml-2 inline-flex items-center gap-1 rounded bg-green-dim px-1.5 py-px align-middle text-[10.5px] text-green">
+                  <span className="ml-2 inline-flex items-center gap-1 rounded-full border border-green/25 bg-green-dim px-2 py-px align-middle text-[10.5px] text-green">
                     <Sprout size={10} aria-hidden /> {nodeName.get(quest.skillNodeId)}
                   </span>
                 )}
               </span>
-              <span className="shrink-0 font-mono text-[11px] text-text-faint">+{quest.xp} XP</span>
+              <span
+                className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] ${quest.done ? "bg-white/[0.04] text-text-faint" : "bg-gold/10 text-gold"}`}
+              >
+                +{quest.xp} XP
+              </span>
               <RowDeleteButton
                 label={quest.label}
                 disabled={pending}
@@ -109,7 +116,7 @@ export function QuestList({ quests, nodeOptions }: { quests: Quest[]; nodeOption
         })}
       </ul>
 
-      <form ref={formRef} action={handleAdd} className="mt-4 flex flex-wrap items-center gap-2 border-t border-border/60 pt-4 sm:flex-nowrap">
+      <form ref={formRef} action={handleAdd} className="mt-4 flex flex-wrap items-center gap-2 border-t border-border/50 pt-4 sm:flex-nowrap">
         <input name="label" placeholder="Add a quest..." aria-label="Quest name" required maxLength={200} className={`${INPUT_CLASS} min-w-0 flex-1 basis-full sm:basis-auto`} />
         {nodeOptions.length > 0 && (
           <select name="skill_node_id" defaultValue="" aria-label="Skill this quest trains" className={`${INPUT_CLASS} w-full max-w-full px-2 sm:w-[170px]`}>

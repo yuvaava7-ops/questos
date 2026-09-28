@@ -3,7 +3,7 @@ import { DatabaseZap } from "lucide-react";
 export function SetupNotice() {
   return (
     <main className="flex min-h-screen flex-1 items-center justify-center px-6">
-      <div className="max-w-md rounded-card border border-border bg-panel p-7 text-center">
+      <div className="max-w-md surface p-7 text-center">
         <DatabaseZap size={28} className="mx-auto mb-3 text-blue" />
         <h1 className="mb-2 text-lg font-bold">Connect Supabase</h1>
         <p className="text-[13px] leading-relaxed text-text-dim">
