@@ -1,6 +1,8 @@
 // Shared types. Keep these in sync with docs/PROJECT_SCOPE.md's data model
 // section — that doc is the source of truth for the eventual Supabase schema.
 
+import type { StatKey } from "@/lib/stats";
+
 export type Accent = "green" | "blue" | "purple" | "orange";
 
 export interface Quest {
@@ -10,6 +12,7 @@ export interface Quest {
   done: boolean;
   xp: number;
   skillNodeId: string | null;
+  stat: StatKey | null;
 }
 
 export interface Task {
@@ -48,7 +51,7 @@ export interface UserSummary {
 
 // --- Skill trees ---
 // Trees are graphs: each node lists the nodes it requires. One generic
-// renderer (components/skills/SkillTreeGraph) draws every tree from these
+// renderer (components/skills/SkillTreeGraph, a constellation view) draws every tree from these
 // shapes; never special-case a specific tree.
 
 export type SkillNodeState = "locked" | "available" | "complete" | "rusty";

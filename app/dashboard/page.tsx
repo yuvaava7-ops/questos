@@ -2,14 +2,16 @@ import { QuestBoard } from "@/components/game/QuestBoard";
 import { Errands } from "@/components/game/Errands";
 import { SkillTreesPanel } from "@/components/skills/SkillTreesPanel";
 import { Chronicle } from "@/components/game/Chronicle";
-import { getActivity, getNodeOptions, getProfileName, getQuests, getTasks, getTrees, getXpProgress } from "@/lib/queries";
+import { getActivity, getAvatar, getNodeOptions, getProfileName, getQuests, getStatXp, getTasks, getTrees, getXpProgress } from "@/lib/queries";
 
 export default async function DashboardPage() {
-  const [name, quests, tasks, xp, nodeOptions, { days, streakDays }] = await Promise.all([
+  const [name, avatar, quests, tasks, xp, statXp, nodeOptions, { days, streakDays }] = await Promise.all([
     getProfileName(),
+    getAvatar(),
     getQuests(),
     getTasks(),
     getXpProgress(),
+    getStatXp(),
     getNodeOptions(),
     getActivity(),
   ]);
@@ -17,11 +19,17 @@ export default async function DashboardPage() {
   const hero = name && name !== "You" ? name : "Hero";
 
   return (
-    <>
-      <QuestBoard name={hero} quests={quests} totalXp={xp.total} streakDays={streakDays} nodeOptions={nodeOptions} />
-      <Errands tasks={tasks} />
-      <SkillTreesPanel trees={trees} />
-      <Chronicle days={days} streakDays={streakDays} />
-    </>
+    <QuestBoard
+      name={hero}
+      quests={quests}
+      totalXp={xp.total}
+      statXp={statXp}
+      avatar={avatar}
+      streakDays={streakDays}
+      nodeOptions={nodeOptions}
+      errands={<Errands tasks={tasks} />}
+      skills={<SkillTreesPanel trees={trees} />}
+      chronicle={<Chronicle days={days} streakDays={streakDays} />}
+    />
   );
 }

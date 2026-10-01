@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth";
 import { todayISO } from "@/lib/dates";
 import { assertOwnsNode, awardXp, deleteSkillTree, revokeQuestXp } from "@/lib/skill-data";
+import { isStatKey } from "@/lib/stats";
 import type { Task } from "@/lib/types";
 
 const PRIORITIES: readonly Task["priority"][] = ["high", "medium", "low"];
@@ -58,12 +59,14 @@ export async function addQuest(formData: FormData) {
   const rawXp = Math.round(Number(formData.get("xp")));
   const xp = Number.isFinite(rawXp) && rawXp > 0 ? Math.min(rawXp, MAX_XP) : 10;
   const skillNodeId = String(formData.get("skill_node_id") ?? "") || null;
+  const rawStat = String(formData.get("stat") ?? "");
+  const stat = isStatKey(rawStat) ? rawStat : null;
 
   await mutate(async (db, userId) => {
     if (skillNodeId) await assertOwnsNode(db, userId, skillNodeId);
     return db
       .from("quests")
-      .insert({ user_id: userId, label, time: time || null, xp, quest_date: todayISO(), skill_node_id: skillNodeId });
+      .insert({ user_id: userId, label, time: time || null, xp, quest_date: todayISO(), skill_node_id: skillNodeId, ...(stat ? { stat } : {}) });
   });
 }
 

@@ -7,16 +7,23 @@ import type { LevelProgress } from "@/lib/leveling";
 import { Sprite } from "@/components/pixel/Sprite";
 import { Window } from "@/components/pixel/Window";
 import { SegBar } from "@/components/pixel/SegBar";
-import { FLAME, HERO_A } from "@/components/pixel/sprites";
+import { FLAME } from "@/components/pixel/sprites";
+import { heroFrames } from "@/components/pixel/heroSprites";
+import type { HeroClass } from "@/lib/stats";
+import type { Avatar } from "@/lib/avatar";
 
 export function Hud({
   name,
   info,
+  heroClass,
+  avatar,
   totalXp,
   streakDays,
 }: {
   name: string;
   info: LevelProgress;
+  heroClass: HeroClass;
+  avatar: Avatar | null;
   totalXp: number;
   streakDays: number;
 }) {
@@ -29,7 +36,7 @@ export function Hud({
     <Window className="mt-4" bodyClassName="p-3">
       <div className="flex items-center gap-3">
         <div className="shrink-0 bg-ink p-1 shadow-[0_-3px_0_0_#ffd24a,0_3px_0_0_#ffd24a,-3px_0_0_0_#ffd24a,3px_0_0_0_#ffd24a]">
-          <Sprite def={HERO_A} scale={3} />
+          <Sprite def={heroFrames(heroClass.primary, avatar).a} scale={3} />
         </div>
 
         <div className="min-w-0 flex-1">
@@ -37,7 +44,7 @@ export function Hud({
             <p className="px-title truncate text-[11px]">{name}</p>
             <p className="px-title shrink-0 text-[11px] text-gold">LV {info.level}</p>
           </div>
-          <p className="truncate text-[20px] uppercase leading-none text-dim">{info.levelTitle}</p>
+          <p className="truncate text-[20px] uppercase leading-none text-dim">{heroClass.name} · {info.levelTitle}</p>
           <div className="mt-2">
             <SegBar fraction={info.xp / info.xpToNextLevel} label="Experience to next level" />
           </div>

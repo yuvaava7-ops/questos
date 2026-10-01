@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <>
-      <main className="mx-auto w-full max-w-[560px] px-4 pb-32 pt-2">{children}</main>
+      <main className="mx-auto w-full max-w-[560px] px-4 pb-32 pt-2 lg:max-w-[1320px] lg:px-8 lg:pb-16 lg:pt-24">{children}</main>
       <NavBar />
     </>
   );

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Press_Start_2P, VT323 } from "next/font/google";
+import { PwaRegister } from "@/components/pwa/PwaRegister";
 import "./globals.css";
 
 const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], variable: "--font-pixel", display: "swap" });
@@ -8,6 +9,9 @@ const body = VT323({ weight: "400", subsets: ["latin"], variable: "--font-body",
 export const metadata: Metadata = {
   title: "QuestOS",
   description: "A 16-bit RPG for your real life. Log quests, earn XP, level up.",
+  applicationName: "QuestOS",
+  appleWebApp: { capable: true, title: "QuestOS", statusBarStyle: "black-translucent" },
+  icons: { apple: "/icons/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {
@@ -19,7 +23,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${pixel.variable} ${body.variable}`}>
-      <body className="font-body antialiased">{children}</body>
+      <body className="font-body antialiased">
+        {children}
+        <PwaRegister />
+      </body>
     </html>
   );
 }

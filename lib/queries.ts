@@ -5,6 +5,8 @@ import { todayISO } from "@/lib/dates";
 import { computeActivity } from "@/lib/activity";
 import { getSkillNodeOptions, getSkillTrees, getXpTotals, type XpTotals } from "@/lib/skill-data";
 import { levelFromTotalXp } from "@/lib/leveling";
+import { parseAvatar, type Avatar } from "@/lib/avatar";
+import { emptyStatXp, isStatKey, type StatXp } from "@/lib/stats";
 import type { Quest, Task, StatCard, DayActivity, SkillNodeOption, SkillTreeView, UserSummary } from "@/lib/types";
 
 // Only the display name is read from profile; level/XP come from the
@@ -42,7 +44,7 @@ export async function getQuests(date = todayISO()): Promise<Quest[]> {
 
   const { data, error } = await createClient()
     .from("quests")
-    .select("id, label, time, done, xp, skill_node_id")
+    .select("*")
     .eq("user_id", user.id)
     .eq("quest_date", date)
     .order("time", { ascending: true });
@@ -54,8 +56,26 @@ export async function getQuests(date = todayISO()): Promise<Quest[]> {
     done: q.done,
     xp: q.xp,
     skillNodeId: q.skill_node_id,
+    stat: isStatKey(q.stat) ? q.stat : null,
   }));
 }
+
+// Completed-quest XP per stat. Falls back to zeros if migration 002 is not
+// applied yet, so the dashboard still loads.
+export const getStatXp = cache(async (): Promise<StatXp> => {
+  const user = await getCurrentUser();
+  const totals = emptyStatXp();
+  if (!user) return totals;
+  const { data, error } = await createClient().rpc("stat_xp", { p_user_id: user.id });
+  if (error) {
+    console.error("[stats] stat_xp unavailable:", error.message);
+    return totals;
+  }
+  for (const row of (data ?? []) as { stat: string; xp: number }[]) {
+    if (isStatKey(row.stat)) totals[row.stat] = Number(row.xp);
+  }
+  return totals;
+});
 
 export async function getTasks(): Promise<Task[]> {
   const user = await getCurrentUser();
@@ -104,4 +124,13 @@ export const getUserSummary = cache(async (): Promise<UserSummary & { hasProfile
     xpToNextLevel: progress.xpToNextLevel,
     streakDays,
   };
+});
+
+// The AI-drawn avatar, if one has been set (null until migration 003 is applied).
+export const getAvatar = cache(async (): Promise<Avatar | null> => {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  const { data, error } = await createClient().from("profile").select("*").eq("user_id", user.id).maybeSingle();
+  if (error) throw error;
+  return parseAvatar(data?.avatar);
 });

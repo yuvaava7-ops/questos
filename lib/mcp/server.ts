@@ -17,9 +17,14 @@ import {
   updateSkillNode,
 } from "@/lib/skill-data";
 import { MAX_NODES_PER_TREE, TreeValidationError } from "@/lib/skill-trees";
+import { STAT_KEYS, STATS, classFor, emptyStatXp, isStatKey, statLevel } from "@/lib/stats";
+import { AVATAR_SIZE, AvatarError, MAX_AVATAR_COLORS, parseAvatar, validateAvatar } from "@/lib/avatar";
+import { HERO_A, HERO_B, HERO_PALETTE } from "@/components/pixel/sprites";
 import type { SkillNodeView, SkillTreeView } from "@/lib/types";
 
 const INSTRUCTIONS = `QuestOS is the user's gamified productivity tracker. Daily quests earn XP; XP levels the user up and progresses nodes on skill trees.
+
+The player also has a character: a hero class derived from the stats their quests train (get_character), and an avatar you can draw for them with set_avatar. Offer to draw one; base it on their class.
 
 How it works:
 - A skill tree is a graph of nodes. Each node has xp_required; it is complete once that much XP has been logged to it. A node is locked until all its prerequisites are complete (XP still accrues while locked).
@@ -81,7 +86,7 @@ async function run<T>(fn: () => Promise<T>) {
   try {
     return json(await fn());
   } catch (e) {
-    if (e instanceof TreeValidationError) return fail(e.message);
+    if (e instanceof TreeValidationError || e instanceof AvatarError) return fail(e.message);
     console.error("[mcp] tool failed", e);
     return fail("QuestOS hit an internal error running this tool.");
   }
@@ -149,6 +154,91 @@ export function createQuestOsMcpServer(db: SupabaseClient, userId: string): McpS
           rusty_nodes: nodes.filter((n) => n.state === "rusty"),
           available_nodes: nodes.filter((n) => n.state === "available").slice(0, 25),
         };
+      })
+  );
+
+  async function loadCharacter() {
+    const [xp, statRows, profile] = await Promise.all([
+      getXpTotals(db, userId),
+      db.rpc("stat_xp", { p_user_id: userId }),
+      db.from("profile").select("*").eq("user_id", userId).maybeSingle(),
+    ]);
+    if (profile.error) throw profile.error;
+    // stat_xp is absent until migration 002 is applied: treat as no stats yet.
+    const statXp = emptyStatXp();
+    for (const row of (statRows.data ?? []) as { stat: string; xp: number }[]) {
+      if (isStatKey(row.stat)) statXp[row.stat] = Number(row.xp);
+    }
+    const heroClass = classFor(statXp);
+    return {
+      name: profile.data?.name ?? null,
+      level: levelFromTotalXp(xp.total),
+      class: { name: heroClass.name, description: heroClass.blurb, primary_stat: heroClass.primary },
+      stats: Object.fromEntries(
+        STAT_KEYS.map((k) => [k, { name: STATS[k].name, xp: statXp[k], level: statLevel(statXp[k]).value }])
+      ),
+      avatar: parseAvatar(profile.data?.avatar),
+    };
+  }
+
+  server.registerTool(
+    "get_character",
+    {
+      description:
+        "The player's character sheet: name, level, hero class (derived from which stats their completed quests train), per-stat levels, and their current avatar if one is set. Call this before drawing an avatar so it matches their class and strengths.",
+      inputSchema: {},
+    },
+    () =>
+      run(async () => {
+        const c = await loadCharacter();
+        return {
+          ...c,
+          default_avatar_reference: {
+            note: `The app's default hero, as a ${AVATAR_SIZE}x${AVATAR_SIZE} example of the exact format set_avatar expects. Facing right, 1px dark outline, flat colours.`,
+            art: HERO_A.art,
+            walk_art: HERO_B.art,
+            palette: HERO_PALETTE,
+          },
+        };
+      })
+  );
+
+  server.registerTool(
+    "set_avatar",
+    {
+      description: `Draw the player's pixel-art avatar. It replaces the default hero in the app (profile card, character sheet, journey scene), so make it look like THEM: call get_character first and reflect their class and top stats (str: armour and sword; int: robe, hat, staff or book; dex: hood, daggers or tools; wis: headband, calm stance, prayer beads; cha: feathered hat, lute or flashy cape; mixed classes blend two). Style: 16-bit SNES RPG sprite, ${AVATAR_SIZE}x${AVATAR_SIZE} pixels, facing right, 1px dark outline (#0b0820), flat colours with at most one highlight and one shadow tone per material, no anti-aliasing, centred horizontally with feet on the bottom row. Format: art is exactly ${AVATAR_SIZE} strings of exactly ${AVATAR_SIZE} characters; "." is transparent; every other character is a single letter or digit defined in palette as #rrggbb (max ${MAX_AVATAR_COLORS} colours). Optionally pass walk_art, a second frame (same palette) with only the legs and arms changed, so the avatar walks in the journey scene; without it the avatar bobs instead. Replaces any previous avatar.`,
+      inputSchema: {
+        art: z.array(z.string()).length(AVATAR_SIZE).describe(`${AVATAR_SIZE} rows of ${AVATAR_SIZE} characters each.`),
+        walk_art: z.array(z.string()).length(AVATAR_SIZE).optional().describe("Optional second walking frame, same size and palette."),
+        palette: z.record(z.string().length(1), z.string()).describe('Map of one character to a #rrggbb colour, e.g. {"k":"#0b0820","s":"#ffcf9f"}.'),
+      },
+    },
+    ({ art, walk_art, palette }) =>
+      run(async () => {
+        const avatar = validateAvatar({ art, walk: walk_art, palette });
+        const updated = await db.from("profile").update({ avatar }).eq("user_id", userId).select("user_id");
+        if (updated.error) {
+          if (/avatar/i.test(updated.error.message)) {
+            throw new AvatarError("Avatars are not enabled on this QuestOS yet: the database migration 003_profile_avatar.sql has not been applied.");
+          }
+          throw updated.error;
+        }
+        if ((updated.data ?? []).length === 0) {
+          const inserted = await db.from("profile").insert({ user_id: userId, avatar });
+          if (inserted.error) throw inserted.error;
+        }
+        return { saved: true, frames: avatar.walk ? 2 : 1, colors: Object.keys(avatar.palette).length, preview: avatar.art.join("\n") };
+      })
+  );
+
+  server.registerTool(
+    "reset_avatar",
+    { description: "Remove the custom avatar and go back to the default class-coloured hero.", inputSchema: {} },
+    () =>
+      run(async () => {
+        const { error } = await db.from("profile").update({ avatar: null }).eq("user_id", userId);
+        if (error) throw error;
+        return { reset: true };
       })
   );
 
@@ -264,6 +354,10 @@ export function createQuestOsMcpServer(db: SupabaseClient, userId: string): McpS
               xp: z.number().int().min(1).max(1000).default(10),
               time: z.string().max(20).optional(),
               skill_node_id: z.string().uuid().optional(),
+              stat: z
+                .enum(STAT_KEYS)
+                .optional()
+                .describe("Character stat this trains: str (body), int (mind), dex (craft), wis (calm/habits), cha (social). Drives the hero class."),
             })
           )
           .min(1)
@@ -282,6 +376,7 @@ export function createQuestOsMcpServer(db: SupabaseClient, userId: string): McpS
               xp: q.xp,
               time: q.time ?? null,
               skill_node_id: q.skill_node_id ?? null,
+              ...(q.stat ? { stat: q.stat } : {}),
               quest_date: date ?? todayISO(),
             }))
           )

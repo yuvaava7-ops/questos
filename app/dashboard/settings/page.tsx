@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth";
 import { Window } from "@/components/pixel/Window";
 import { ConnectAi } from "@/components/settings/ConnectAi";
+import { InstallApp } from "@/components/pwa/InstallApp";
 import { RevokeTokenButton } from "@/components/settings/RevokeTokenButton";
 
 function formatDate(iso: string | null): string {
@@ -27,6 +28,10 @@ export default async function SettingsPage() {
   return (
     <>
       <h1 className="px-title mb-2 mt-6 text-[16px] text-gold">Camp</h1>
+
+      <Window title="Download" className="mt-7">
+        <InstallApp />
+      </Window>
 
       <Window title="Connect an AI" className="mt-7">
         <p className="mb-4 text-[23px] leading-tight text-dim">

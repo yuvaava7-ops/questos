@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { SpriteRects } from "@/components/pixel/Sprite";
-import { CASTLE, HERO_A, HERO_B, STAR } from "@/components/pixel/sprites";
+import { CASTLE, STAR } from "@/components/pixel/sprites";
+import { heroFrames } from "@/components/pixel/heroSprites";
+import type { StatKey } from "@/lib/stats";
+import type { Avatar } from "@/lib/avatar";
 
 const W = 192;
 const H = 108;
@@ -199,10 +202,15 @@ interface PixelSceneProps {
   mode: "title" | "journey";
   /** 0..1, journey mode only. */
   progress?: number;
+  /** Dominant stat; tints the hero outfit to match the class. */
+  heroStat?: StatKey | null;
+  /** Player-drawn avatar; replaces the default hero. */
+  avatar?: Avatar | null;
   className?: string;
 }
 
-export function PixelScene({ mode, progress = 0, className }: PixelSceneProps) {
+export function PixelScene({ mode, progress = 0, heroStat = null, avatar = null, className }: PixelSceneProps) {
+  const hero = heroFrames(heroStat, avatar);
   const [tod, setTod] = useState<TimeOfDay>("dusk");
 
   useEffect(() => {
@@ -316,17 +324,17 @@ export function PixelScene({ mode, progress = 0, className }: PixelSceneProps) {
             transition: scrolling ? undefined : "transform 1.2s steps(12)",
           }}
         >
-          {done ? (
+          {done || hero.single ? (
             <g className="anim-bob">
-              <SpriteRects def={HERO_B} />
+              <SpriteRects def={hero.b} />
             </g>
           ) : (
             <>
               <g className="anim-frame-a">
-                <SpriteRects def={HERO_A} />
+                <SpriteRects def={hero.a} />
               </g>
               <g className="anim-frame-b">
-                <SpriteRects def={HERO_B} />
+                <SpriteRects def={hero.b} />
               </g>
             </>
           )}

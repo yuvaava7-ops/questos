@@ -247,3 +247,17 @@ export const HOURGLASS: SpriteDef = {
 export function tint(def: SpriteDef, colors: Record<string, string>): SpriteDef {
   return { art: def.art, palette: { ...def.palette, ...colors } };
 }
+
+// Four-point star used for skill-tree nodes. w = body, c = bright core.
+export const STAR_NODE: SpriteDef = {
+  art: [
+    "...w...",
+    "...w...",
+    "..www..",
+    "wwwcwww",
+    "..www..",
+    "...w...",
+    "...w...",
+  ],
+  palette: { w: "#f4f1ff", c: "#ffffff" },
+};
