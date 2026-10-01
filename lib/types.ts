@@ -1,12 +1,15 @@
 // Shared types. Keep these in sync with docs/PROJECT_SCOPE.md's data model
 // section — that doc is the source of truth for the eventual Supabase schema.
 
+export type Accent = "green" | "blue" | "purple" | "orange";
+
 export interface Quest {
   id: string;
   label: string;
   time: string;
   done: boolean;
   xp: number;
+  skillNodeId: string | null;
 }
 
 export interface Task {
@@ -16,12 +19,15 @@ export interface Task {
   done: boolean;
 }
 
-export interface SkillProgress {
+export interface StatCard {
   id: string;
-  name: string;
+  label: string;
   icon: string;
-  percent: number; // 0-100
-  color: "green" | "blue" | "purple" | "orange";
+  value: string;
+  unit?: string;
+  sub: string;
+  percent: number;
+  color: Accent;
 }
 
 export interface DayActivity {
@@ -30,26 +36,57 @@ export interface DayActivity {
   count: number; // quests completed that day; -1 marks a future padding cell
 }
 
-// --- Skill tree shapes (Phase 3+, not rendered yet in the MVP) ---
+export interface UserSummary {
+  name: string;
+  level: number;
+  levelTitle: string;
+  totalXp: number;
+  xp: number; // XP inside the current level
+  xpToNextLevel: number;
+  streakDays: number;
+}
 
-export interface Perk {
+// --- Skill trees ---
+// Trees are graphs: each node lists the nodes it requires. One generic
+// renderer (components/skills/SkillTreeGraph) draws every tree from these
+// shapes; never special-case a specific tree.
+
+export type SkillNodeState = "locked" | "available" | "complete" | "rusty";
+
+export interface SkillNodeView {
+  id: string;
+  treeId: string;
   name: string;
   description: string;
-  unlockCondition: "count" | "streak" | "manual";
   icon: string;
-}
-
-export interface SkillTier {
-  level: number;
+  xp: number; // earned, capped at xpRequired
   xpRequired: number;
-  perks: Perk[];
+  tier: number; // depth from the roots, derived from prerequisites
+  position: number; // order within the tier
+  maintenanceDays: number | null;
+  lastPracticedAt: string | null;
+  prerequisites: string[]; // node ids
+  complete: boolean; // earned XP has reached xpRequired (stays true when rusty)
+  state: SkillNodeState;
 }
 
-export interface SkillTree {
+export interface SkillTreeView {
   id: string;
   name: string;
-  icon: string;
   description: string;
-  trunkStat: string;
-  tiers: SkillTier[];
+  icon: string;
+  color: Accent;
+  source: "manual" | "mcp";
+  createdAt: string;
+  nodes: SkillNodeView[];
+  completeCount: number;
+  rustyCount: number;
+  percent: number; // share of the tree's total required XP earned
+}
+
+// Minimal node reference for pickers (quest form, etc.).
+export interface SkillNodeOption {
+  id: string;
+  name: string;
+  treeName: string;
 }

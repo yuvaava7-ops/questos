@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { signOutAction } from "@/lib/auth-actions";
 import { isMuted, setMuted, sfx } from "@/lib/sfx";
-import type { LevelInfo } from "@/lib/levels";
+import type { LevelProgress } from "@/lib/leveling";
 import { Sprite } from "@/components/pixel/Sprite";
 import { Window } from "@/components/pixel/Window";
 import { SegBar } from "@/components/pixel/SegBar";
@@ -16,7 +16,7 @@ export function Hud({
   streakDays,
 }: {
   name: string;
-  info: LevelInfo;
+  info: LevelProgress;
   totalXp: number;
   streakDays: number;
 }) {
@@ -37,13 +37,13 @@ export function Hud({
             <p className="px-title truncate text-[11px]">{name}</p>
             <p className="px-title shrink-0 text-[11px] text-gold">LV {info.level}</p>
           </div>
-          <p className="truncate text-[20px] uppercase leading-none text-dim">{info.title}</p>
+          <p className="truncate text-[20px] uppercase leading-none text-dim">{info.levelTitle}</p>
           <div className="mt-2">
-            <SegBar fraction={info.fraction} label="Experience to next level" />
+            <SegBar fraction={info.xp / info.xpToNextLevel} label="Experience to next level" />
           </div>
           <div className="mt-1.5 flex items-center justify-between text-[20px] leading-none text-dim">
             <span>
-              {info.into}/{info.span} XP
+              {info.xp}/{info.xpToNextLevel} XP
             </span>
             <span className="flex items-center gap-1 text-ember" title="Day streak">
               <Sprite def={FLAME} scale={2} />

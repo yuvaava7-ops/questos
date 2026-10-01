@@ -8,7 +8,7 @@ QuestOS — a personal RPG-styled life tracker. Full goal/scope/roadmap lives in
 
 ## Current state
 
-MVP stage: Next.js + TypeScript dashboard backed by Supabase (Postgres) — no mock data, no `data/` directory. `/` is the public marketing/landing page; the actual dashboard lives at `/dashboard`. Real accounts via Supabase Auth (email/password), every table scoped by `user_id` with `auth.uid()`-enforced RLS (see `supabase/schema.sql`), `middleware.ts` gates `/dashboard` behind login. Don't assume the skill tree page or live integrations (GitHub, health data) exist until they're actually added — check `docs/PROJECT_SCOPE.md`'s "Current Status" section, which should be kept up to date as phases land.
+Next.js + TypeScript game UI backed by Supabase (Postgres), no mock data. `/` is the public title screen; the app lives under `/dashboard` (Quests, Skills, Camp tabs). Real accounts via Supabase Auth, every table scoped by `user_id` with RLS (see `supabase/schema.sql` and `supabase/migrations/`). `middleware.ts` gates `/dashboard`. Level and XP come from the `xp_events` ledger (`lib/leveling.ts`). Skill trees are graphs rendered by one generic component (`components/skills/SkillTreeGraph.tsx`). An MCP server at `/api/mcp` (and `/api/mcp/<token>` for connectors without header support) lets Claude and ChatGPT read progress, build trees and plan quests; tokens are created from the Camp tab and need `SUPABASE_SERVICE_ROLE_KEY` set server-side. Integrations (GitHub, health data) are not built yet. `docs/PROJECT_SCOPE.md` has the roadmap.
 
 ## Stack & conventions
 
@@ -21,7 +21,7 @@ MVP stage: Next.js + TypeScript dashboard backed by Supabase (Postgres) — no m
 
 ## Design direction
 
-SNES-era RPG: night-sky indigo, blue menu windows with white rims, gold accents, chunky pixel type. Quest framing throughout (quests not "tasks" where user-facing, XP/levels not generic "points"). Mobile-first — the dashboard is a single column capped at 560px. Level and XP are derived from completed quests (`lib/levels.ts`), not the stored `profile.level`/`xp` columns.
+SNES-era RPG: night-sky indigo, blue menu windows with white rims, gold accents, chunky pixel type. Quest framing throughout (quests not "tasks" where user-facing, XP/levels not generic "points"). Mobile-first — the dashboard is a single column capped at 560px. Level and XP come from the XP ledger (`lib/leveling.ts`), not the stored `profile.level`/`xp` columns.
 
 ## When adding a skill tree or data model change
 

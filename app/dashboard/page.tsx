@@ -1,33 +1,27 @@
 import { QuestBoard } from "@/components/game/QuestBoard";
 import { Errands } from "@/components/game/Errands";
-import { Skills } from "@/components/game/Skills";
+import { SkillTreesPanel } from "@/components/skills/SkillTreesPanel";
 import { Chronicle } from "@/components/game/Chronicle";
-import { SetupNotice } from "@/components/SetupNotice";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { getActivity, getPlayerName, getQuests, getSkills, getTasks, getTotalXp } from "@/lib/queries";
-
-// Always render fresh: streak/activity are relative to "today", and data can
-// change from outside the app (Supabase Studio, another session).
-export const dynamic = "force-dynamic";
+import { getActivity, getNodeOptions, getProfileName, getQuests, getTasks, getTrees, getXpProgress } from "@/lib/queries";
 
 export default async function DashboardPage() {
-  if (!isSupabaseConfigured) return <SetupNotice />;
-
-  const [name, quests, tasks, skills, totalXp, { days, streakDays }] = await Promise.all([
-    getPlayerName(),
+  const [name, quests, tasks, xp, nodeOptions, { days, streakDays }] = await Promise.all([
+    getProfileName(),
     getQuests(),
     getTasks(),
-    getSkills(),
-    getTotalXp(),
+    getXpProgress(),
+    getNodeOptions(),
     getActivity(),
   ]);
+  const trees = await getTrees(xp);
+  const hero = name && name !== "You" ? name : "Hero";
 
   return (
-    <main className="mx-auto w-full max-w-[560px] px-4 pb-16 pt-2">
-      <QuestBoard name={name} quests={quests} totalXp={totalXp} streakDays={streakDays} />
+    <>
+      <QuestBoard name={hero} quests={quests} totalXp={xp.total} streakDays={streakDays} nodeOptions={nodeOptions} />
       <Errands tasks={tasks} />
-      <Skills skills={skills} />
+      <SkillTreesPanel trees={trees} />
       <Chronicle days={days} streakDays={streakDays} />
-    </main>
+    </>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import type { Quest } from "@/lib/types";
+import type { Quest, SkillNodeOption } from "@/lib/types";
 import { addQuest, deleteQuest, toggleQuest } from "@/lib/actions";
-import { levelFromXp } from "@/lib/levels";
+import { levelFromTotalXp } from "@/lib/leveling";
 import { celebrateAt } from "@/lib/celebrate";
 import { sfx } from "@/lib/sfx";
 import { Hud } from "@/components/game/Hud";
@@ -20,11 +20,13 @@ export function QuestBoard({
   quests,
   totalXp,
   streakDays,
+  nodeOptions,
 }: {
   name: string;
   quests: Quest[];
   totalXp: number;
   streakDays: number;
+  nodeOptions: SkillNodeOption[];
 }) {
   const [, startTransition] = useTransition();
   // Optimistic overrides: instant feedback while the server action round-trips.
@@ -48,7 +50,7 @@ export function QuestBoard({
     return o === undefined || o === q.done ? sum : sum + (o ? q.xp : -q.xp);
   }, 0);
   const liveXp = totalXp + delta;
-  const info = levelFromXp(liveXp);
+  const info = levelFromTotalXp(liveXp);
 
   const questXp = effective.reduce((s, q) => s + q.xp, 0);
   const earnedXp = effective.filter((q) => q.done).reduce((s, q) => s + q.xp, 0);
@@ -61,10 +63,10 @@ export function QuestBoard({
   useEffect(() => {
     if (info.level > seenLevel.current) {
       sfx.levelUp();
-      setLevelUp({ level: info.level, title: info.title });
+      setLevelUp({ level: info.level, title: info.levelTitle });
     }
     seenLevel.current = info.level;
-  }, [info.level, info.title]);
+  }, [info.level, info.levelTitle]);
   const closeLevelUp = useCallback(() => setLevelUp(null), []);
 
   function toggle(q: Quest & { done: boolean }, el: HTMLElement) {
@@ -161,6 +163,16 @@ export function QuestBoard({
           className="mt-4 flex flex-col gap-3 border-t-2 border-dusk pt-4"
         >
           <input name="label" required maxLength={120} placeholder="New quest..." className="px-input" autoComplete="off" />
+          {nodeOptions.length > 0 && (
+            <select name="skill_node_id" aria-label="Train a skill (optional)" defaultValue="" className="px-input">
+              <option value="">No skill link</option>
+              {nodeOptions.map((n) => (
+                <option key={n.id} value={n.id}>
+                  {n.treeName}: {n.name}
+                </option>
+              ))}
+            </select>
+          )}
           <div className="flex items-center gap-2">
             <input name="time" maxLength={12} placeholder="7:00" aria-label="Time (optional)" className="px-input !w-[88px] shrink-0" />
             <div className="flex flex-1 gap-1.5" role="radiogroup" aria-label="XP reward">

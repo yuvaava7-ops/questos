@@ -213,3 +213,37 @@ export const CURSOR: SpriteDef = {
   ],
   palette: { k: INK, w: "#ffd24a" },
 };
+
+export const LOCK: SpriteDef = {
+  art: [
+    "..kkkk..",
+    ".k....k.",
+    ".k....k.",
+    "kkkkkkkk",
+    "kyyyyyyk",
+    "kyykkyyk",
+    "kyyykyyk",
+    "kkkkkkkk",
+  ],
+  palette: { k: INK, y: "#7d77b8" },
+};
+
+export const HOURGLASS: SpriteDef = {
+  art: [
+    "kkkkkkkk",
+    "kooooook",
+    ".kooook.",
+    "..kook..",
+    "...kk...",
+    "..kook..",
+    ".kooook.",
+    "kooooook",
+    "kkkkkkkk",
+  ],
+  palette: { k: INK, o: "#ff9a3c" },
+};
+
+// Recolours a sprite by swapping palette keys, e.g. a gem per skill-tree accent.
+export function tint(def: SpriteDef, colors: Record<string, string>): SpriteDef {
+  return { art: def.art, palette: { ...def.palette, ...colors } };
+}
