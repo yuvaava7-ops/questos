@@ -14,14 +14,14 @@ MVP stage: Next.js + TypeScript dashboard backed by Supabase (Postgres) — no m
 
 - **Next.js (App Router) + React + TypeScript** — strict mode on, avoid `any`
 - **Tailwind CSS** for all styling — no CSS-in-JS, no separate stylesheet files per component
-- **Component style**: functional components, one component per file, colocate small pieces in `components/`, shared types in `lib/types.ts`
+- **Component style**: functional components, one component per file; game screens in `components/game/`, pixel primitives in `components/pixel/`, shared types in `lib/types.ts`
 - **Data**: `lib/supabase.ts` is the client, `lib/queries.ts` holds server-side reads (called from Server Components), `lib/actions.ts` holds `"use server"` mutations — all typed against `lib/types.ts`. Schema changes go in `supabase/schema.sql`. No mock data — an empty table should render an empty state, not placeholder rows
-- **Icons**: `lucide-react` only, no custom SVG icon sets, no emoji in production UI copy (emoji were used as placeholders in the original prototype — replace with lucide icons as components are touched)
+- **Art**: 16-bit pixel style. Sprites are string grids in `components/pixel/sprites.ts` rendered by `<Sprite>` (crisp SVG rects) — no icon libraries, no emoji, no smooth gradients/rounded corners. UI chrome uses the `.win` / `.px-btn` / `.px-input` classes in `app/globals.css`; fonts are Press Start 2P (headings) and VT323 (body). Motion uses `steps()` easing, never smooth easing
 - **Naming**: PascalCase components, camelCase functions/variables, kebab-case file names for non-component files
 
 ## Design direction
 
-Dark theme, RPG/quest framing throughout (quests not "tasks" where user-facing, XP/levels not generic "points"). Reference the original static HTML prototypes in `docs/reference/` for the visual language (colors, spacing, card style) if rebuilding a section — match that direction rather than defaulting to generic dashboard UI.
+SNES-era RPG: night-sky indigo, blue menu windows with white rims, gold accents, chunky pixel type. Quest framing throughout (quests not "tasks" where user-facing, XP/levels not generic "points"). Mobile-first — the dashboard is a single column capped at 560px. Level and XP are derived from completed quests (`lib/levels.ts`), not the stored `profile.level`/`xp` columns.
 
 ## When adding a skill tree or data model change
 

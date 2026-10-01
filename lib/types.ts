@@ -19,19 +19,8 @@ export interface Task {
 export interface SkillProgress {
   id: string;
   name: string;
-  icon: string; // lucide-react icon name
-  percent: number; // 0-100
-  color: "green" | "blue" | "purple" | "orange";
-}
-
-export interface StatCard {
-  id: string;
-  label: string;
   icon: string;
-  value: string;
-  unit?: string;
-  sub: string;
-  percent: number;
+  percent: number; // 0-100
   color: "green" | "blue" | "purple" | "orange";
 }
 
@@ -39,15 +28,6 @@ export interface DayActivity {
   date: string; // ISO date, "" for a not-yet-happened cell padding out the grid
   level: 0 | 1 | 2 | 3 | 4; // intensity, drives heatmap color
   count: number; // quests completed that day; -1 marks a future padding cell
-}
-
-export interface UserSummary {
-  name: string;
-  level: number;
-  levelTitle: string;
-  xp: number;
-  xpToNextLevel: number;
-  streakDays: number;
 }
 
 // --- Skill tree shapes (Phase 3+, not rendered yet in the MVP) ---

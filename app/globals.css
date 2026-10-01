@@ -1,12 +1,232 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ink: #0b0820;
+  --paper: #f4f1ff;
+}
+
+html {
+  background: var(--ink);
+}
+
 body {
-  background:
-    radial-gradient(ellipse at top left, #241a0d80, transparent 60%),
-    linear-gradient(rgba(12, 10, 8, 0.88), rgba(12, 10, 8, 0.93)),
-    url('/illustrations/app-bg.webp') center / cover fixed no-repeat,
-    #0c0a08;
+  font-family: var(--font-body), monospace;
+  font-size: 22px;
+  line-height: 1.15;
+  color: var(--paper);
+  background-color: #0b0820;
+  /* Tiled pixel starfield: three 1px-grid layers at coprime sizes so it never visibly repeats. */
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, #f4f1ff 99%, transparent),
+    radial-gradient(1px 1px at 90px 80px, #b9b4e6 99%, transparent),
+    radial-gradient(2px 2px at 140px 20px, #4ad8ff 99%, transparent),
+    radial-gradient(1px 1px at 60px 140px, #f4f1ff 99%, transparent),
+    linear-gradient(#0b0820, #17123a 70%, #2b1f5c);
+  background-size: 170px 170px, 130px 130px, 230px 230px, 190px 190px, 100% 100%;
+  background-attachment: fixed;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  min-height: 100vh;
+}
+
+* {
+  image-rendering: pixelated;
+}
+
+@layer components {
+  /* SNES-menu window: blue gradient, light inner rim, chamfered corners via stepped box-shadows. */
+  .win {
+    position: relative;
+    margin: 8px;
+    background: linear-gradient(#3b50cf, #1b2477 90%);
+    box-shadow:
+      0 -4px 0 0 #f4f1ff,
+      0 4px 0 0 #f4f1ff,
+      -4px 0 0 0 #f4f1ff,
+      4px 0 0 0 #f4f1ff,
+      0 -8px 0 0 #0b0820,
+      0 8px 0 0 #0b0820,
+      -8px 0 0 0 #0b0820,
+      8px 0 0 0 #0b0820,
+      inset 0 4px 0 0 rgba(255, 255, 255, 0.16),
+      inset 0 -4px 0 0 rgba(0, 0, 0, 0.28);
+  }
+
+  .win-dark {
+    background: linear-gradient(#1d1747, #120e30);
+  }
+
+  .px-title {
+    font-family: var(--font-pixel), monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  /* Chunky pixel button that physically presses down. */
+  .px-btn {
+    position: relative;
+    font-family: var(--font-pixel), monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 14px 16px;
+    color: #0b0820;
+    background: #ffd24a;
+    border: 0;
+    cursor: pointer;
+    box-shadow:
+      0 -3px 0 0 #0b0820,
+      0 3px 0 0 #0b0820,
+      -3px 0 0 0 #0b0820,
+      3px 0 0 0 #0b0820,
+      inset 0 3px 0 0 #fff0a8,
+      inset 0 -5px 0 0 #c48a1a;
+    transition: transform 0.05s steps(1);
+    touch-action: manipulation;
+  }
+  .px-btn:hover {
+    background: #ffe173;
+  }
+  .px-btn:active {
+    transform: translateY(3px);
+    box-shadow:
+      0 -3px 0 0 #0b0820,
+      0 0 0 0 #0b0820,
+      -3px 0 0 0 #0b0820,
+      3px 0 0 0 #0b0820,
+      inset 0 3px 0 0 #c48a1a;
+  }
+  .px-btn:disabled {
+    opacity: 0.55;
+    cursor: wait;
+  }
+  .px-btn-ghost {
+    color: #f4f1ff;
+    background: #2b1f5c;
+    box-shadow:
+      0 -3px 0 0 #0b0820,
+      0 3px 0 0 #0b0820,
+      -3px 0 0 0 #0b0820,
+      3px 0 0 0 #0b0820,
+      inset 0 3px 0 0 #4a3a96,
+      inset 0 -5px 0 0 #170f3a;
+  }
+  .px-btn-ghost:hover {
+    background: #3a2c7a;
+  }
+
+  .px-input {
+    width: 100%;
+    font-family: var(--font-body), monospace;
+    font-size: 24px;
+    color: #f4f1ff;
+    background: #0b0820;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 0;
+    box-shadow:
+      0 -3px 0 0 #4a3a96,
+      0 3px 0 0 #4a3a96,
+      -3px 0 0 0 #4a3a96,
+      3px 0 0 0 #4a3a96;
+  }
+  .px-input::placeholder {
+    color: #7d77b8;
+  }
+  .px-input:focus {
+    outline: none;
+    box-shadow:
+      0 -3px 0 0 #ffd24a,
+      0 3px 0 0 #ffd24a,
+      -3px 0 0 0 #ffd24a,
+      3px 0 0 0 #ffd24a;
+  }
+}
+
+/* ---- Motion: everything steps, nothing eases — that's the 16-bit tell. ---- */
+
+@keyframes px-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.15; }
+}
+@keyframes px-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes px-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+}
+@keyframes px-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-192px); }
+}
+@keyframes px-drift {
+  from { transform: translateX(-40px); }
+  to { transform: translateX(232px); }
+}
+@keyframes px-frame-a {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes px-frame-b {
+  0%, 49% { opacity: 0; }
+  50%, 100% { opacity: 1; }
+}
+@keyframes px-shine {
+  0% { background-position: 0 -100%; }
+  100% { background-position: 0 200%; }
+}
+@keyframes px-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes px-rise {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-48px); opacity: 0; }
+}
+
+.anim-twinkle { animation: px-twinkle 2s steps(2, jump-none) infinite; }
+.anim-blink { animation: px-blink 1s steps(1) infinite; }
+.anim-bob { animation: px-bob 0.5s steps(1) infinite; }
+.anim-frame-a { animation: px-frame-a 0.5s steps(1) infinite; }
+.anim-frame-b { animation: px-frame-b 0.5s steps(1) infinite; }
+.anim-pop { animation: px-pop 0.45s steps(5) both; }
+
+.logo-shine {
+  background: linear-gradient(180deg, #fff6c9 0%, #ffd24a 40%, #ff9a3c 70%, #ff4d6d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 0 #0b0820) drop-shadow(4px 0 0 #0b0820) drop-shadow(-4px 0 0 #0b0820) drop-shadow(0 -4px 0 #0b0820);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-twinkle,
+  .anim-blink,
+  .anim-bob,
+  .anim-frame-a,
+  .anim-frame-b,
+  .anim-pop,
+  [data-motion] {
+    animation: none !important;
+  }
+}
+
+/* CRT-ish scanlines, scene-only. */
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(rgba(0, 0, 0, 0.14) 0 1px, transparent 1px 3px);
+}
+
+::selection {
+  background: #ffd24a;
+  color: #0b0820;
 }

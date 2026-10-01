@@ -1,10 +1,11 @@
-import { AuthCard } from "@/components/auth/AuthCard";
+import { Window } from "@/components/pixel/Window";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 
 export default function SignUpPage() {
   return (
-    <AuthCard title="Create your account" subtitle="Start logging quests and earning XP today.">
+    <Window title="New Game" bodyClassName="p-5 pt-6">
+      <p className="mb-4 text-[24px] leading-tight text-dim">Name your hero and start earning XP today.</p>
       <SignUpForm />
-    </AuthCard>
+    </Window>
   );
 }

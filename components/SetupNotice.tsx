@@ -1,18 +1,23 @@
-import { DatabaseZap } from "lucide-react";
+import { Sprite } from "@/components/pixel/Sprite";
+import { Window } from "@/components/pixel/Window";
+import { CHEST } from "@/components/pixel/sprites";
 
 export function SetupNotice() {
   return (
-    <main className="flex min-h-screen flex-1 items-center justify-center px-6">
-      <div className="max-w-md rounded-card border border-border bg-panel p-7 text-center">
-        <DatabaseZap size={28} className="mx-auto mb-3 text-blue" />
-        <h1 className="mb-2 text-lg font-bold">Connect Supabase</h1>
-        <p className="text-[13px] leading-relaxed text-text-dim">
-          Create a Supabase project, run <code className="rounded bg-panel2 px-1.5 py-0.5 text-text">supabase/schema.sql</code> in
-          its SQL editor, then set <code className="rounded bg-panel2 px-1.5 py-0.5 text-text">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-          <code className="rounded bg-panel2 px-1.5 py-0.5 text-text">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in{" "}
-          <code className="rounded bg-panel2 px-1.5 py-0.5 text-text">.env.local</code>, then restart the dev server.
+    <main className="mx-auto flex min-h-screen w-full max-w-[480px] items-center px-4">
+      <Window title="Save data missing" className="w-full" bodyClassName="p-5 pt-6 text-center">
+        <div className="mb-3 flex justify-center">
+          <Sprite def={CHEST} scale={5} />
+        </div>
+        <p className="text-[24px] leading-tight text-paper">
+          Create a Supabase project and run <span className="text-gold">supabase/schema.sql</span> in its SQL editor.
         </p>
-      </div>
+        <p className="mt-3 text-[22px] leading-tight text-dim">
+          Then set <span className="text-sky">NEXT_PUBLIC_SUPABASE_URL</span> and{" "}
+          <span className="text-sky">NEXT_PUBLIC_SUPABASE_ANON_KEY</span> in <span className="text-sky">.env.local</span> and restart the
+          dev server.
+        </p>
+      </Window>
     </main>
   );
 }

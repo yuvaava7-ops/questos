@@ -1,13 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
-import type {
-  Quest,
-  Task,
-  SkillProgress,
-  StatCard,
-  DayActivity,
-  UserSummary,
-} from "@/lib/types";
+import type { Quest, Task, SkillProgress, DayActivity } from "@/lib/types";
 
 const DAY_MS = 86_400_000;
 
@@ -15,35 +8,27 @@ function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-function yesterdayISO(): string {
-  return new Date(Date.now() - DAY_MS).toISOString().slice(0, 10);
-}
-
-function donePercent(quests: Quest[]): number {
-  const totalXp = quests.reduce((sum, q) => sum + q.xp, 0);
-  const earnedXp = quests.filter((q) => q.done).reduce((sum, q) => sum + q.xp, 0);
-  return totalXp > 0 ? Math.round((earnedXp / totalXp) * 100) : 0;
-}
-
-export async function getProfile(): Promise<Omit<UserSummary, "streakDays"> | null> {
+export async function getPlayerName(): Promise<string> {
   const user = await getCurrentUser();
-  if (!user) return null;
+  if (!user) return "Hero";
 
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("profile")
-    .select("*")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const { data, error } = await supabase.from("profile").select("name").eq("user_id", user.id).maybeSingle();
   if (error) throw error;
-  if (!data) return null;
-  return {
-    name: data.name,
-    level: data.level,
-    levelTitle: data.level_title,
-    xp: data.xp,
-    xpToNextLevel: data.xp_to_next_level,
-  };
+  const name = data?.name?.trim();
+  return name && name !== "You" ? name : "Hero";
+}
+
+// Total XP is derived from every completed quest rather than a stored counter,
+// so it can never drift from what the quest log actually shows.
+export async function getTotalXp(): Promise<number> {
+  const user = await getCurrentUser();
+  if (!user) return 0;
+
+  const supabase = createClient();
+  const { data, error } = await supabase.from("quests").select("xp").eq("user_id", user.id).eq("done", true);
+  if (error) throw error;
+  return (data ?? []).reduce((sum, row) => sum + row.xp, 0);
 }
 
 export async function getQuests(date = todayISO()): Promise<Quest[]> {
@@ -104,57 +89,6 @@ export async function getSkills(): Promise<SkillProgress[]> {
     percent: s.percent,
     color: s.color,
   }));
-}
-
-// Yesterday's Quest Score, for the hero card's "+N pts from yesterday" line.
-// Returns null (not 0) when there's no baseline to compare against, so the
-// UI can omit the trend rather than imply a misleading "+82".
-export async function getQuestScoreTrend(todayQuests: Quest[]): Promise<number | null> {
-  const yesterdayQuests = await getQuests(yesterdayISO());
-  if (yesterdayQuests.length === 0) return null;
-  return donePercent(todayQuests) - donePercent(yesterdayQuests);
-}
-
-// "Quest Score" is always computed live from today's quests; any rows in
-// stat_cards (Training, Nutrition, custom trackers, ...) are appended after it.
-export async function getStatCards(quests: Quest[]): Promise<StatCard[]> {
-  const percent = donePercent(quests);
-  const doneCount = quests.filter((q) => q.done).length;
-
-  const questScore: StatCard = {
-    id: "quest-score",
-    label: "Quest Score",
-    icon: "Target",
-    value: String(percent),
-    unit: "/100",
-    sub: quests.length > 0 ? `${doneCount}/${quests.length} quests done today` : "No quests logged today",
-    percent,
-    color: "green",
-  };
-
-  const user = await getCurrentUser();
-  if (!user) return [questScore];
-
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("stat_cards")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("sort_order", { ascending: true });
-  if (error) throw error;
-
-  const custom: StatCard[] = (data ?? []).map((s) => ({
-    id: s.id,
-    label: s.label,
-    icon: s.icon,
-    value: s.value,
-    unit: s.unit ?? undefined,
-    sub: s.sub ?? "",
-    percent: s.percent,
-    color: s.color,
-  }));
-
-  return [questScore, ...custom];
 }
 
 const ACTIVITY_WEEKS = 53;
