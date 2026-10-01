@@ -7,6 +7,8 @@ import { requireUser } from "@/lib/auth";
 import { todayISO } from "@/lib/dates";
 import { assertOwnsNode, awardXp, deleteSkillTree, revokeQuestXp } from "@/lib/skill-data";
 import { isStatKey } from "@/lib/stats";
+import { bonusXp } from "@/lib/multiplier";
+import { currentMultiplier, safe } from "@/lib/game-data";
 import type { Task } from "@/lib/types";
 
 const PRIORITIES: readonly Task["priority"][] = ["high", "medium", "low"];
@@ -44,7 +46,14 @@ export async function toggleQuest(id: string, done: boolean) {
   if (error) throw error;
   if (quest) {
     if (done) {
-      await awardXp(db, user.id, { amount: quest.xp, source: "quest", questId: quest.id, skillNodeId: quest.skill_node_id });
+      // Streak bonus: set once, when the quest is completed; undoing removes this exact ledger row.
+      const multiplier = await safe("streak bonus", () => currentMultiplier(db, user.id), 1);
+      await awardXp(db, user.id, {
+        amount: bonusXp(quest.xp, multiplier),
+        source: "quest",
+        questId: quest.id,
+        skillNodeId: quest.skill_node_id,
+      });
     } else {
       await revokeQuestXp(db, user.id, quest.id);
     }

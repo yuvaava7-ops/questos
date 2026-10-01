@@ -4,6 +4,8 @@ import { requireUser } from "@/lib/auth";
 import { Window } from "@/components/pixel/Window";
 import { ConnectAi } from "@/components/settings/ConnectAi";
 import { InstallApp } from "@/components/pwa/InstallApp";
+import { PublicCardForm } from "@/components/settings/PublicCardForm";
+import { getProfileExtras } from "@/lib/queries";
 import { RevokeTokenButton } from "@/components/settings/RevokeTokenButton";
 
 function formatDate(iso: string | null): string {
@@ -24,6 +26,8 @@ export default async function SettingsPage() {
   const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const endpoint = `${proto}://${host}/api/mcp`;
   const mcpConfigured = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  // Public card fields need migration 004; before it is applied, hide them rather than fail.
+  const extras = await getProfileExtras().catch(() => null);
 
   return (
     <>
@@ -32,6 +36,12 @@ export default async function SettingsPage() {
       <Window title="Download" className="mt-7">
         <InstallApp />
       </Window>
+
+      {extras && (
+        <Window title="Hero Card" className="mt-7">
+          <PublicCardForm initialPublic={extras.isPublic} initialSlug={extras.publicSlug ?? ""} />
+        </Window>
+      )}
 
       <Window title="Connect an AI" className="mt-7">
         <p className="mb-4 text-[23px] leading-tight text-dim">

@@ -20,11 +20,13 @@ import { MAX_NODES_PER_TREE, TreeValidationError } from "@/lib/skill-trees";
 import { STAT_KEYS, STATS, classFor, emptyStatXp, isStatKey, statLevel } from "@/lib/stats";
 import { AVATAR_SIZE, AvatarError, MAX_AVATAR_COLORS, parseAvatar, validateAvatar } from "@/lib/avatar";
 import { HERO_A, HERO_B, HERO_PALETTE } from "@/components/pixel/sprites";
+import { ensureDailies, getHabits } from "@/lib/game-data";
+import { BOSS_PRESETS, weekStartOf } from "@/lib/boss";
 import type { SkillNodeView, SkillTreeView } from "@/lib/types";
 
 const INSTRUCTIONS = `QuestOS is the user's gamified productivity tracker. Daily quests earn XP; XP levels the user up and progresses nodes on skill trees.
 
-The player also has a character: a hero class derived from the stats their quests train (get_character), and an avatar you can draw for them with set_avatar. Offer to draw one; base it on their class.
+The player also has a character: a hero class derived from the stats their quests train (get_character), and an avatar you can draw for them with set_avatar. Offer to draw one; base it on their class. Repeating habits are dailies (add_habit), one-offs are quests (add_quests), and the week's big goal is a boss (set_boss). Completing quests on a streak earns bonus XP, so scheduling a realistic daily rhythm matters more than piling on quests.
 
 How it works:
 - A skill tree is a graph of nodes. Each node has xp_required; it is complete once that much XP has been logged to it. A node is locked until all its prerequisites are complete (XP still accrues while locked).
@@ -228,6 +230,78 @@ export function createQuestOsMcpServer(db: SupabaseClient, userId: string): McpS
           if (inserted.error) throw inserted.error;
         }
         return { saved: true, frames: avatar.walk ? 2 : 1, colors: Object.keys(avatar.palette).length, preview: avatar.art.join("\n") };
+      })
+  );
+
+  server.registerTool(
+    "list_habits",
+    {
+      description: "The player's dailies (recurring habits) with their schedule and current streak. Check this before adding one to avoid duplicates.",
+      inputSchema: {},
+    },
+    () =>
+      run(async () =>
+        (await getHabits(db, userId)).map((h) => ({
+          id: h.id,
+          label: h.label,
+          xp: h.xp,
+          stat: h.stat,
+          weekdays: h.weekdays,
+          time: h.time || null,
+          active: h.active,
+          streak: h.streak,
+        }))
+      )
+  );
+
+  server.registerTool(
+    "add_habit",
+    {
+      description:
+        "Add a daily (recurring habit). It appears as a quest in the player's log on every scheduled day, builds a streak, and trains a stat. Use for things they do repeatedly (a nightly workout, daily study), not one-offs (use add_quests).",
+      inputSchema: {
+        label: z.string().min(1).max(120),
+        xp: z.number().int().min(1).max(1000).default(10),
+        stat: z.enum(STAT_KEYS).optional(),
+        weekdays: z.array(z.number().int().min(0).max(6)).min(1).max(7).default([0, 1, 2, 3, 4, 5, 6]).describe("0 = Sunday ... 6 = Saturday."),
+        time: z.string().max(20).optional(),
+      },
+    },
+    ({ label, xp, stat, weekdays, time }) =>
+      run(async () => {
+        const days = [...new Set(weekdays)].sort();
+        const { data, error } = await db
+          .from("habits")
+          .insert({ user_id: userId, label, xp, stat: stat ?? null, weekdays: days, time: time ?? null })
+          .select("id, label, xp, weekdays")
+          .single();
+        if (error) throw error;
+        await ensureDailies(db, userId);
+        return { added: data };
+      })
+  );
+
+  server.registerTool(
+    "set_boss",
+    {
+      description:
+        "Summon this week's boss: a weekly goal. All XP the player earns during the week damages it; defeating it before Sunday earns a bonus. One boss per week. Name it after their real goal for the week (e.g. 'IELTS mock exam').",
+      inputSchema: {
+        name: z.string().min(1).max(60),
+        difficulty: z.enum(["light", "normal", "hard", "legendary"]).default("normal").describe("Light 200 HP, normal 400, hard 800, legendary 1500."),
+      },
+    },
+    ({ name, difficulty }) =>
+      run(async () => {
+        const preset = BOSS_PRESETS.find((p) => p.label.toLowerCase() === difficulty) ?? BOSS_PRESETS[1];
+        const { error } = await db
+          .from("bosses")
+          .insert({ user_id: userId, week_start: weekStartOf(), name, hp: preset.hp, reward_xp: preset.reward });
+        if (error) {
+          if (error.code === "23505") throw new AvatarError("A boss is already summoned for this week.");
+          throw error;
+        }
+        return { summoned: name, hp: preset.hp, reward_xp: preset.reward };
       })
   );
 

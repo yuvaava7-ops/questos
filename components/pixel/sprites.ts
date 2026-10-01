@@ -261,3 +261,58 @@ export const STAR_NODE: SpriteDef = {
   ],
   palette: { w: "#f4f1ff", c: "#ffffff" },
 };
+
+// Weekly bosses, from small to large.
+export const SLIME: SpriteDef = {
+  art: [
+    "................",
+    "................",
+    "......kkkk......",
+    "....kkggggkk....",
+    "...kgggggggwk...",
+    "..kggwwgggggbk..".replace("b", "g"),
+    "..kgkkggggkkgk..",
+    "..kgkkggggkkgk..",
+    ".kgggggggggggbk.".replace("b", "g"),
+    ".kggggkkkkggggk.",
+    ".kgggggggggggGk.",
+    "..kkkkkkkkkkkk..",
+  ],
+  palette: { k: INK, g: "#5bd96a", G: "#2e7d46", w: "#c4ffcb" },
+};
+
+export const SKULL: SpriteDef = {
+  art: [
+    "....kkkkkkkk....",
+    "..kkwwwwwwwwkk..",
+    ".kwwwwwwwwwwwwk.",
+    ".kwwwwwwwwwwwwk.",
+    ".kwkkkkwwkkkkwk.",
+    ".kwkrrkwwkrrkwk.",
+    ".kwkkkkwwkkkkwk.",
+    ".kwwwwwkkwwwwwk.",
+    "..kwwwwwwwwwwk..",
+    "...kwkwkwkwkwk..",
+    "...kkkkkkkkkkk..",
+    "................",
+  ],
+  palette: { k: INK, w: "#e8ecff", r: "#ff4d6d" },
+};
+
+export const EYE: SpriteDef = {
+  art: [
+    "k..............k",
+    "kk....kkkk....kk",
+    "kPk.kkwwwwkk.kPk",
+    ".kPkwwwwwwwwkPk.",
+    ".kkwwwrrrrwwwkk.",
+    "..kwwrrkkrrwwk..",
+    "..kwwrkkkkrwwk..",
+    "..kwwrrkkrrwwk..",
+    "..kwwwrrrrwwwk..",
+    "...kkwwwwwwkk...",
+    ".....kkkkkk.....",
+    "................",
+  ],
+  palette: { k: INK, w: "#f4f1ff", r: "#ff4d6d", P: "#b377ff" },
+};

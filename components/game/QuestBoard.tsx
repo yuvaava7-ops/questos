@@ -4,12 +4,17 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import type { Quest, SkillNodeOption } from "@/lib/types";
 import { addQuest, deleteQuest, toggleQuest } from "@/lib/actions";
 import { levelFromTotalXp } from "@/lib/leveling";
+import { bonusXp } from "@/lib/multiplier";
+import type { BossState } from "@/lib/boss";
+import type { LoginState } from "@/lib/login-rewards";
 import { classFor, STAT_KEYS, STATS, emptyStatXp, type StatKey, type StatXp } from "@/lib/stats";
 import type { Avatar } from "@/lib/avatar";
 import { celebrateAt } from "@/lib/celebrate";
 import { sfx } from "@/lib/sfx";
 import { CharacterSheet } from "@/components/game/CharacterSheet";
+import { BossPanel } from "@/components/game/BossPanel";
 import { Hud } from "@/components/game/Hud";
+import { LoginReward } from "@/components/game/LoginReward";
 import { LevelUp, type Fanfare } from "@/components/game/LevelUp";
 import { PixelScene } from "@/components/pixel/PixelScene";
 import { Sprite } from "@/components/pixel/Sprite";
@@ -43,7 +48,14 @@ export function QuestBoard({
   statXp,
   avatar,
   streakDays,
+  multiplier,
+  titleName,
+  boss,
+  login,
+  achievementFanfares,
   nodeOptions,
+  dailies,
+  trophies,
   errands,
   skills,
   chronicle,
@@ -54,7 +66,16 @@ export function QuestBoard({
   statXp: StatXp;
   avatar: Avatar | null;
   streakDays: number;
+  /** Streak bonus applied to XP earned today (1 = none). */
+  multiplier: number;
+  titleName: string | null;
+  boss: BossState | null;
+  /** Today's login reward, or null once claimed. */
+  login: LoginState | null;
+  achievementFanfares: Fanfare[];
   nodeOptions: SkillNodeOption[];
+  dailies: React.ReactNode;
+  trophies: React.ReactNode;
   errands: React.ReactNode;
   skills: React.ReactNode;
   chronicle: React.ReactNode;
@@ -64,7 +85,8 @@ export function QuestBoard({
   const [overrides, setOverrides] = useState<Record<string, boolean>>({});
   const [xpChoice, setXpChoice] = useState(10);
   const [statChoice, setStatChoice] = useState<StatKey | null>(null);
-  const [fanfare, setFanfare] = useState<Fanfare | null>(null);
+  const [fanfares, setFanfares] = useState<Fanfare[]>(achievementFanfares);
+  const [loginOpen, setLoginOpen] = useState(login !== null);
   const formRef = useRef<HTMLFormElement>(null);
 
   // Once fresh server data arrives, drop overrides it already agrees with.
@@ -80,17 +102,21 @@ export function QuestBoard({
 
   // Live totals: server values plus the effect of any not-yet-confirmed toggles.
   let delta = 0;
+  let realDelta = 0;
   const liveStat: StatXp = { ...emptyStatXp(), ...statXp };
   for (const q of quests) {
     const o = overrides[q.id];
     if (o === undefined || o === q.done) continue;
     const sign = o ? 1 : -1;
-    delta += sign * q.xp;
+    const gained = bonusXp(q.xp, multiplier);
+    delta += sign * gained;
+    realDelta += sign * gained;
     if (q.stat) liveStat[q.stat] = Math.max(0, liveStat[q.stat] + sign * q.xp);
   }
   const liveXp = totalXp + delta;
   const info = levelFromTotalXp(liveXp);
   const heroClass = classFor(liveStat);
+  const liveBossDamage = (boss?.damage ?? 0) + realDelta;
 
   const questXp = effective.reduce((s, q) => s + q.xp, 0);
   const earnedXp = effective.filter((q) => q.done).reduce((s, q) => s + q.xp, 0);
@@ -99,26 +125,35 @@ export function QuestBoard({
   const nextQuest = effective.find((q) => !q.done);
   const allDone = effective.length > 0 && !nextQuest;
 
+  const push = useCallback((f: Fanfare) => setFanfares((q) => [...q, f]), []);
   const seenLevel = useRef(info.level);
+  const seenBossDown = useRef(boss ? boss.defeated : true);
   const seenClass = useRef(heroClass.name);
   useEffect(() => {
     if (info.level > seenLevel.current) {
       sfx.levelUp();
-      setFanfare({ headline: "LEVEL UP!", big: `LV ${info.level}`, sub: info.levelTitle });
+      push({ headline: "LEVEL UP!", big: `LV ${info.level}`, sub: info.levelTitle });
     } else if (heroClass.name !== seenClass.current && heroClass.primary) {
       sfx.levelUp();
-      setFanfare({ headline: "NEW CLASS!", big: heroClass.name, sub: heroClass.blurb });
+      push({ headline: "NEW CLASS!", big: heroClass.name, sub: heroClass.blurb });
     }
     seenLevel.current = info.level;
     seenClass.current = heroClass.name;
-  }, [info.level, info.levelTitle, heroClass.name, heroClass.blurb, heroClass.primary]);
-  const closeFanfare = useCallback(() => setFanfare(null), []);
+  }, [info.level, info.levelTitle, heroClass.name, heroClass.blurb, heroClass.primary, push]);
+  useEffect(() => {
+    if (boss && !seenBossDown.current && liveBossDamage >= boss.hp) {
+      sfx.levelUp();
+      push({ headline: "BOSS DEFEATED!", big: boss.name, sub: `Claim your +${boss.rewardXp} XP reward.` });
+    }
+    if (boss) seenBossDown.current = boss.defeated || liveBossDamage >= boss.hp;
+  }, [boss, liveBossDamage, push]);
+  const closeFanfare = useCallback(() => setFanfares((q) => q.slice(1)), []);
 
   function toggle(q: Quest & { done: boolean }, el: HTMLElement) {
     const next = !q.done;
     setOverrides((o) => ({ ...o, [q.id]: next }));
     if (next) {
-      celebrateAt(el, q.xp);
+      celebrateAt(el, bonusXp(q.xp, multiplier));
       sfx.coin();
     } else {
       sfx.undo();
@@ -140,7 +175,16 @@ export function QuestBoard({
       {/* left: who you are */}
       <div className="contents lg:flex lg:flex-col">
         <div className="order-1">
-          <Hud name={name} info={info} heroClass={heroClass} avatar={avatar} totalXp={liveXp} streakDays={streakDays} />
+          <Hud
+            name={name}
+            info={info}
+            heroClass={heroClass}
+            avatar={avatar}
+            totalXp={liveXp}
+            streakDays={streakDays}
+            multiplier={multiplier}
+            titleName={titleName}
+          />
         </div>
         <div className="order-4">
           <CharacterSheet heroClass={heroClass} statXp={liveStat} avatar={avatar} />
@@ -188,6 +232,7 @@ export function QuestBoard({
                       {q.label}
                       {q.time && <span className="ml-2 text-[20px] text-faint">{q.time}</span>}
                     </span>
+                    {q.habitId && <span className="px-title shrink-0 text-[8px] text-faint">DAILY</span>}
                     {q.stat && (
                       <span className={`px-title shrink-0 text-[8px] ${STAT_TEXT[STATS[q.stat].color]}`}>{STATS[q.stat].abbr}</span>
                     )}
@@ -195,6 +240,9 @@ export function QuestBoard({
                       <Sprite def={COIN} scale={2} />
                       {q.xp}
                     </span>
+                    {q.habitId ? (
+                      <span className="w-7 shrink-0" />
+                    ) : (
                     <button
                       type="button"
                       onClick={() => {
@@ -206,6 +254,7 @@ export function QuestBoard({
                     >
                       ×
                     </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -288,11 +337,17 @@ export function QuestBoard({
 
       {/* right: everything else */}
       <div className="contents lg:flex lg:flex-col">
-        <div className="order-5 lg:-mt-3">{errands}</div>
+        <div className="order-5 lg:-mt-3">
+          <BossPanel boss={boss} liveDamage={liveBossDamage} />
+        </div>
+        <div className="order-5">{dailies}</div>
+        <div className="order-6">{errands}</div>
         <div className="order-6">{skills}</div>
+        <div className="order-8">{trophies}</div>
       </div>
 
-      {fanfare && <LevelUp fanfare={fanfare} onClose={closeFanfare} />}
+      {loginOpen && login && <LoginReward state={login} onClose={() => setLoginOpen(false)} />}
+      {!loginOpen && fanfares[0] && <LevelUp fanfare={fanfares[0]} onClose={closeFanfare} />}
     </div>
   );
 }

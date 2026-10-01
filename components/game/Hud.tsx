@@ -19,6 +19,8 @@ export function Hud({
   avatar,
   totalXp,
   streakDays,
+  multiplier,
+  titleName,
 }: {
   name: string;
   info: LevelProgress;
@@ -26,6 +28,8 @@ export function Hud({
   avatar: Avatar | null;
   totalXp: number;
   streakDays: number;
+  multiplier: number;
+  titleName: string | null;
 }) {
   const [muted, setMutedState] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -44,7 +48,7 @@ export function Hud({
             <p className="px-title truncate text-[11px]">{name}</p>
             <p className="px-title shrink-0 text-[11px] text-gold">LV {info.level}</p>
           </div>
-          <p className="truncate text-[20px] uppercase leading-none text-dim">{heroClass.name} · {info.levelTitle}</p>
+          <p className="truncate text-[20px] uppercase leading-none text-dim">{heroClass.name} · {titleName ?? info.levelTitle}</p>
           <div className="mt-2">
             <SegBar fraction={info.xp / info.xpToNextLevel} label="Experience to next level" />
           </div>
@@ -61,7 +65,10 @@ export function Hud({
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-2 border-t-2 border-dusk pt-2.5">
-        <p className="text-[20px] leading-none text-faint">TOTAL {totalXp} XP</p>
+        <p className="text-[20px] leading-none text-faint">
+          TOTAL {totalXp} XP
+          {multiplier > 1 && <span className="ml-2 text-gold" title="Streak bonus on all XP earned today">x{multiplier}</span>}
+        </p>
         <div className="flex gap-3">
           <button
             type="button"

@@ -13,6 +13,7 @@ export interface Quest {
   xp: number;
   skillNodeId: string | null;
   stat: StatKey | null;
+  habitId: string | null;
 }
 
 export interface Task {

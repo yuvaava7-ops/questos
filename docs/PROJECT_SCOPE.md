@@ -71,3 +71,5 @@ Mobile-first 16-bit pixel RPG UI. `/` is a title screen; `/dashboard` has three 
 Data: Supabase with per-user RLS; XP is an `xp_events` ledger; skill trees live in their own tables. Claude/ChatGPT connect over MCP (`/api/mcp`, bearer token or token-in-URL); trees are created through MCP, the web UI can only delete them. Needs `SUPABASE_SERVICE_ROLE_KEY` on the server. Not built: GitHub/health integrations, OAuth for MCP, timezone handling, editing trees in the web UI.
 
 Added: hero stats and classes (quests tagged STR/INT/DEX/WIS/CHA; class and outfit colour follow the top stats), Skyrim-style constellation skill trees, a wide desktop layout, and PWA install (Camp > Download). Run `supabase/migrations/002_quest_stats.sql` to enable stats.
+
+Added: dailies (recurring habits), streak XP bonus, weekly boss, achievements with wearable titles, daily login rewards, and a public hero card. MCP gained list_habits, add_habit and set_boss. Run `supabase/migrations/004_dailies_bosses_rewards.sql` to enable them.

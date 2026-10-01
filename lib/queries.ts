@@ -57,6 +57,7 @@ export async function getQuests(date = todayISO()): Promise<Quest[]> {
     xp: q.xp,
     skillNodeId: q.skill_node_id,
     stat: isStatKey(q.stat) ? q.stat : null,
+    habitId: q.habit_id ?? null,
   }));
 }
 
@@ -134,3 +135,14 @@ export const getAvatar = cache(async (): Promise<Avatar | null> => {
   if (error) throw error;
   return parseAvatar(data?.avatar);
 });
+
+// Title / public-card fields (null until migration 004 is applied).
+export const getProfileExtras = cache(
+  async (): Promise<{ titleKey: string | null; isPublic: boolean; publicSlug: string | null }> => {
+    const user = await getCurrentUser();
+    if (!user) return { titleKey: null, isPublic: false, publicSlug: null };
+    const { data, error } = await createClient().from("profile").select("*").eq("user_id", user.id).maybeSingle();
+    if (error) throw error;
+    return { titleKey: data?.title_key ?? null, isPublic: data?.is_public ?? false, publicSlug: data?.public_slug ?? null };
+  }
+);

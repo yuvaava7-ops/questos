@@ -235,7 +235,7 @@ export async function deleteSkillTree(db: Db, userId: string, treeId: string): P
 export async function awardXp(
   db: Db,
   userId: string,
-  event: { amount: number; source: "quest" | "mcp" | "manual"; skillNodeId?: string | null; questId?: string; note?: string }
+  event: { amount: number; source: "quest" | "mcp" | "manual" | "login" | "boss" | "achievement"; skillNodeId?: string | null; questId?: string; note?: string }
 ): Promise<void> {
   if (event.skillNodeId) await assertOwnsNode(db, userId, event.skillNodeId);
   const row = {
